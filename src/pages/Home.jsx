@@ -23,7 +23,7 @@ export default function Home() {
 
         {/* ── HERO IMAGE — change src to any URL or local path ── */}
         <img
-          src="https://res.cloudinary.com/dx5tbpgob/image/upload/v1773097016/Coconut_Curry_Rice_with_Grilled_Chicken_-_KikiFoodies_1_mt6jbm.jpg"
+          src="https://res.cloudinary.com/dx5tbpgob/image/upload/Coconut_Curry_Rice_with_Grilled_Chicken_-_KikiFoodies_1_mt6jbm.jpg"
           alt=""
           style={{
             position: 'absolute', inset: 0,
