@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "stripe": "^14.18.0",
+    "mongodb": "^6.3.0"
+  }
+}
