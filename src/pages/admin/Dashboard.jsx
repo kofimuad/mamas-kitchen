@@ -13,7 +13,7 @@ export default function Dashboard() {
   // Build top ordered items dynamically from real order data
   const itemCounts = {}
   orders.forEach(order => {
-    order.plates?.forEach(p => {
+    (order.items || order.plates || []).forEach(p => {
       itemCounts[p.name] = (itemCounts[p.name] || 0) + 1
     })
   })

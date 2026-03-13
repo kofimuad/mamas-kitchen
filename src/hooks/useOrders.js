@@ -41,7 +41,7 @@ export default function useOrders() {
     plates:   {},
   }
   orders.forEach(o => {
-    o.plates?.forEach(p => {
+    (o.items || o.plates || []).forEach(p => {
       stats.plates[p.name] = (stats.plates[p.name] || 0) + 1
     })
   })

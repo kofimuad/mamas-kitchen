@@ -154,6 +154,109 @@ app.post('/api/webhook', async (req, res) => {
   }
 })
 
+// ── POST /api/submit-order ─────────────────────────────────
+app.post('/api/submit-order', async (req, res) => {
+  try {
+    const { orderType, items, info, total } = req.body
+    if (!items?.length || !info?.name || !info?.branch) {
+      return res.status(400).json({ error: 'Missing required fields' })
+    }
+
+    const database = await db()
+    const order = {
+      orderType, items, total,
+      info: {
+        name:          info.name,
+        phone:         info.phone || '',
+        branch:        info.branch,
+        battalion:     info.battalion || '',
+        paymentMethod: info.paymentMethod,
+        paymentHandle: info.paymentHandle,
+      },
+      status:    'pending_payment',
+      createdAt: new Date(),
+    }
+
+    const result  = await database.collection('orders').insertOne(order)
+    const orderId = result.insertedId.toString()
+
+    // WhatsApp notification
+    const baseUrl    = process.env.SITE_URL || `http://localhost:5173`
+    const adminLink  = `${baseUrl}/admin/orders/${orderId}`
+    const statusLink = `${baseUrl}/order-status/${orderId}`
+    const itemsText  = items.map(p => `  • ${p.name}${p.qty > 1 ? ` ×${p.qty}` : ''} — $${p.price * p.qty}`).join('\n')
+    const payLabel   = info.paymentMethod === 'zelle' ? 'Zelle' : 'Cash App'
+    const divider    = '─────────────────────'
+
+    const message =
+      `🍛 *New Order — Obaa Yaa's Kitchen*\n${divider}\n\n` +
+      `👤 *${info.name}*\n📞 ${info.phone || '—'}\n🪖 ${info.branch}${info.battalion ? ' · ' + info.battalion : ''}\n\n` +
+      `🍽 *Order (${orderType === 'tray' ? 'Tray — Wed' : 'Plate — Sat'}):*\n${itemsText}\n\n` +
+      `💰 *Total: $${total}*\n💳 Paying via *${payLabel}*\n   Handle: *${info.paymentHandle}*\n\n` +
+      `${divider}\n✅ *Confirm order here:*\n${adminLink}\n\n📋 Customer status:\n${statusLink}`
+
+    try {
+      const waRes = await fetch(`https://graph.facebook.com/v22.0/${process.env.META_PHONE_NUMBER_ID}/messages`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${process.env.META_WHATSAPP_TOKEN}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ messaging_product: 'whatsapp', to: process.env.MAMA_WHATSAPP_NUMBER, type: 'text', text: { body: message } }),
+      })
+      if (waRes.ok) console.log('✓ WhatsApp sent for order:', orderId)
+      else console.error('WhatsApp failed:', await waRes.text())
+    } catch (waErr) { console.error('WhatsApp error:', waErr.message) }
+
+    res.json({ success: true, orderId })
+  } catch (err) {
+    console.error('submit-order error:', err)
+    res.status(500).json({ error: err.message })
+  }
+})
+
+// ── GET /api/get-order?id=xxx ──────────────────────────────
+app.get('/api/get-order', async (req, res) => {
+  try {
+    const { ObjectId } = await import('mongodb')
+    const { id } = req.query
+    if (!id) return res.status(400).json({ error: 'Missing id' })
+    const database = await db()
+    const order = await database.collection('orders').findOne({ _id: new ObjectId(id) })
+    if (!order) return res.status(404).json({ error: 'Order not found' })
+    res.json({
+      orderId:      order._id.toString(),
+      status:       order.status,
+      orderType:    order.orderType,
+      items:        order.items,
+      total:        order.total,
+      customerName: order.info?.name,
+      createdAt:    order.createdAt,
+      confirmedAt:  order.confirmedAt || null,
+    })
+  } catch (err) {
+    res.status(500).json({ error: err.message })
+  }
+})
+
+// ── POST /api/confirm-order ────────────────────────────────
+app.post('/api/confirm-order', async (req, res) => {
+  try {
+    const { ObjectId } = await import('mongodb')
+    const { orderId, status } = req.body
+    if (!orderId || !status) return res.status(400).json({ error: 'Missing fields' })
+    const database = await db()
+    await database.collection('orders').updateOne(
+      { _id: new ObjectId(orderId) },
+      { $set: { status, confirmedAt: new Date(), updatedAt: new Date() } }
+    )
+    res.json({ success: true })
+  } catch (err) {
+    res.status(500).json({ error: err.message })
+  }
+})
+
+// ── POST /api/create-payment-intent (DISABLED) ─────────────
+// Stripe payments removed — using Zelle/CashApp direct payment
+// app.post('/api/create-payment-intent', async (req, res) => { ... })
+
 // ── POST /api/test-whatsapp ────────────────────────────────
 // Test your WhatsApp config without needing a real payment
 app.post('/api/test-whatsapp', async (req, res) => {
