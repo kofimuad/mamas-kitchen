@@ -229,9 +229,9 @@ export default function Order() {
                 }}>
                   <div style={{
                     width: 52, height: 52, borderRadius: 10, flexShrink: 0,
-                    backgroundImage: `url('${item.image}')`,
+                    backgroundImage: item.image ? `url('${item.image}')` : 'none',
                     backgroundSize: 'cover', backgroundPosition: 'center',
-                    background: item.image ? undefined : 'rgba(212,84,26,0.1)',
+                    backgroundColor: 'rgba(212,84,26,0.1)',
                   }} />
                   <div style={{ flex: 1 }}>
                     <div style={{ fontFamily: "'Lato', sans-serif", fontSize: 14, fontWeight: 700, color: '#1E0E04' }}>{item.name}</div>
