@@ -3,10 +3,13 @@ import { useNavigate } from 'react-router-dom'
 export default function FoodCard({ item, compact = false }) {
   const navigate = useNavigate()
 
-  // ── COMPACT — horizontal row for Menu page list ──
+  // Pass the item id and type so Order page can pre-select it
+  const goToOrder = () => navigate('/order', { state: { preselect: { id: item.id, type: item.type || 'plate' } } })
+
+  // ── COMPACT — horizontal row for Menu page ──
   if (compact) return (
     <div
-      onClick={() => navigate('/order')}
+      onClick={goToOrder}
       style={{
         display: 'flex', alignItems: 'center', gap: 14,
         background: '#fff', borderRadius: 14,
@@ -46,10 +49,10 @@ export default function FoodCard({ item, compact = false }) {
     </div>
   )
 
-  // ── FULL — tall card for Home page preview ──
+  // ── FULL — tall card for Home page ──
   return (
     <div
-      onClick={() => navigate('/order')}
+      onClick={goToOrder}
       style={{
         background: '#fff', borderRadius: 18,
         border: '1px solid rgba(212,84,26,0.12)',
@@ -61,7 +64,6 @@ export default function FoodCard({ item, compact = false }) {
       onMouseEnter={e => { e.currentTarget.style.boxShadow = '0 10px 32px rgba(212,84,26,0.16)'; e.currentTarget.style.transform = 'translateY(-3px)'; e.currentTarget.style.borderColor = 'rgba(212,84,26,0.25)' }}
       onMouseLeave={e => { e.currentTarget.style.boxShadow = '0 2px 12px rgba(212,84,26,0.07)'; e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.borderColor = 'rgba(212,84,26,0.12)' }}
     >
-      {/* Tall image */}
       <div style={{
         width: '100%', aspectRatio: '4 / 3',
         backgroundImage: `url('${item.image}')`,
@@ -76,8 +78,6 @@ export default function FoodCard({ item, compact = false }) {
           boxShadow: '0 3px 10px rgba(212,84,26,0.4)',
         }}>{item.price !== null ? `$${item.price}` : 'TBD'}</div>
       </div>
-
-      {/* Body */}
       <div style={{ padding: '16px 18px 18px', flex: 1, display: 'flex', flexDirection: 'column', gap: 6 }}>
         <div style={{
           fontFamily: "'Playfair Display', serif", fontSize: 16, fontWeight: 700,
@@ -96,4 +96,3 @@ export default function FoodCard({ item, compact = false }) {
     </div>
   )
 }
-

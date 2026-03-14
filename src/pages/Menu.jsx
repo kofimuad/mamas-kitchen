@@ -90,7 +90,7 @@ export default function Menu() {
               }}>{cat}</div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
                 {catItems.map(item => (
-                  <FoodCard key={item.id} item={item} compact />
+                  <FoodCard key={item.id} item={{ ...item, type: tab }} compact />
                 ))}
               </div>
             </div>
@@ -118,7 +118,7 @@ export default function Menu() {
             </div>
           </div>
           <button
-            onClick={() => navigate('/order')}
+            onClick={() => navigate('/order', { state: { preselect: { type: tab } } })}
             style={{
               fontFamily: "'Lato', sans-serif",
               background: '#D4541A', color: '#fff',
