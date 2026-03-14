@@ -264,7 +264,37 @@ export default function Home() {
 
 
 
-      <Footer />
+      {/* ══════════════════════════════
+          COMMUNITY BANNER
+      ══════════════════════════════ */}
+      <div style={{ padding: '0 40px 60px' }}>
+        <div style={{
+          borderRadius: 24, overflow: 'hidden',
+          background: '#1E0E04',
+          display: 'flex', alignItems: 'center',
+        }}>
+          <div style={{ padding: '44px 48px', maxWidth: 580 }}>
+            <span style={{
+              fontFamily: "'Lato', sans-serif",
+              display: 'inline-block', background: '#F5C842', color: '#1E0E04',
+              fontSize: 10, fontWeight: 700, textTransform: 'uppercase',
+              letterSpacing: '0.10em', padding: '4px 12px', borderRadius: 99, marginBottom: 16,
+            }}>🪖 Military Community</span>
+            <h3 style={{
+              fontFamily: "'Playfair Display', serif",
+              fontSize: 30, color: '#fff', marginBottom: 14, lineHeight: 1.25,
+            }}>Bringing the Taste<br />of Home to Base</h3>
+            <p style={{
+              fontFamily: "'Lato', sans-serif",
+              fontSize: 14, color: 'rgba(255,255,255,0.65)',
+              lineHeight: 1.8, fontWeight: 300, margin: 0,
+            }}>
+              We deliver every Wednesday and Saturday to service members of African descent.
+              Your order isn't just a meal — it's a piece of home.
+            </p>
+          </div>
+        </div>
+      </div>
 
       <style>{`
         @keyframes shimmer {
@@ -275,6 +305,7 @@ export default function Home() {
           .delivery-grid { grid-template-columns: 1fr !important; }
         }
       `}</style>
+      <Footer />
     </div>
   )
 }
