@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { apiUrl } from '../lib/api'
+import { apiUrl, adminHeaders } from '../lib/api'
 
 export default function useOrders() {
   const [orders,  setOrders]  = useState([])
@@ -7,7 +7,7 @@ export default function useOrders() {
   const [error,   setError]   = useState(null)
 
   useEffect(() => {
-    fetch(apiUrl('get-orders'))
+    fetch(apiUrl('get-orders'), { headers: adminHeaders() })
       .then(r => {
         if (!r.ok) throw new Error(`Server returned ${r.status}`)
         return r.json()
@@ -23,9 +23,9 @@ export default function useOrders() {
   const updateStatus = async (id, status) => {
     setOrders(prev => prev.map(o => o._id === id ? { ...o, status } : o))
     try {
-      await fetch(apiUrl(`orders/${id}`), {
+      await fetch(apiUrl('orders/' + id), {
         method:  'PATCH',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', ...adminHeaders() },
         body:    JSON.stringify({ status }),
       })
     } catch (err) {
@@ -35,13 +35,14 @@ export default function useOrders() {
 
   const stats = {
     total:    orders.length,
-    newCount: orders.filter(o => o.status === 'new').length,
-    revenue:  orders.filter(o => o.paymentStatus === 'paid')
-                    .reduce((sum, o) => sum + (o.total || 0), 0),
-    plates:   {},
+    newCount: orders.filter(o => o.status === 'new' || o.status === 'pending_payment').length,
+    revenue:  orders
+      .filter(o => o.paymentStatus === 'paid' || o.status === 'confirmed' || o.status === 'delivered')
+      .reduce((sum, o) => sum + (o.total || 0), 0),
+    plates: {},
   }
   orders.forEach(o => {
-    (o.items || o.plates || []).forEach(p => {
+    ;(o.items || o.plates || []).forEach(p => {
       stats.plates[p.name] = (stats.plates[p.name] || 0) + 1
     })
   })

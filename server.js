@@ -333,6 +333,9 @@ app.post('/api/save-menu', async (req, res) => {
 
 // ── GET /api/get-orders ────────────────────────────────────
 app.get('/api/get-orders', async (req, res) => {
+  if (req.headers['x-admin-secret'] !== process.env.ADMIN_SECRET) {
+    return res.status(401).json({ error: 'Unauthorized' })
+  }
   try {
     const orders = await (await db()).collection('orders')
       .find({}).sort({ createdAt: -1 }).limit(100).toArray()
