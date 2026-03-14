@@ -48,7 +48,7 @@ export const masterFoods = [
   {
     id: 'fufu-soup',
     name: 'Fufu and Chicken Light Soup',
-    category: 'Soup & Fufu',
+    category: 'Soup',
     type: 'plate',
     defaultPrice: 28,
     tags: ['Fufu', 'Soup', 'Chicken'],
@@ -58,7 +58,7 @@ export const masterFoods = [
   {
     id: 'fufu-goat-soup',
     name: 'Fufu and Goat Light Soup',
-    category: 'Soup & Fufu',
+    category: 'Soup',
     type: 'plate',
     defaultPrice: 30,
     tags: ['Fufu', 'Soup', 'Goat'],
@@ -68,7 +68,7 @@ export const masterFoods = [
   {
     id: 'fufu-kontomire',
     name: 'Fufu and Kontomire Stew',
-    category: 'Soup & Fufu',
+    category: 'Soup',
     type: 'plate',
     defaultPrice: 25,
     tags: ['Fufu', 'Kontomire', 'Stew'],
@@ -98,7 +98,7 @@ export const masterFoods = [
   {
     id: 'banku-tilapia',
     name: 'Banku and Tilapia',
-    category: 'Soup & Fufu',
+    category: 'Soup',
     type: 'plate',
     defaultPrice: 28,
     tags: ['Banku', 'Fish', 'Pepper Sauce'],
@@ -190,7 +190,7 @@ export const masterFoods = [
   {
     id: 'tray-egusi-rice',
     name: 'Egusi Stew with Rice Tray',
-    category: 'Stew',
+    category: 'Other',
     type: 'tray',
     defaultPrice: 70,
     tags: ['Egusi', 'Rice', 'Tray'],
@@ -200,7 +200,7 @@ export const masterFoods = [
   {
     id: 'tray-egusi-eba',
     name: 'Egusi Stew with Eba Tray',
-    category: 'Stew',
+    category: 'Other',
     type: 'tray',
     defaultPrice: 70,
     tags: ['Egusi', 'Eba', 'Tray'],
@@ -210,7 +210,7 @@ export const masterFoods = [
   {
     id: 'tray-chicken',
     name: 'Chicken Tray',
-    category: 'Protein',
+    category: 'Other',
     type: 'tray',
     defaultPrice: 60,
     tags: ['Chicken', 'Tray'],
@@ -220,7 +220,7 @@ export const masterFoods = [
   {
     id: 'tray-goat',
     name: 'Goat Tray',
-    category: 'Protein',
+    category: 'Other',
     type: 'tray',
     defaultPrice: 80,
     tags: ['Goat', 'Tray'],
