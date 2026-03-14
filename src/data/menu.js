@@ -1,6 +1,26 @@
 // ─── PLATE ORDERS — Saturdays ───────────────────────────────
 export const plateItems = [
   {
+    id: 'waakye-chicken',
+    name: 'Waakye with Chicken',
+    price: 25,
+    available: true,
+    description: 'Classic Ghanaian waakye served with seasoned fried chicken.',
+    tags: ['Waakye', 'Chicken', 'Shito'],
+    category: 'Specialty',
+    image: '/images/jollof-chicken-plate.jpg',
+  },
+  {
+    id: 'waakye-chicken',
+    name: 'Waakye with Goat Meat',
+    price: 28,
+    available: true,
+    description: 'Classic Ghanaian waakye served with seasoned goat meat.',
+    tags: ['Waakye', 'Chicken', 'Shito'],
+    category: 'Specialty',
+    image: '/images/jollof-chicken-plate.jpg',
+  },
+  {
     id: 'jollof-chicken',
     name: 'Jollof Rice with Chicken',
     price: 25,
@@ -77,11 +97,11 @@ export const trayItems = [
   },
   {
     id: 'tray-jollof-suya',
-    name: 'Suya Jollof Tray',
+    name: 'Jollof with Kebab',
     price: 75,
     available: true,
-    description: 'Jollof rice tray with tender suya-spiced meat — smoky and bold.',
-    tags: ['Jollof', 'Suya', 'Tray'],
+    description: 'Jollof rice tray with tender kebab-spiced meat — smoky and bold.',
+    tags: ['Jollof', 'Kebab', 'Tray'],
     category: 'Jollof',
     image: '/images/jollof-goat.jpg',
   },
