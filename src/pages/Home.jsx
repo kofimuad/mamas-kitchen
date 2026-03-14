@@ -267,7 +267,7 @@ export default function Home() {
       {/* ══════════════════════════════
           COMMUNITY BANNER
       ══════════════════════════════ */}
-      <div style={{ padding: '0 40px 60px' }}>
+      <div style={{ padding: '48px 40px 60px' }}>
         <div style={{
           borderRadius: 24, overflow: 'hidden',
           background: '#1E0E04',
