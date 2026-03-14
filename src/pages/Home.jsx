@@ -262,50 +262,7 @@ export default function Home() {
         </div>
       </div>
 
-      {/* ══════════════════════════════
-          COMMUNITY BANNER
-      ══════════════════════════════ */}
-      <div style={{ padding: '52px 40px 60px' }}>
-        <div style={{
-          borderRadius: 24, overflow: 'hidden',
-          position: 'relative', minHeight: 240,
-          display: 'flex', alignItems: 'center',
-        }}>
-          <img
-            src="/images/community.jpg"
-            alt=""
-            style={{
-              position: 'absolute', inset: 0,
-              width: '100%', height: '100%',
-              objectFit: 'cover', objectPosition: 'center',
-            }}
-          />
-          <div style={{
-            position: 'absolute', inset: 0,
-            background: 'linear-gradient(to right, rgba(30,14,4,0.93) 0%, rgba(30,14,4,0.60) 60%, rgba(30,14,4,0.30) 100%)',
-          }} />
-          <div style={{ position: 'relative', zIndex: 2, padding: '40px 44px', maxWidth: 540 }}>
-            <span style={{
-              fontFamily: "'Lato', sans-serif",
-              display: 'inline-block', background: '#F5C842', color: '#1E0E04',
-              fontSize: 10, fontWeight: 700, textTransform: 'uppercase',
-              letterSpacing: '0.10em', padding: '4px 12px', borderRadius: 99, marginBottom: 14,
-            }}>🪖 Military Community</span>
-            <h3 style={{
-              fontFamily: "'Playfair Display', serif",
-              fontSize: 30, color: '#fff', marginBottom: 12, lineHeight: 1.25,
-            }}>Bringing the Taste<br />of Home to Base</h3>
-            <p style={{
-              fontFamily: "'Lato', sans-serif",
-              fontSize: 14, color: 'rgba(255,255,255,0.68)',
-              lineHeight: 1.8, fontWeight: 300,
-            }}>
-              We deliver every Wednesday and Saturday to service members of African descent.
-              Your order isn't just a meal — it's a piece of home.
-            </p>
-          </div>
-        </div>
-      </div>
+
 
       <Footer />
 
