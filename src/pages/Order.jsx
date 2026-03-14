@@ -18,10 +18,10 @@ export default function Order() {
   const preselect = location.state?.preselect  // { id?, type }
   const { plateItems, trayItems } = useMenu()
 
-  // If a specific item was passed in, jump straight to step 2 (info)
-  // If only a type was passed (from menu CTA), jump to step 1 (items)
+  // If a specific item was passed in, go to step 1 with it pre-selected at qty 1
+  // If only a type was passed (from menu CTA), go to step 1 with order type set
   const initialType = preselect?.type || null
-  const initialStep = preselect?.id ? 2 : (preselect?.type ? 1 : 0)
+  const initialStep = preselect?.type ? 1 : 0
 
   const [step,       setStep]       = useState(initialStep)
   const [orderType,  setOrderType]  = useState(initialType)
@@ -91,8 +91,6 @@ export default function Order() {
 
   const back = () => {
     if (step === 1) { setOrderType(null); setSelected([]); setStep(0); return }
-    // If we jumped in from a preselect, go back to menu not step 0
-    if (step === 2 && preselect?.id) { navigate(-1); return }
     if (step > 0) setStep(s => s - 1)
   }
 
@@ -265,29 +263,6 @@ export default function Order() {
       {/* ── STEP 2: Info + Payment ── */}
       {step === 2 && (
         <div>
-          {/* Selected item preview — shown when jumping in from a food card */}
-          {preselect?.id && selected.length > 0 && (() => {
-            const item = items.find(i => i.id === preselect.id)
-            return item ? (
-              <div style={{
-                display: 'flex', alignItems: 'center', gap: 12,
-                background: '#fff', border: '1.5px solid rgba(212,84,26,0.2)',
-                borderRadius: 14, padding: '12px 16px', marginBottom: 24,
-              }}>
-                <div style={{ width: 48, height: 48, borderRadius: 10, flexShrink: 0, backgroundImage: `url('${item.image}')`, backgroundSize: 'cover' }} />
-                <div style={{ flex: 1 }}>
-                  <div style={{ fontFamily: "'Lato', sans-serif", fontSize: 14, fontWeight: 700, color: '#1E0E04' }}>{item.name}</div>
-                  <div style={{ fontFamily: "'Lato', sans-serif", fontSize: 12, color: '#B07040' }}>
-                    {orderType === 'tray' ? 'Tray Order · Wednesday' : 'Plate Order · Saturday'}
-                  </div>
-                </div>
-                <div style={{ fontFamily: "'Playfair Display', serif", fontSize: 18, fontWeight: 700, color: '#D4541A' }}>
-                  {item.price != null ? `$${item.price}` : 'TBD'}
-                </div>
-              </div>
-            ) : null
-          })()}
-
           <h3 style={{ fontFamily: "'Playfair Display', serif", fontSize: 17, color: '#1E0E04', marginBottom: 4 }}>Your details</h3>
           <p style={{ fontFamily: "'Lato', sans-serif", fontSize: 13, color: '#B07040', marginBottom: 20 }}>
             {info.name ? `Welcome back, ${info.name.split(' ')[0]}! Your details have been filled in.` : 'Fill in your details below.'}

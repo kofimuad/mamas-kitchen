@@ -185,8 +185,8 @@ export const trayCategories  = ['Jollof', 'Fried Rice', 'Other']
 
 // ─── CUTOFF TIMES ────────────────────────────────────────────
 export const cutoffs = {
-  plate: { day: 'Thursday', hour: 20 }, // 8 PM Thursday → Saturday delivery
-  tray:  { day: 'Monday',   hour: 20 }, // 8 PM Monday   → Wednesday delivery
+  plate: { day: 'Thursday', hour: 20, time: '8 PM', delivery: 'Saturday' },
+  tray:  { day: 'Monday',   hour: 20, time: '8 PM', delivery: 'Wednesday' },
 }
 
 // ─── FOOD NAME SUGGESTIONS (by category, for Admin Menu Editor) ──
