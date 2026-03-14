@@ -32,8 +32,8 @@ async function db() {
 
 // ── Auth middleware for admin routes ───────────────────────
 function adminOnly(req, res, next) {
-  const secret = req.headers['x-admin-secret']
-  if (secret !== process.env.ADMIN_SECRET) {
+  const pin = req.headers['x-admin-pin']
+  if (pin !== process.env.ADMIN_PIN) {
     return res.status(401).json({ error: 'Unauthorized' })
   }
   next()
@@ -333,7 +333,7 @@ app.post('/api/save-menu', async (req, res) => {
 
 // ── GET /api/get-orders ────────────────────────────────────
 app.get('/api/get-orders', async (req, res) => {
-  if (req.headers['x-admin-secret'] !== process.env.ADMIN_SECRET) {
+  if (req.headers['x-admin-pin'] !== process.env.ADMIN_PIN) {
     return res.status(401).json({ error: 'Unauthorized' })
   }
   try {

@@ -14,7 +14,7 @@ exports.handler = async (event) => {
     return { statusCode: 405, body: 'Method Not Allowed' }
   }
 
-  if (event.headers['x-admin-secret'] !== process.env.ADMIN_SECRET) {
+  if (event.headers['x-admin-pin'] !== process.env.ADMIN_PIN) {
     return { statusCode: 401, body: JSON.stringify({ error: 'Unauthorized' }) }
   }
 

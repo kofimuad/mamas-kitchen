@@ -20,6 +20,7 @@ export default function AdminLogin() {
       setTimeout(() => {
         if (next === ADMIN_PIN) {
           sessionStorage.setItem('mama_admin', '1')
+          sessionStorage.setItem('mama_admin_pin', next)
           navigate('/admin')
         } else {
           setError(true)
