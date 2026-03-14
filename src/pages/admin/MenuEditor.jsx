@@ -4,7 +4,9 @@ import {
   plateCategories, trayCategories,
   foodSuggestions,
 } from '../../data/menu'
+import { masterFoods } from '../../data/masterFoodList'
 import useMenu from '../../hooks/useMenu'
+import { adminHeaders } from '../../lib/api'
 
 export default function MenuEditor() {
   const navigate = useNavigate()
@@ -67,15 +69,16 @@ export default function MenuEditor() {
     const id = `${tab}-${newItem.name.toLowerCase().replace(/\s+/g, '-')}-${Date.now()}`
     setItems(prev => [...prev, {
       id,
-      name:      newItem.name,
-      price:     newItem.price ? Number(newItem.price) : null,
-      available: true,
-      description: '',
-      tags:      [newItem.category],
-      category:  newItem.category,
-      image:     newItem.image || '/images/jollof-plate.jpg',
+      name:        newItem.name,
+      price:       newItem.price ? Number(newItem.price) : null,
+      available:   true,
+      description: newItem.description || '',
+      tags:        newItem.tags || [newItem.category],
+      category:    newItem.category,
+      image:       newItem.image || '/images/jollof-plate.jpg',
     }])
     setAddingCat(null)
+    setNewItem({ name: '', price: '', category: '' })
     setSaveState('idle')
   }
 
@@ -220,7 +223,7 @@ export default function MenuEditor() {
                           method: 'POST',
                           headers: {
                             'Content-Type': 'application/json',
-                            'x-admin-secret': process.env.ADMIN_SECRET || '',
+                            ...adminHeaders(),
                           },
                           body: JSON.stringify({ imageData, itemId: item.id }),
                         })
@@ -352,98 +355,140 @@ export default function MenuEditor() {
               border: '1.5px dashed rgba(212,84,26,0.30)',
               borderRadius: 14, marginTop: 4,
             }}>
-              <div style={{ fontSize: 12, fontWeight: 700, color: '#D4541A', marginBottom: 12 }}>
+              <div style={{ fontSize: 12, fontWeight: 700, color: '#D4541A', marginBottom: 14 }}>
                 New {cat} Item
               </div>
-              <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', alignItems: 'flex-start' }}>
 
-                {/* Image upload for new item */}
-                <label style={{
-                  width: 64, height: 64, borderRadius: 12,
-                  border: '2px dashed rgba(212,84,26,0.35)',
-                  background: newItem.image ? `url('${newItem.image}') center/cover` : 'rgba(212,84,26,0.04)',
-                  display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-                  cursor: 'pointer', flexShrink: 0, overflow: 'hidden',
-                }}>
-                  {!newItem.image && <>
-                    <span style={{ fontSize: 18, color: '#B07040' }}>+</span>
-                    <span style={{ fontSize: 9, color: '#B07040', fontWeight: 700, marginTop: 2, textAlign: 'center', lineHeight: 1.3 }}>Photo</span>
-                  </>}
-                  <input
-                    type="file" accept="image/*" style={{ display: 'none' }}
-                    onChange={async e => {
-                      const file = e.target.files[0]
-                      if (!file) return
-                      const reader = new FileReader()
-                      reader.onload = async ev => {
-                        const imageData = ev.target.result
-                        setNewItem(n => ({ ...n, image: imageData }))
-                        try {
-                          const tempId = `new-${Date.now()}`
-                          const res = await fetch('/.netlify/functions/upload-menu-image', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json', 'x-admin-secret': '' },
-                            body: JSON.stringify({ imageData, itemId: tempId }),
-                          })
-                          const data = await res.json()
-                          if (data.imageUrl) setNewItem(n => ({ ...n, image: data.imageUrl }))
-                        } catch (err) { console.error('Upload failed:', err) }
-                      }
-                      reader.readAsDataURL(file)
-                    }}
-                  />
-                </label>
+              {/* ── Step 1: pick from master list or type custom ── */}
+              {!newItem.customName ? (
+                <select
+                  value={newItem.masterId || ''}
+                  onChange={e => {
+                    if (e.target.value === '__custom__') {
+                      setNewItem(n => ({ ...n, masterId: '', name: '', price: '', image: '', customName: true }))
+                      return
+                    }
+                    const master = masterFoods.find(f => f.id === e.target.value)
+                    if (master) {
+                      setNewItem(n => ({
+                        ...n,
+                        masterId:    master.id,
+                        name:        master.name,
+                        price:       master.defaultPrice ?? '',
+                        image:       master.image || '',
+                        tags:        master.tags || [cat],
+                        description: master.description || '',
+                      }))
+                    } else {
+                      setNewItem(n => ({ ...n, masterId: '', name: '', price: '', image: '' }))
+                    }
+                  }}
+                  className="field-select"
+                  style={{ width: '100%', marginBottom: 14 }}
+                >
+                  <option value="">Choose a dish...</option>
+                  {masterFoods
+                    .filter(f => f.type === tab && f.category === cat)
+                    .map(f => <option key={f.id} value={f.id}>{f.name}</option>)
+                  }
+                  <option value="__custom__">✏️ Type a custom name...</option>
+                </select>
+              ) : (
+                <input
+                  autoFocus
+                  type="text"
+                  placeholder="Type food name..."
+                  value={newItem.name}
+                  onChange={e => setNewItem(n => ({ ...n, name: e.target.value }))}
+                  className="field-input"
+                  style={{ width: '100%', marginBottom: 14, boxSizing: 'border-box' }}
+                />
+              )}
 
-                {/* Name — dropdown or text input */}
-                {newItem.customName ? (
-                  <input
-                    autoFocus
-                    type="text"
-                    placeholder="Type food name..."
-                    value={newItem.name}
-                    onChange={e => setNewItem(n => ({ ...n, name: e.target.value }))}
-                    className="field-input"
-                    style={{ flex: 2, minWidth: 180 }}
-                  />
-                ) : (
-                  <select
-                    value={newItem.name}
-                    onChange={e => {
-                      if (e.target.value === '__custom__') {
-                        setNewItem(n => ({ ...n, name: '', customName: true }))
-                      } else {
-                        setNewItem(n => ({ ...n, name: e.target.value }))
-                      }
-                    }}
-                    className="field-select"
-                    style={{ flex: 2, minWidth: 180 }}
-                  >
-                    <option value="">Choose food name...</option>
-                    {(foodSuggestions[cat] || []).map(s => (
-                      <option key={s} value={s}>{s}</option>
-                    ))}
-                    <option value="__custom__">✏️ Type custom name...</option>
-                  </select>
-                )}
+              {/* ── Preview card — shows once a dish is selected ── */}
+              {(newItem.name || newItem.image) && (
                 <div style={{
-                  display: 'flex', alignItems: 'center', gap: 4,
-                  background: '#fff', border: '1.5px solid rgba(212,84,26,0.25)',
-                  borderRadius: 12, padding: '0 12px', flex: 1, minWidth: 100,
+                  display: 'flex', gap: 12, alignItems: 'center',
+                  background: '#fff', border: '1px solid rgba(212,84,26,0.18)',
+                  borderRadius: 12, padding: 12, marginBottom: 14,
                 }}>
-                  <span style={{ color: '#D4541A', fontWeight: 700 }}>$</span>
-                  <input
-                    type="number" placeholder="Price" min="0"
-                    value={newItem.price}
-                    onChange={e => setNewItem(n => ({ ...n, price: e.target.value }))}
-                    style={{
-                      flex: 1, padding: '11px 0', border: 'none', outline: 'none',
-                      fontSize: 14, fontFamily: 'inherit',
-                    }}
-                  />
+
+                  {/* Image — click to replace */}
+                  <label title="Click to upload a different photo" style={{ flexShrink: 0, cursor: 'pointer' }}>
+                    <div style={{
+                      width: 64, height: 64, borderRadius: 10,
+                      backgroundImage: newItem.image ? `url('${newItem.image}')` : 'none',
+                      backgroundSize: 'cover', backgroundPosition: 'center',
+                      background: newItem.image ? undefined : 'rgba(212,84,26,0.08)',
+                      border: '2px dashed rgba(212,84,26,0.25)',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      fontSize: 22, color: '#B07040',
+                    }}>
+                      {!newItem.image && '📷'}
+                    </div>
+                    <input
+                      type="file" accept="image/*" style={{ display: 'none' }}
+                      onChange={async e => {
+                        const file = e.target.files[0]
+                        if (!file) return
+                        const reader = new FileReader()
+                        reader.onload = async ev => {
+                          const imageData = ev.target.result
+                          setNewItem(n => ({ ...n, image: imageData }))
+                          try {
+                            const res = await fetch('/.netlify/functions/upload-menu-image', {
+                              method: 'POST',
+                              headers: { 'Content-Type': 'application/json', ...adminHeaders() },
+                              body: JSON.stringify({ imageData, itemId: `new-${Date.now()}` }),
+                            })
+                            const data = await res.json()
+                            if (data.imageUrl) setNewItem(n => ({ ...n, image: data.imageUrl }))
+                          } catch (err) { console.error('Upload failed:', err) }
+                        }
+                        reader.readAsDataURL(file)
+                      }}
+                    />
+                  </label>
+
+                  <div style={{ flex: 1 }}>
+                    {/* Name — editable inline */}
+                    <input
+                      type="text"
+                      value={newItem.name}
+                      onChange={e => setNewItem(n => ({ ...n, name: e.target.value }))}
+                      style={{
+                        width: '100%', fontSize: 14, fontWeight: 700, color: '#1E0E04',
+                        border: 'none', borderBottom: '1.5px solid rgba(212,84,26,0.2)',
+                        outline: 'none', padding: '2px 0', background: 'none',
+                        fontFamily: 'inherit', marginBottom: 8,
+                      }}
+                    />
+
+                    {/* Price — editable inline */}
+                    <div style={{
+                      display: 'inline-flex', alignItems: 'center', gap: 4,
+                      background: 'rgba(212,84,26,0.06)', border: '1px solid rgba(212,84,26,0.18)',
+                      borderRadius: 8, padding: '4px 10px',
+                    }}>
+                      <span style={{ fontSize: 13, fontWeight: 700, color: '#D4541A' }}>$</span>
+                      <input
+                        type="number" min="0" placeholder="Price"
+                        value={newItem.price}
+                        onChange={e => setNewItem(n => ({ ...n, price: e.target.value }))}
+                        style={{
+                          width: 60, fontSize: 14, fontWeight: 700, color: '#D4541A',
+                          background: 'none', border: 'none', outline: 'none',
+                          fontFamily: 'inherit',
+                        }}
+                      />
+                    </div>
+                    <span style={{ fontSize: 11, color: '#B07040', marginLeft: 8 }}>tap photo or name to edit</span>
+                  </div>
                 </div>
-              </div>
-              <div style={{ display: 'flex', gap: 10, marginTop: 10 }}>
-                <button onClick={() => setAddingCat(null)} style={{
+              )}
+
+              <div style={{ display: 'flex', gap: 10, marginTop: 4 }}>
+                <button onClick={() => { setAddingCat(null); setNewItem({ name: '', price: '', category: '' }) }} style={{
                   flex: 1, padding: 11, border: '1.5px solid rgba(212,84,26,0.25)',
                   borderRadius: 10, background: 'transparent', color: '#7A3A10',
                   fontSize: 13, fontWeight: 600, cursor: 'pointer',

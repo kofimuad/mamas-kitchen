@@ -1,7 +1,7 @@
 // src/hooks/useMenu.js
 import { useState, useEffect } from 'react'
 import { plateItems as defaultPlates, trayItems as defaultTrays } from '../data/menu'
-import { apiUrl } from '../lib/api'
+import { apiUrl, adminHeaders } from '../lib/api'
 
 export default function useMenu() {
   const [plateItems, setPlateItems] = useState([])
@@ -38,7 +38,7 @@ export default function useMenu() {
   const saveMenu = async (plates, trays) => {
     const res  = await fetch(apiUrl('save-menu'), {
       method:  'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: adminHeaders(),
       body:    JSON.stringify({ plateItems: plates, trayItems: trays }),
     })
     const data = await res.json()

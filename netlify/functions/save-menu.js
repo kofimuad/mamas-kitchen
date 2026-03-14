@@ -20,8 +20,8 @@ exports.handler = async (event) => {
   }
 
   // Admin auth check
-  const auth = event.headers['x-admin-secret']
-  if (auth !== process.env.ADMIN_SECRET) {
+  const auth = event.headers['x-admin-pin']
+  if (auth !== process.env.ADMIN_PIN) {
     return { statusCode: 401, body: 'Unauthorized' }
   }
 

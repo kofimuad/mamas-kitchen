@@ -6,7 +6,7 @@
 //   CLOUDINARY_CLOUD_NAME   — your cloud name (e.g. "obaa-yaas-kitchen")
 //   CLOUDINARY_API_KEY      — from Cloudinary dashboard
 //   CLOUDINARY_API_SECRET   — from Cloudinary dashboard
-//   ADMIN_SECRET            — your admin PIN / secret for auth
+//   ADMIN_PIN               — your admin PIN for auth
 
 const https = require('https')
 const crypto = require('crypto')
@@ -17,8 +17,8 @@ exports.handler = async (event) => {
   }
 
   // Admin auth check
-  const auth = event.headers['x-admin-secret']
-  if (auth !== process.env.ADMIN_SECRET) {
+  const auth = event.headers['x-admin-pin']
+  if (auth !== process.env.ADMIN_PIN) {
     return { statusCode: 401, body: 'Unauthorized' }
   }
 
