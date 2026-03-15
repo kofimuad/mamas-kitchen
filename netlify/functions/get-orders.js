@@ -1,3 +1,4 @@
+const { checkAdminPin } = require('./_auth')
 const { MongoClient } = require('mongodb')
 
 let client
@@ -14,8 +15,9 @@ exports.handler = async (event) => {
     return { statusCode: 405, body: 'Method Not Allowed' }
   }
 
-  if (event.headers['x-admin-pin'] !== process.env.ADMIN_PIN) {
-    return { statusCode: 401, body: JSON.stringify({ error: 'Unauthorized' }) }
+  const auth = checkAdminPin(event.headers)
+  if (!auth.allowed) {
+    return { statusCode: 401, body: JSON.stringify({ error: auth.reason }) }
   }
 
   try {

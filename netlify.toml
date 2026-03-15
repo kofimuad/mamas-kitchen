@@ -16,3 +16,25 @@
   from = "/*"
   to = "/index.html"
   status = 200
+
+# ── Security headers on all responses ────────────────────────
+[[headers]]
+  for = "/*"
+  [headers.values]
+    # Prevent clickjacking
+    X-Frame-Options = "DENY"
+    # Stop MIME sniffing
+    X-Content-Type-Options = "nosniff"
+    # Force HTTPS
+    Strict-Transport-Security = "max-age=31536000; includeSubDomains; preload"
+    # Control referrer info
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    # Permissions policy — disable unused browser features
+    Permissions-Policy = "camera=(), microphone=(), geolocation=(), payment=()"
+    # Content Security Policy
+    # - default: only same origin
+    # - scripts: self + inline (React needs this)
+    # - images: self + Cloudinary + data URIs
+    # - connect: self + Netlify functions + Meta/WhatsApp API
+    # - fonts: Google Fonts
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https://res.cloudinary.com https://images.unsplash.com; connect-src 'self' https://*.netlify.app https://graph.facebook.com https://api.anthropic.com; frame-ancestors 'none';"

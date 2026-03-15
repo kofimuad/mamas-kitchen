@@ -169,7 +169,7 @@ export default function About() {
           }}>
             "I don't just cook food. I send a little piece of home to every soldier who misses their mother's kitchen."
           </p>
-          <p style={{ fontFamily: "'Lato', sans-serif", fontSize: 13, fontWeight: 700, color: '#F5C842', letterSpacing: '0.06em' }}>— Mama</p>
+          <p style={{ fontFamily: "'Lato', sans-serif", fontSize: 13, fontWeight: 700, color: '#F5C842', letterSpacing: '0.06em' }}>— Obaa Yaa</p>
         </div>
       </div>
 

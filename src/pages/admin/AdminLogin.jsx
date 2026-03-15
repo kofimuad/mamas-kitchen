@@ -2,8 +2,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 // PIN comes from environment variable — set VITE_ADMIN_PIN in your .env
-// Never hardcode PINs in source code
-const ADMIN_PIN = import.meta.env.VITE_ADMIN_PIN || '2580'
+const ADMIN_PIN = import.meta.env.VITE_ADMIN_PIN
 
 export default function AdminLogin() {
   const navigate = useNavigate()
