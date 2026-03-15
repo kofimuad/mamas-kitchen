@@ -1,10 +1,13 @@
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import useOrders from '../../hooks/useOrders'
 import OrderCard from '../../components/OrderCard'
+import { generateOrderLog } from '../../lib/generateOrderLog'
 
 export default function Dashboard() {
   const navigate = useNavigate()
   const { orders, loading, error, updateStatus, stats } = useOrders()
+  const [downloading, setDownloading] = useState(false)
 
   const today = new Date().toLocaleDateString('en-US', {
     weekday: 'long', month: 'long', day: 'numeric',
@@ -50,6 +53,30 @@ export default function Dashboard() {
               cursor: 'pointer',
             }}
           >Manage Menu</button>
+          <button
+            onClick={async () => {
+              if (orders.length === 0) { alert('No orders to export.'); return }
+              setDownloading(true)
+              try { await generateOrderLog(orders) }
+              catch (e) { alert('Failed to generate PDF: ' + e.message) }
+              finally { setDownloading(false) }
+            }}
+            disabled={downloading || loading}
+            style={{
+              fontFamily: "'Lato', sans-serif",
+              background: downloading ? 'rgba(212,84,26,0.4)' : 'rgba(212,84,26,0.1)',
+              color: '#D4541A',
+              fontSize: 12, fontWeight: 700,
+              padding: '7px 16px', borderRadius: 99,
+              border: '1.5px solid rgba(212,84,26,0.3)',
+              cursor: downloading ? 'not-allowed' : 'pointer',
+              display: 'flex', alignItems: 'center', gap: 6,
+            }}
+          >
+            {downloading
+              ? <><span style={{ width: 10, height: 10, border: '2px solid rgba(212,84,26,0.3)', borderTopColor: '#D4541A', borderRadius: '50%', animation: 'spin 0.8s linear infinite', display: 'inline-block' }} />Generating...</>
+              : '↓ Download Order Log'}
+          </button>
         </div>
       </div>
 
@@ -180,6 +207,7 @@ export default function Dashboard() {
           )}
         </div>
       )}
+      <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
     </div>
   )
 }
