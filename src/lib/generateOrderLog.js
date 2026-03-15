@@ -1,6 +1,8 @@
 // src/lib/generateOrderLog.js
-// Generates a detailed order log PDF using jsPDF (loaded from CDN at runtime)
+// Generates a detailed order log PDF using jsPDF (npm package)
 // All order data, timeline events, payment info, and stats included
+
+import { jsPDF } from 'jspdf'
 
 function fmt(date) {
   if (!date) return '—'
@@ -30,21 +32,8 @@ function statusLabel(status) {
   return map[status] || status
 }
 
-async function loadJsPDF() {
-  if (window.jspdf?.jsPDF) return window.jspdf.jsPDF
-  await new Promise((resolve, reject) => {
-    const script = document.createElement('script')
-    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js'
-    script.onload = resolve
-    script.onerror = reject
-    document.head.appendChild(script)
-  })
-  return window.jspdf.jsPDF
-}
-
 export async function generateOrderLog(orders) {
-  const JsPDF  = await loadJsPDF()
-  const doc    = new JsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' })
+  const doc    = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' })
   const PW     = 210  // page width mm
   const PH     = 297  // page height mm
   const ML     = 18   // margin left
