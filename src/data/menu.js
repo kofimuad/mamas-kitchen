@@ -18,7 +18,7 @@ export const plateItems = [
     description: 'Smoky jollof rice paired with a whole seasoned fried fish.',
     tags: ['Jollof', 'Fish', 'Rice'],
     category: 'Jollof',
-    image: '/images/jollof-plate.jpg',
+    image: '/images/jollof-chicken-plate.jpg',
   },
   {
     id: 'check-check',
@@ -27,7 +27,7 @@ export const plateItems = [
     available: true,
     description: 'A beloved Ghanaian street food favourite — hearty, spicy and deeply satisfying.',
     tags: ['Street Food', 'Spicy'],
-    category: 'Speciality',
+    category: 'Specialty',
     image: '/images/jollof-plate-2.jpg',
   },
   {
@@ -47,8 +47,28 @@ export const plateItems = [
     available: true,
     description: 'Classic black-eyed peas stew in rich palm oil, served with sweet fried plantains.',
     tags: ['Black Eye Peas', 'Plantain', 'Palm Oil'],
-    category: 'Speciality',
-    image: '/images/red-red.webp',
+    category: 'Specialty',
+    image: '/images/red-red.jpg',
+  },
+  {
+    id: 'fried-rice-chicken',
+    name: 'Fried Rice with Chicken',
+    price: 25,
+    available: true,
+    description: 'Ghanaian-style fried rice served with seasoned fried chicken.',
+    tags: ['Fried Rice', 'Chicken'],
+    category: 'Fried Rice',
+    image: '/images/fried-rice-plate.jpeg',
+  },
+  {
+    id: 'waakye-plate',
+    name: 'Waakye',
+    price: 20,
+    available: true,
+    description: 'Ghanaian rice and beans cooked together with sorghum leaves, served with stew and sides.',
+    tags: ['Waakye', 'Rice', 'Beans'],
+    category: 'Waakye',
+    image: '/images/waakye.jpg',
   },
 ]
 
@@ -63,7 +83,7 @@ export const trayItems = [
     description: 'A full tray of smoky, perfectly seasoned Ghanaian party jollof rice.',
     tags: ['Jollof', 'Tray', 'Vegetarian'],
     category: 'Jollof',
-    image: '/images/jollof-plate.jpg',
+    image: '/images/jollof-kebab-tray.jpeg',
   },
   {
     id: 'tray-jollof-chicken',
@@ -73,17 +93,17 @@ export const trayItems = [
     description: 'Jollof rice tray loaded with seasoned chicken pieces throughout.',
     tags: ['Jollof', 'Chicken', 'Tray'],
     category: 'Jollof',
-    image: '/images/jollof-chicken-tray.jpg',
+    image: '/images/jollof-chicken-tray.jpeg',
   },
   {
     id: 'tray-jollof-suya',
     name: 'Suya Jollof Tray',
     price: 75,
     available: true,
-    description: 'Jollof rice tray with tender suya-spiced meat — smoky and bold.',
+    description: 'Jollof rice tray with tender suya-spiced kebab meat — smoky and bold.',
     tags: ['Jollof', 'Suya', 'Tray'],
     category: 'Jollof',
-    image: '/images/jollof-goat.jpg',
+    image: '/images/jollof-kebab-tray.jpeg',
   },
   {
     id: 'tray-jollof-goat',
@@ -93,7 +113,7 @@ export const trayItems = [
     description: 'Jollof rice tray with slow-cooked goat meat — the ultimate crowd pleaser.',
     tags: ['Jollof', 'Goat', 'Tray'],
     category: 'Jollof',
-    image: '/images/jollof-plate-2.jpg',
+    image: '/images/jollof-chicken-tray.jpeg',
   },
   // Fried Rice
   {
@@ -104,7 +124,7 @@ export const trayItems = [
     description: 'A full tray of perfectly seasoned Ghanaian-style fried rice.',
     tags: ['Fried Rice', 'Tray', 'Vegetarian'],
     category: 'Fried Rice',
-    image: '/images/jollof-plate.jpg',
+    image: '/images/fried-rice-plate.jpeg',
   },
   {
     id: 'tray-fried-chicken',
@@ -114,7 +134,7 @@ export const trayItems = [
     description: 'Fried rice tray with juicy seasoned chicken pieces.',
     tags: ['Fried Rice', 'Chicken', 'Tray'],
     category: 'Fried Rice',
-    image: '/images/jollof-chicken-plate.jpg',
+    image: '/images/fried-rice-plate.jpeg',
   },
   {
     id: 'tray-fried-suya',
@@ -124,7 +144,7 @@ export const trayItems = [
     description: 'Fried rice tray with smoky suya-spiced meat.',
     tags: ['Fried Rice', 'Suya', 'Tray'],
     category: 'Fried Rice',
-    image: '/images/jollof-goat.jpg',
+    image: '/images/fried-rice-plate.jpeg',
   },
   {
     id: 'tray-fried-goat',
@@ -134,9 +154,9 @@ export const trayItems = [
     description: 'Fried rice tray with tender slow-cooked goat meat.',
     tags: ['Fried Rice', 'Goat', 'Tray'],
     category: 'Fried Rice',
-    image: '/images/jollof-plate-2.jpg',
+    image: '/images/fried-rice-plate.jpeg',
   },
-  // Other
+  // Specialty
   {
     id: 'tray-egusi-rice',
     name: 'Egusi Tray with Rice',
@@ -144,7 +164,7 @@ export const trayItems = [
     available: true,
     description: 'Rich, hearty egusi stew served with a full tray of white rice.',
     tags: ['Egusi', 'Soup', 'Tray'],
-    category: 'Other',
+    category: 'Specialty',
     image: '/images/egusi.webp',
   },
   {
@@ -154,7 +174,7 @@ export const trayItems = [
     available: true,
     description: 'Egusi stew served with 5 balls of freshly made eba.',
     tags: ['Egusi', 'Eba', 'Tray'],
-    category: 'Other',
+    category: 'Specialty',
     image: '/images/egusi.webp',
   },
   {
@@ -162,10 +182,10 @@ export const trayItems = [
     name: 'Chicken Tray',
     price: null,
     available: true,
-    description: 'A full tray of Mama\'s perfectly seasoned, slow-cooked chicken.',
+    description: "A full tray of Obaa Yaa's perfectly seasoned, slow-cooked chicken.",
     tags: ['Chicken', 'Tray'],
-    category: 'Other',
-    image: '/images/cooking-pot.jpg',
+    category: 'Specialty',
+    image: '/images/jollof-chicken-tray.jpeg',
   },
   {
     id: 'tray-goat',
@@ -174,14 +194,35 @@ export const trayItems = [
     available: true,
     description: 'Tender slow-cooked goat meat, seasoned the Ghanaian way.',
     tags: ['Goat', 'Tray'],
-    category: 'Other',
+    category: 'Specialty',
     image: '/images/jollof-goat.jpg',
+  },
+  // Waakye
+  {
+    id: 'tray-waakye-plain',
+    name: 'Plain Waakye Tray',
+    price: null,
+    available: true,
+    description: 'A full tray of Ghanaian rice and beans cooked with sorghum leaves.',
+    tags: ['Waakye', 'Rice', 'Beans', 'Tray'],
+    category: 'Waakye',
+    image: '/images/waakye.jpg',
+  },
+  {
+    id: 'tray-waakye-chicken',
+    name: 'Waakye with Chicken Tray',
+    price: null,
+    available: true,
+    description: 'Full waakye tray served with seasoned fried chicken.',
+    tags: ['Waakye', 'Chicken', 'Tray'],
+    category: 'Waakye',
+    image: '/images/waakye.jpg',
   },
 ]
 
 // ─── CATEGORIES ──────────────────────────────────────────────
-export const plateCategories = ['Jollof', 'Soup', 'Speciality']
-export const trayCategories  = ['Jollof', 'Fried Rice', 'Other']
+export const plateCategories = ['Jollof', 'Waakye', 'Fried Rice', 'Soup', 'Specialty']
+export const trayCategories  = ['Jollof', 'Waakye', 'Fried Rice', 'Soup', 'Specialty']
 
 // ─── CUTOFF TIMES ────────────────────────────────────────────
 export const cutoffs = {
@@ -195,6 +236,10 @@ export const foodSuggestions = {
     'Plain Jollof', 'Chicken Jollof', 'Suya Jollof', 'Goat Jollof',
     'Fish Jollof', 'Beef Jollof', 'Jollof Rice with Chicken', 'Jollof Rice with Whole Fish',
   ],
+  Waakye: [
+    'Waakye', 'Waakye with Chicken', 'Waakye with Fish', 'Waakye with Goat',
+    'Waakye with Spaghetti', 'Waakye Special',
+  ],
   'Fried Rice': [
     'Plain Fried Rice', 'Chicken Fried Rice', 'Suya Fried Rice',
     'Goat Fried Rice', 'Shrimp Fried Rice', 'Mixed Fried Rice',
@@ -203,12 +248,9 @@ export const foodSuggestions = {
     'Fufu and Chicken Light Soup', 'Fufu and Goat Light Soup',
     'Banku and Tilapia', 'Groundnut Soup', 'Palm Nut Soup', 'Okra Soup',
   ],
-  Speciality: [
+  Specialty: [
     'Check Check', 'Red Red', 'Kelewele', 'Kontomire Stew',
-    'Waakye', 'Ampesi', 'Beans and Plantain',
-  ],
-  Other: [
-    'Chicken Tray', 'Goat Tray', 'Egusi Tray with Rice', 'Egusi Tray with Eba',
-    'Kontomire Tray', 'Plantain Tray', 'Assorted Meat Tray',
+    'Ampesi', 'Beans and Plantain', 'Chicken Tray', 'Goat Tray',
+    'Egusi Tray with Rice', 'Egusi Tray with Eba',
   ],
 }

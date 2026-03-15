@@ -23,7 +23,7 @@ export const masterFoods = [
     defaultPrice: 28,
     tags: ['Jollof', 'Fish', 'Rice'],
     description: 'Smoky jollof rice paired with a whole seasoned fried fish.',
-    image: '/images/jollof-plate.jpg',
+    image: '/images/jollof-chicken-plate.jpg',
   },
   {
     id: 'jollof-goat',
@@ -33,12 +33,12 @@ export const masterFoods = [
     defaultPrice: 30,
     tags: ['Jollof', 'Goat', 'Rice'],
     description: 'Rich party jollof rice served with tender slow-cooked goat meat.',
-    image: '/images/jollof-goat.jpg',
+    image: '/images/jollof-kebab-tray.jpeg',
   },
   {
     id: 'check-check',
     name: 'Check Check',
-    category: 'Speciality',
+    category: 'Specialty',
     type: 'plate',
     defaultPrice: 25,
     tags: ['Street Food', 'Spicy'],
@@ -78,7 +78,7 @@ export const masterFoods = [
   {
     id: 'red-red',
     name: 'Red Red',
-    category: 'Speciality',
+    category: 'Specialty',
     type: 'plate',
     defaultPrice: 12,
     tags: ['Black Eye Peas', 'Plantain', 'Palm Oil'],
@@ -88,12 +88,12 @@ export const masterFoods = [
   {
     id: 'waakye',
     name: 'Waakye',
-    category: 'Speciality',
+    category: 'Waakye',
     type: 'plate',
     defaultPrice: 20,
     tags: ['Rice', 'Beans', 'Ghanaian'],
     description: 'Ghanaian rice and beans cooked together with sorghum leaves, served with stew.',
-    image: '/images/jollof-plate.jpg',
+    image: '/images/waakye.jpg',
   },
   {
     id: 'banku-tilapia',
@@ -113,7 +113,7 @@ export const masterFoods = [
     defaultPrice: 25,
     tags: ['Fried Rice', 'Chicken'],
     description: 'Ghanaian-style fried rice with seasoned chicken.',
-    image: '/images/jollof-chicken-plate.jpg',
+    image: '/images/fried-rice-plate.jpeg',
   },
 
   // ── TRAYS ───────────────────────────────────────────────────
@@ -125,7 +125,7 @@ export const masterFoods = [
     defaultPrice: 55,
     tags: ['Jollof', 'Tray', 'Vegetarian'],
     description: 'A full tray of smoky, perfectly seasoned Ghanaian party jollof rice.',
-    image: '/images/jollof-plate.jpg',
+    image: '/images/jollof-kebab-tray.jpeg',
   },
   {
     id: 'tray-jollof-chicken',
@@ -135,7 +135,7 @@ export const masterFoods = [
     defaultPrice: 65,
     tags: ['Jollof', 'Chicken', 'Tray'],
     description: 'Jollof rice tray loaded with seasoned chicken pieces throughout.',
-    image: '/images/jollof-chicken-tray.jpg',
+    image: '/images/jollof-chicken-tray.jpeg',
   },
   {
     id: 'tray-jollof-suya',
@@ -145,7 +145,7 @@ export const masterFoods = [
     defaultPrice: 75,
     tags: ['Jollof', 'Suya', 'Tray'],
     description: 'Jollof rice tray with spiced suya beef pieces.',
-    image: '/images/jollof-chicken-tray.jpg',
+    image: '/images/jollof-kebab-tray.jpeg',
   },
   {
     id: 'tray-jollof-goat',
@@ -155,7 +155,7 @@ export const masterFoods = [
     defaultPrice: 85,
     tags: ['Jollof', 'Goat', 'Tray'],
     description: 'Jollof rice tray with slow-cooked, fall-off-the-bone goat.',
-    image: '/images/jollof-goat.jpg',
+    image: '/images/jollof-chicken-tray.jpeg',
   },
   {
     id: 'tray-fried-rice-plain',
@@ -165,7 +165,7 @@ export const masterFoods = [
     defaultPrice: 55,
     tags: ['Fried Rice', 'Tray'],
     description: 'Ghanaian-style fried rice tray.',
-    image: '/images/jollof-plate.jpg',
+    image: '/images/fried-rice-plate.jpeg',
   },
   {
     id: 'tray-fried-rice-chicken',
@@ -175,7 +175,7 @@ export const masterFoods = [
     defaultPrice: 65,
     tags: ['Fried Rice', 'Chicken', 'Tray'],
     description: 'Fried rice tray with tender seasoned chicken.',
-    image: '/images/jollof-chicken-tray.jpg',
+    image: '/images/fried-rice-plate.jpeg',
   },
   {
     id: 'tray-fried-rice-goat',
@@ -185,7 +185,7 @@ export const masterFoods = [
     defaultPrice: 85,
     tags: ['Fried Rice', 'Goat', 'Tray'],
     description: 'Fried rice tray with rich slow-cooked goat meat.',
-    image: '/images/jollof-goat.jpg',
+    image: '/images/fried-rice-plate.jpeg',
   },
   {
     id: 'tray-egusi-rice',
@@ -215,7 +215,7 @@ export const masterFoods = [
     defaultPrice: 60,
     tags: ['Chicken', 'Tray'],
     description: "A full tray of Obaa Yaa's perfectly seasoned, slow-cooked chicken.",
-    image: '/images/jollof-chicken-tray.jpg',
+    image: '/images/jollof-chicken-tray.jpeg',
   },
   {
     id: 'tray-goat',
@@ -225,7 +225,7 @@ export const masterFoods = [
     defaultPrice: 80,
     tags: ['Goat', 'Tray'],
     description: 'A full tray of tender, slow-braised goat meat.',
-    image: '/images/jollof-goat.jpg',
+    image: '/images/jollof-kebab-tray.jpeg',
   },
 ]
 
