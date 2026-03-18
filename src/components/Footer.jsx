@@ -20,12 +20,11 @@ export default function Footer() {
           {/* Brand column */}
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 16 }}>
-              <div style={{
-                width: 38, height: 38, borderRadius: '50%',
-                background: '#D12918',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                fontSize: 17, flexShrink: 0,
-              }}>🍛</div>
+              <img
+                src="/images/logo-icon.png"
+                alt="Obaa Yaa's Kitchen"
+                style={{ width: 42, height: 42, borderRadius: '50%', objectFit: 'cover', flexShrink: 0 }}
+              />
               <div>
                 <div style={{
                   fontFamily: "'Nunito', sans-serif", fontWeight: 900,
