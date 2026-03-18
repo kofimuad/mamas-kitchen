@@ -1,33 +1,34 @@
 /* ─── GOOGLE FONTS ─── */
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Lato:wght@300;400;600;700&display=swap');
+/* Nunito = closest freely available match to Aspira (headers) + Univia (body) */
+@import url('https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,400;0,600;0,700;0,800;0,900;1,400;1,700&display=swap');
 
 /* ─── RESET ─── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html { scroll-behavior: smooth; }
 
-/* ─── PALETTE C — WARM SPICE ─── */
+/* ─── BRAND PALETTE ─── */
 :root {
-  --primary:       #D4541A;
-  --primary-mid:   #F08030;
-  --accent:        #F5C842;
-  --bg:            #FFFAF4;
-  --bg-2:          #FFF1E0;
-  --dark:          #1E0E04;
-  --text:          #1E0E04;
-  --text-mid:      #7A3A10;
-  --text-muted:    #B07040;
+  --primary:       #D12918;
+  --primary-mid:   #ED7D2B;
+  --accent:        #ED7D2B;
+  --bg:            #FCF8E6;
+  --bg-2:          #F5EDCC;
+  --dark:          #3A5A14;
+  --text:          #3A5A14;
+  --text-mid:      #456D1B;
+  --text-muted:    #6B8F3A;
   --white:         #FFFFFF;
-  --border:        rgba(212, 84, 26, 0.15);
-  --border-2:      rgba(212, 84, 26, 0.25);
-  --shadow:        0 4px 20px rgba(212, 84, 26, 0.10);
-  --shadow-lg:     0 12px 40px rgba(212, 84, 26, 0.18);
+  --border:        rgba(209,41,24,0.15);
+  --border-2:      rgba(209,41,24,0.25);
+  --shadow:        0 4px 20px rgba(209,41,24,0.10);
+  --shadow-lg:     0 12px 40px rgba(209,41,24,0.18);
   --radius:        16px;
   --radius-lg:     22px;
   --navbar-height: 72px;
 }
 
 body {
-  font-family: 'Lato', -apple-system, 'Helvetica Neue', Arial, sans-serif;
+  font-family: 'Nunito', -apple-system, 'Helvetica Neue', Arial, sans-serif;
   background: var(--bg);
   color: var(--text);
   min-height: 100vh;
@@ -35,7 +36,8 @@ body {
 }
 
 h1, h2, h3, h4 {
-  font-family: 'Playfair Display', Georgia, 'Times New Roman', serif;
+  font-family: 'Nunito', -apple-system, 'Helvetica Neue', Arial, sans-serif;
+  font-weight: 900;
   line-height: 1.2;
 }
 
@@ -50,10 +52,10 @@ a { text-decoration: none; }
   height: 5px;
   background: repeating-linear-gradient(
     90deg,
-    #D4541A 0 10px,
-    #F08030 10px 20px,
-    #F5C842 20px 30px,
-    #1E0E04 30px 40px
+    #D12918 0 10px,
+    #ED7D2B 10px 20px,
+    #ED7D2B 20px 30px,
+    #3A5A14 30px 40px
   );
   width: 100%;
   flex-shrink: 0;

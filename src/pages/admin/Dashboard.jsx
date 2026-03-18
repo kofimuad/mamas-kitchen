@@ -38,16 +38,16 @@ export default function Dashboard() {
         </div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 8, alignItems: 'flex-end', marginTop: 8 }}>
           <span style={{
-            fontFamily: "'Lato', sans-serif",
-            background: '#D4541A', color: '#fff',
+            fontFamily: "'Nunito', sans-serif",
+            background: '#D12918', color: '#fff',
             fontSize: 12, fontWeight: 700,
             padding: '7px 16px', borderRadius: 99,
           }}>{today}</span>
           <button
             onClick={() => navigate('/admin/menu')}
             style={{
-              fontFamily: "'Lato', sans-serif",
-              background: '#1E0E04', color: '#fff',
+              fontFamily: "'Nunito', sans-serif",
+              background: '#3A5A14', color: '#fff',
               fontSize: 12, fontWeight: 700,
               padding: '7px 16px', borderRadius: 99, border: 'none',
               cursor: 'pointer',
@@ -63,18 +63,18 @@ export default function Dashboard() {
             }}
             disabled={downloading || loading}
             style={{
-              fontFamily: "'Lato', sans-serif",
-              background: downloading ? 'rgba(212,84,26,0.4)' : 'rgba(212,84,26,0.1)',
-              color: '#D4541A',
+              fontFamily: "'Nunito', sans-serif",
+              background: downloading ? 'rgba(209,41,24,0.4)' : 'rgba(209,41,24,0.1)',
+              color: '#D12918',
               fontSize: 12, fontWeight: 700,
               padding: '7px 16px', borderRadius: 99,
-              border: '1.5px solid rgba(212,84,26,0.3)',
+              border: '1.5px solid rgba(209,41,24,0.3)',
               cursor: downloading ? 'not-allowed' : 'pointer',
               display: 'flex', alignItems: 'center', gap: 6,
             }}
           >
             {downloading
-              ? <><span style={{ width: 10, height: 10, border: '2px solid rgba(212,84,26,0.3)', borderTopColor: '#D4541A', borderRadius: '50%', animation: 'spin 0.8s linear infinite', display: 'inline-block' }} />Generating...</>
+              ? <><span style={{ width: 10, height: 10, border: '2px solid rgba(209,41,24,0.3)', borderTopColor: '#D12918', borderRadius: '50%', animation: 'spin 0.8s linear infinite', display: 'inline-block' }} />Generating...</>
               : '↓ Download Order Log'}
           </button>
         </div>
@@ -94,19 +94,19 @@ export default function Dashboard() {
         ].map(s => (
           <div key={s.label} style={{
             background: '#fff',
-            border: '1px solid rgba(212,84,26,0.12)',
+            border: '1px solid rgba(209,41,24,0.12)',
             borderRadius: 16, padding: '20px 20px',
-            boxShadow: '0 2px 8px rgba(212,84,26,0.05)',
+            boxShadow: '0 2px 8px rgba(209,41,24,0.05)',
           }}>
             <div style={{
-              fontFamily: "'Lato', sans-serif",
-              fontSize: 10, fontWeight: 700, color: '#B07040',
+              fontFamily: "'Nunito', sans-serif",
+              fontSize: 10, fontWeight: 700, color: '#6B8F3A',
               textTransform: 'uppercase', letterSpacing: '0.09em', marginBottom: 10,
             }}>{s.label}</div>
             <div style={{
-              fontFamily: "'Playfair Display', serif",
+              fontFamily: "'Nunito', sans-serif", fontWeight: 900,
               fontSize: 34, fontWeight: 700, lineHeight: 1,
-              color: s.accent ? '#D4541A' : '#1E0E04',
+              color: s.accent ? '#D12918' : '#3A5A14',
             }}>{s.value}</div>
           </div>
         ))}
@@ -116,14 +116,14 @@ export default function Dashboard() {
       {topItems.length > 0 && (
         <div style={{
           background: '#fff',
-          border: '1px solid rgba(212,84,26,0.12)',
+          border: '1px solid rgba(209,41,24,0.12)',
           borderRadius: 16, padding: '18px 20px',
           marginBottom: 32,
-          boxShadow: '0 2px 8px rgba(212,84,26,0.05)',
+          boxShadow: '0 2px 8px rgba(209,41,24,0.05)',
         }}>
           <div style={{
-            fontFamily: "'Lato', sans-serif",
-            fontSize: 10, fontWeight: 700, color: '#B07040',
+            fontFamily: "'Nunito', sans-serif",
+            fontSize: 10, fontWeight: 700, color: '#6B8F3A',
             textTransform: 'uppercase', letterSpacing: '0.09em', marginBottom: 14,
           }}>Most Ordered This Week</div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
@@ -133,25 +133,25 @@ export default function Dashboard() {
                 justifyContent: 'space-between',
               }}>
                 <span style={{
-                  fontFamily: "'Lato', sans-serif",
-                  fontSize: 14, color: '#1E0E04', fontWeight: 500,
+                  fontFamily: "'Nunito', sans-serif",
+                  fontSize: 14, color: '#3A5A14', fontWeight: 500,
                 }}>{name}</span>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                   {/* Mini bar */}
                   <div style={{
                     width: 80, height: 4, borderRadius: 99,
-                    background: 'rgba(212,84,26,0.10)',
+                    background: 'rgba(209,41,24,0.10)',
                     overflow: 'hidden',
                   }}>
                     <div style={{
                       height: '100%', borderRadius: 99,
-                      background: '#D4541A',
+                      background: '#D12918',
                       width: `${Math.min(100, (count / (topItems[0][1] || 1)) * 100)}%`,
                     }} />
                   </div>
                   <span style={{
-                    fontFamily: "'Lato', sans-serif",
-                    fontSize: 13, fontWeight: 700, color: '#D4541A', minWidth: 24,
+                    fontFamily: "'Nunito', sans-serif",
+                    fontSize: 13, fontWeight: 700, color: '#D12918', minWidth: 24,
                     textAlign: 'right',
                   }}>{count}</span>
                 </div>
@@ -163,8 +163,8 @@ export default function Dashboard() {
 
       {/* ── Orders list ── */}
       <h2 style={{
-        fontFamily: "'Playfair Display', serif",
-        fontSize: 20, color: '#1E0E04', marginBottom: 16,
+        fontFamily: "'Nunito', sans-serif", fontWeight: 900,
+        fontSize: 20, color: '#3A5A14', marginBottom: 16,
       }}>
         Orders {loading ? '' : `(${orders.length})`}
       </h2>
@@ -172,18 +172,18 @@ export default function Dashboard() {
       {loading && (
         <div style={{
           textAlign: 'center', padding: '48px 0',
-          fontFamily: "'Lato', sans-serif",
-          color: '#B07040', fontSize: 14,
+          fontFamily: "'Nunito', sans-serif",
+          color: '#6B8F3A', fontSize: 14,
         }}>Loading orders...</div>
       )}
 
       {error && (
         <div style={{
           padding: 16, background: '#fff3f3',
-          border: '1px solid rgba(212,84,26,0.3)',
+          border: '1px solid rgba(209,41,24,0.3)',
           borderRadius: 12,
-          fontFamily: "'Lato', sans-serif",
-          color: '#D4541A', fontSize: 14,
+          fontFamily: "'Nunito', sans-serif",
+          color: '#D12918', fontSize: 14,
         }}>Error loading orders: {error}</div>
       )}
 
@@ -192,8 +192,8 @@ export default function Dashboard() {
           {orders.length === 0 ? (
             <div style={{
               textAlign: 'center', padding: '48px 0',
-              fontFamily: "'Lato', sans-serif",
-              color: '#B07040', fontSize: 15,
+              fontFamily: "'Nunito', sans-serif",
+              color: '#6B8F3A', fontSize: 15,
             }}>No orders yet this week.</div>
           ) : (
             orders.map(order => (

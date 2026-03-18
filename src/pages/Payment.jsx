@@ -62,9 +62,9 @@ function CheckoutForm({ total, info, plates }) {
 
       {error && (
         <div style={{
-          background: '#fff3f3', border: '1px solid rgba(212,84,26,0.3)',
+          background: '#fff3f3', border: '1px solid rgba(209,41,24,0.3)',
           borderRadius: 10, padding: '12px 14px', marginBottom: 16,
-          fontFamily: "'Lato', sans-serif",
+          fontFamily: "'Nunito', sans-serif",
           fontSize: 13, color: '#c0392b',
         }}>{error}</div>
       )}
@@ -74,17 +74,17 @@ function CheckoutForm({ total, info, plates }) {
         disabled={!stripe || loading}
         style={{
           width: '100%', padding: 16,
-          background: loading ? 'rgba(212,84,26,0.4)' : '#1E0E04',
+          background: loading ? 'rgba(209,41,24,0.4)' : '#3A5A14',
           border: 'none', borderRadius: 12,
           color: '#fff',
-          fontFamily: "'Lato', sans-serif",
+          fontFamily: "'Nunito', sans-serif",
           fontSize: 15, fontWeight: 700,
           cursor: loading ? 'not-allowed' : 'pointer',
           transition: 'background 0.2s',
           display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10,
         }}
-        onMouseEnter={e => { if (!loading) e.currentTarget.style.background = '#D4541A' }}
-        onMouseLeave={e => { if (!loading) e.currentTarget.style.background = '#1E0E04' }}
+        onMouseEnter={e => { if (!loading) e.currentTarget.style.background = '#D12918' }}
+        onMouseLeave={e => { if (!loading) e.currentTarget.style.background = '#3A5A14' }}
       >
         {loading ? (
           <>
@@ -154,9 +154,9 @@ export default function Payment() {
     appearance: {
       theme: 'stripe',
       variables: {
-        colorPrimary:    '#D4541A',
+        colorPrimary:    '#D12918',
         colorBackground: '#ffffff',
-        colorText:       '#1E0E04',
+        colorText:       '#3A5A14',
         colorDanger:     '#c0392b',
         fontFamily:      'Lato, sans-serif',
         borderRadius:    '10px',
@@ -173,12 +173,12 @@ export default function Payment() {
 
       {/* Order summary */}
       <div style={{
-        background: '#fff', border: '1px solid rgba(212,84,26,0.15)',
+        background: '#fff', border: '1px solid rgba(209,41,24,0.15)',
         borderRadius: 16, padding: 16, marginBottom: 28,
       }}>
         <div style={{
-          fontFamily: "'Lato', sans-serif",
-          fontSize: 11, fontWeight: 700, color: '#B07040',
+          fontFamily: "'Nunito', sans-serif",
+          fontSize: 11, fontWeight: 700, color: '#6B8F3A',
           textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 12,
         }}>Order Summary</div>
 
@@ -187,8 +187,8 @@ export default function Payment() {
           return (
             <div key={id} style={{
               display: 'flex', justifyContent: 'space-between',
-              fontFamily: "'Lato', sans-serif",
-              fontSize: 14, color: '#7A3A10', marginBottom: 6,
+              fontFamily: "'Nunito', sans-serif",
+              fontSize: 14, color: '#456D1B', marginBottom: 6,
             }}>
               <span>{item?.name} × {qty}</span>
               <span>${(item?.price ?? 0) * qty}</span>
@@ -198,10 +198,10 @@ export default function Payment() {
 
         <div style={{
           display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-          borderTop: '1.5px solid rgba(212,84,26,0.12)', paddingTop: 12, marginTop: 8,
+          borderTop: '1.5px solid rgba(209,41,24,0.12)', paddingTop: 12, marginTop: 8,
         }}>
-          <span style={{ fontFamily: "'Lato', sans-serif", fontSize: 15, fontWeight: 700, color: '#1E0E04' }}>Total</span>
-          <span style={{ fontFamily: "'Playfair Display', serif", fontSize: 22, fontWeight: 700, color: '#D4541A' }}>${total}</span>
+          <span style={{ fontFamily: "'Nunito', sans-serif", fontSize: 15, fontWeight: 700, color: '#3A5A14' }}>Total</span>
+          <span style={{ fontFamily: "'Nunito', sans-serif", fontWeight: 900, fontSize: 22, fontWeight: 700, color: '#D12918' }}>${total}</span>
         </div>
       </div>
 
@@ -209,14 +209,14 @@ export default function Payment() {
       <div style={{
         display: 'flex', alignItems: 'flex-start', gap: 10,
         padding: '12px 14px',
-        background: 'rgba(212,84,26,0.04)',
-        border: '1px solid rgba(212,84,26,0.12)',
+        background: 'rgba(209,41,24,0.04)',
+        border: '1px solid rgba(209,41,24,0.12)',
         borderRadius: 12, marginBottom: 24,
       }}>
         <span style={{ fontSize: 16, flexShrink: 0 }}>🔒</span>
         <p style={{
-          fontFamily: "'Lato', sans-serif",
-          fontSize: 12, color: '#7A3A10', lineHeight: 1.6, margin: 0,
+          fontFamily: "'Nunito', sans-serif",
+          fontSize: 12, color: '#456D1B', lineHeight: 1.6, margin: 0,
         }}>
           Payments processed securely by <strong>Stripe</strong>.
           Apple Pay and Cash App Pay are available based on your device.
@@ -227,9 +227,9 @@ export default function Payment() {
       {/* Stripe Elements or loading/error states */}
       {initError ? (
         <div style={{
-          background: '#fff3f3', border: '1px solid rgba(212,84,26,0.3)',
+          background: '#fff3f3', border: '1px solid rgba(209,41,24,0.3)',
           borderRadius: 12, padding: 16, marginBottom: 16,
-          fontFamily: "'Lato', sans-serif",
+          fontFamily: "'Nunito', sans-serif",
           fontSize: 14, color: '#c0392b', textAlign: 'center',
         }}>
           {initError}
@@ -237,14 +237,14 @@ export default function Payment() {
       ) : !clientSecret ? (
         <div style={{
           textAlign: 'center', padding: '32px 0',
-          fontFamily: "'Lato', sans-serif",
-          color: '#B07040', fontSize: 14,
+          fontFamily: "'Nunito', sans-serif",
+          color: '#6B8F3A', fontSize: 14,
         }}>
           <span style={{
             display: 'inline-block',
             width: 24, height: 24,
-            border: '2px solid rgba(212,84,26,0.2)',
-            borderTopColor: '#D4541A',
+            border: '2px solid rgba(209,41,24,0.2)',
+            borderTopColor: '#D12918',
             borderRadius: '50%',
             animation: 'spin 0.8s linear infinite',
           }} />
@@ -261,9 +261,9 @@ export default function Payment() {
         style={{
           width: '100%', marginTop: 12, padding: 14,
           background: 'transparent',
-          border: '1.5px solid rgba(212,84,26,0.25)',
-          borderRadius: 12, color: '#7A3A10',
-          fontFamily: "'Lato', sans-serif",
+          border: '1.5px solid rgba(209,41,24,0.25)',
+          borderRadius: 12, color: '#456D1B',
+          fontFamily: "'Nunito', sans-serif",
           fontSize: 14, fontWeight: 600, cursor: 'pointer',
         }}
       >← Edit Order</button>

@@ -97,14 +97,14 @@ export default function Order() {
   const Dot  = ({ n }) => (
     <div style={{
       width: 30, height: 30, borderRadius: '50%', flexShrink: 0,
-      background: step > n ? '#1E0E04' : step === n ? '#D4541A' : '#FFF1E0',
-      border: `2px solid ${step > n ? '#1E0E04' : step === n ? '#D4541A' : 'rgba(212,84,26,0.25)'}`,
+      background: step > n ? '#3A5A14' : step === n ? '#D12918' : '#F5EDCC',
+      border: `2px solid ${step > n ? '#3A5A14' : step === n ? '#D12918' : 'rgba(209,41,24,0.25)'}`,
       display: 'flex', alignItems: 'center', justifyContent: 'center',
-      fontSize: 12, fontWeight: 700, color: step >= n ? '#fff' : '#B07040', transition: 'all 0.3s',
+      fontSize: 12, fontWeight: 700, color: step >= n ? '#fff' : '#6B8F3A', transition: 'all 0.3s',
     }}>{step > n ? '✓' : n}</div>
   )
   const Line = ({ n }) => (
-    <div style={{ flex: 1, height: 2, background: step > n ? '#1E0E04' : 'rgba(212,84,26,0.15)', transition: 'background 0.3s' }} />
+    <div style={{ flex: 1, height: 2, background: step > n ? '#3A5A14' : 'rgba(209,41,24,0.15)', transition: 'background 0.3s' }} />
   )
 
   const categories = orderType === 'tray' ? trayCategories : plateCategories
@@ -127,27 +127,27 @@ export default function Order() {
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: 16, marginBottom: 32 }}>
             {[
-              { type: 'plate', label: 'Plate Order', sub: 'Individual plates · Delivered Saturday', cutoffText: 'Order by Thursday 8 PM', accent: '#D4541A' },
-              { type: 'tray',  label: 'Tray Order',  sub: 'Large trays · Feeds a group · Delivered Wednesday', cutoffText: 'Order by Monday 8 PM', accent: '#1E0E04' },
+              { type: 'plate', label: 'Plate Order', sub: 'Individual plates · Delivered Saturday', cutoffText: 'Order by Thursday 8 PM', accent: '#D12918' },
+              { type: 'tray',  label: 'Tray Order',  sub: 'Large trays · Feeds a group · Delivered Wednesday', cutoffText: 'Order by Monday 8 PM', accent: '#3A5A14' },
             ].map(({ type, label, sub, cutoffText, accent }) => (
               <div key={type}
                 onClick={() => { setOrderType(type); setStep(1) }}
                 style={{
-                  background: '#fff', border: `2px solid rgba(212,84,26,0.18)`,
+                  background: '#fff', border: `2px solid rgba(209,41,24,0.18)`,
                   borderRadius: 20, overflow: 'hidden', cursor: 'pointer', transition: 'all 0.2s',
-                  boxShadow: '0 4px 20px rgba(212,84,26,0.08)',
+                  boxShadow: '0 4px 20px rgba(209,41,24,0.08)',
                 }}
-                onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-3px)'; e.currentTarget.style.boxShadow = '0 10px 32px rgba(212,84,26,0.16)' }}
-                onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)';   e.currentTarget.style.boxShadow = '0 4px 20px rgba(212,84,26,0.08)' }}
+                onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-3px)'; e.currentTarget.style.boxShadow = '0 10px 32px rgba(209,41,24,0.16)' }}
+                onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)';   e.currentTarget.style.boxShadow = '0 4px 20px rgba(209,41,24,0.08)' }}
               >
                 <div style={{ height: 100, background: accent, display: 'flex', alignItems: 'center', padding: '0 28px' }}>
                   <div>
-                    <div style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 22, fontWeight: 'bold', color: '#fff' }}>{label}</div>
-                    <div style={{ fontFamily: "'Lato', sans-serif", fontSize: 12, color: 'rgba(255,255,255,0.80)', marginTop: 2 }}>{sub}</div>
+                    <div style={{ fontFamily: "'Nunito', sans-serif", fontWeight: 900, fontSize: 22, fontWeight: 'bold', color: '#fff' }}>{label}</div>
+                    <div style={{ fontFamily: "'Nunito', sans-serif", fontSize: 12, color: 'rgba(255,255,255,0.80)', marginTop: 2 }}>{sub}</div>
                   </div>
                 </div>
                 <div style={{ padding: '16px 24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <div style={{ fontFamily: "'Lato', sans-serif", fontSize: 13, color: '#7A3A10' }}>{cutoffText}</div>
+                  <div style={{ fontFamily: "'Nunito', sans-serif", fontSize: 13, color: '#456D1B' }}>{cutoffText}</div>
                   <div style={{ background: accent, color: '#fff', fontSize: 18, width: 34, height: 34, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>→</div>
                 </div>
               </div>
@@ -173,8 +173,8 @@ export default function Order() {
           <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 28 }}>
             {['Items', 'Your Info', 'Summary'].map((l, i) => (
               <span key={i} style={{
-                fontFamily: "'Lato', sans-serif", fontSize: 10, fontWeight: 600,
-                color: step === i + 1 ? '#D4541A' : '#B07040',
+                fontFamily: "'Nunito', sans-serif", fontSize: 10, fontWeight: 600,
+                color: step === i + 1 ? '#D12918' : '#6B8F3A',
                 textTransform: 'uppercase', letterSpacing: '0.05em',
                 width: 80, textAlign: i === 0 ? 'left' : i === 2 ? 'right' : 'center',
               }}>{l}</span>
@@ -186,26 +186,26 @@ export default function Order() {
       {/* ── STEP 1: Items ── */}
       {step === 1 && (
         <div>
-          <h3 style={{ fontFamily: "'Playfair Display', serif", fontSize: 17, color: '#1E0E04', marginBottom: 4 }}>
+          <h3 style={{ fontFamily: "'Nunito', sans-serif", fontWeight: 900, fontSize: 17, color: '#3A5A14', marginBottom: 4 }}>
             Choose your {orderType === 'tray' ? 'trays' : 'plates'}
           </h3>
-          <p style={{ fontFamily: "'Lato', sans-serif", fontSize: 13, color: '#B07040', marginBottom: 22 }}>
+          <p style={{ fontFamily: "'Nunito', sans-serif", fontSize: 13, color: '#6B8F3A', marginBottom: 22 }}>
             Add as many items as you'd like.
           </p>
 
           {Object.entries(grouped).map(([cat, catItems]) => (
             <div key={cat} style={{ marginBottom: 24 }}>
               <div style={{
-                fontFamily: "'Lato', sans-serif", fontSize: 11, fontWeight: 700, color: '#D4541A',
+                fontFamily: "'Nunito', sans-serif", fontSize: 11, fontWeight: 700, color: '#D12918',
                 textTransform: 'uppercase', letterSpacing: '0.10em',
-                marginBottom: 12, paddingBottom: 6, borderBottom: '1.5px solid rgba(212,84,26,0.15)',
+                marginBottom: 12, paddingBottom: 6, borderBottom: '1.5px solid rgba(209,41,24,0.15)',
               }}>{cat}</div>
 
               {catItems.map(item => (
                 <div key={item.id} style={{
                   display: 'flex', alignItems: 'center', gap: 14, padding: 13, marginBottom: 10,
-                  background: counts[item.id] ? 'rgba(212,84,26,0.03)' : '#fff',
-                  border: `2px solid ${counts[item.id] ? '#D4541A' : 'rgba(212,84,26,0.15)'}`,
+                  background: counts[item.id] ? 'rgba(209,41,24,0.03)' : '#fff',
+                  border: `2px solid ${counts[item.id] ? '#D12918' : 'rgba(209,41,24,0.15)'}`,
                   borderRadius: 14, transition: 'all 0.18s',
                 }}>
                   <div style={{
@@ -213,27 +213,27 @@ export default function Order() {
                     backgroundImage: `url('${item.image}')`, backgroundSize: 'cover', backgroundPosition: 'center',
                   }} />
                   <div style={{ flex: 1 }}>
-                    <div style={{ fontFamily: "'Lato', sans-serif", fontSize: 14, fontWeight: 700, color: '#1E0E04' }}>{item.name}</div>
-                    <div style={{ fontFamily: "'Lato', sans-serif", fontSize: 11, color: '#B07040', marginTop: 2 }}>{item.tags?.slice(0, 2).join(' · ')}</div>
+                    <div style={{ fontFamily: "'Nunito', sans-serif", fontSize: 14, fontWeight: 700, color: '#3A5A14' }}>{item.name}</div>
+                    <div style={{ fontFamily: "'Nunito', sans-serif", fontSize: 11, color: '#6B8F3A', marginTop: 2 }}>{item.tags?.slice(0, 2).join(' · ')}</div>
                   </div>
-                  <div style={{ fontFamily: "'Playfair Display', serif", fontSize: 16, fontWeight: 700, color: '#D4541A', marginRight: 4 }}>
+                  <div style={{ fontFamily: "'Nunito', sans-serif", fontWeight: 900, fontSize: 16, fontWeight: 700, color: '#D12918', marginRight: 4 }}>
                     {item.price !== null ? `$${item.price}` : 'TBD'}
                   </div>
                   {/* Qty controls — no max limit */}
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                     <button onClick={() => remove(item.id)} disabled={!counts[item.id]} style={{
                       width: 28, height: 28, borderRadius: '50%', border: 'none',
-                      background: counts[item.id] ? '#D4541A' : 'rgba(212,84,26,0.12)',
-                      color: counts[item.id] ? '#fff' : '#B07040',
+                      background: counts[item.id] ? '#D12918' : 'rgba(209,41,24,0.12)',
+                      color: counts[item.id] ? '#fff' : '#6B8F3A',
                       fontSize: 16, fontWeight: 700, cursor: counts[item.id] ? 'pointer' : 'default',
                       display: 'flex', alignItems: 'center', justifyContent: 'center',
                     }}>−</button>
-                    <span style={{ fontFamily: "'Lato', sans-serif", fontSize: 15, fontWeight: 700, color: '#1E0E04', minWidth: 14, textAlign: 'center' }}>
+                    <span style={{ fontFamily: "'Nunito', sans-serif", fontSize: 15, fontWeight: 700, color: '#3A5A14', minWidth: 14, textAlign: 'center' }}>
                       {counts[item.id] || 0}
                     </span>
                     <button onClick={() => add(item.id)} style={{
                       width: 28, height: 28, borderRadius: '50%', border: 'none',
-                      background: '#D4541A', color: '#fff',
+                      background: '#D12918', color: '#fff',
                       fontSize: 16, fontWeight: 700, cursor: 'pointer',
                       display: 'flex', alignItems: 'center', justifyContent: 'center',
                     }}>+</button>
@@ -245,14 +245,14 @@ export default function Order() {
 
           {selected.length > 0 && (
             <div style={{
-              background: 'rgba(212,84,26,0.05)', border: '1px solid rgba(212,84,26,0.20)',
+              background: 'rgba(209,41,24,0.05)', border: '1px solid rgba(209,41,24,0.20)',
               borderRadius: 12, padding: '12px 16px', marginBottom: 4,
               display: 'flex', justifyContent: 'space-between', alignItems: 'center',
             }}>
-              <span style={{ fontFamily: "'Lato', sans-serif", fontSize: 14, color: '#7A3A10' }}>
+              <span style={{ fontFamily: "'Nunito', sans-serif", fontSize: 14, color: '#456D1B' }}>
                 {selected.length} item{selected.length !== 1 ? 's' : ''} selected
               </span>
-              <span style={{ fontFamily: "'Playfair Display', serif", fontSize: 16, fontWeight: 700, color: '#D4541A' }}>
+              <span style={{ fontFamily: "'Nunito', sans-serif", fontWeight: 900, fontSize: 16, fontWeight: 700, color: '#D12918' }}>
                 {total > 0 ? `$${total}` : 'TBD'}
               </span>
             </div>
@@ -263,8 +263,8 @@ export default function Order() {
       {/* ── STEP 2: Info + Payment ── */}
       {step === 2 && (
         <div>
-          <h3 style={{ fontFamily: "'Playfair Display', serif", fontSize: 17, color: '#1E0E04', marginBottom: 4 }}>Your details</h3>
-          <p style={{ fontFamily: "'Lato', sans-serif", fontSize: 13, color: '#B07040', marginBottom: 20 }}>
+          <h3 style={{ fontFamily: "'Nunito', sans-serif", fontWeight: 900, fontSize: 17, color: '#3A5A14', marginBottom: 4 }}>Your details</h3>
+          <p style={{ fontFamily: "'Nunito', sans-serif", fontSize: 13, color: '#6B8F3A', marginBottom: 20 }}>
             {info.name ? `Welcome back, ${info.name.split(' ')[0]}! Your details have been filled in.` : 'Fill in your details below.'}
           </p>
 
@@ -289,18 +289,18 @@ export default function Order() {
           </div>
 
           <div style={{ marginTop: 28, marginBottom: 8 }}>
-            <div style={{ fontFamily: "'Lato', sans-serif", fontSize: 11, fontWeight: 700, color: '#B07040', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 14 }}>
+            <div style={{ fontFamily: "'Nunito', sans-serif", fontSize: 11, fontWeight: 700, color: '#6B8F3A', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 14 }}>
               How will you pay?
             </div>
             <div style={{ display: 'flex', gap: 12, marginBottom: 16 }}>
               {['cashapp', 'zelle'].map(method => (
                 <div key={method} onClick={() => setInfo(i => ({ ...i, paymentMethod: method }))} style={{
                   flex: 1, padding: '14px 16px', borderRadius: 12, cursor: 'pointer',
-                  border: `2px solid ${info.paymentMethod === method ? '#D4541A' : 'rgba(212,84,26,0.18)'}`,
-                  background: info.paymentMethod === method ? 'rgba(212,84,26,0.04)' : '#fff',
+                  border: `2px solid ${info.paymentMethod === method ? '#D12918' : 'rgba(209,41,24,0.18)'}`,
+                  background: info.paymentMethod === method ? 'rgba(209,41,24,0.04)' : '#fff',
                   transition: 'all 0.18s', textAlign: 'center',
                 }}>
-                  <div style={{ fontFamily: "'Lato', sans-serif", fontSize: 14, fontWeight: 700, color: '#1E0E04' }}>
+                  <div style={{ fontFamily: "'Nunito', sans-serif", fontSize: 14, fontWeight: 700, color: '#3A5A14' }}>
                     {method === 'cashapp' ? 'Cash App' : 'Zelle'}
                   </div>
                 </div>
@@ -313,7 +313,7 @@ export default function Order() {
                 value={info.paymentHandle}
                 onChange={e => setInfo(i => ({ ...i, paymentHandle: e.target.value }))}
               />
-              <p style={{ fontFamily: "'Lato', sans-serif", fontSize: 11, color: '#B07040', marginTop: 6, lineHeight: 1.5 }}>
+              <p style={{ fontFamily: "'Nunito', sans-serif", fontSize: 11, color: '#6B8F3A', marginTop: 6, lineHeight: 1.5 }}>
                 This must match the name you send the payment with so Obaa Yaa can confirm it's you.
               </p>
             </div>
@@ -324,51 +324,51 @@ export default function Order() {
       {/* ── STEP 3: Summary ── */}
       {step === 3 && (
         <div>
-          <h3 style={{ fontFamily: "'Playfair Display', serif", fontSize: 17, color: '#1E0E04', marginBottom: 20 }}>Review your order</h3>
+          <h3 style={{ fontFamily: "'Nunito', sans-serif", fontWeight: 900, fontSize: 17, color: '#3A5A14', marginBottom: 20 }}>Review your order</h3>
 
-          <div style={{ background: '#fff', border: '1px solid rgba(212,84,26,0.15)', borderRadius: 16, overflow: 'hidden', marginBottom: 14 }}>
+          <div style={{ background: '#fff', border: '1px solid rgba(209,41,24,0.15)', borderRadius: 16, overflow: 'hidden', marginBottom: 14 }}>
             {Object.entries(counts).map(([id, qty]) => {
               const item = items.find(m => m.id === id)
               return (
-                <div key={id} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '12px 16px', borderBottom: '1px solid rgba(212,84,26,0.08)' }}>
+                <div key={id} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '12px 16px', borderBottom: '1px solid rgba(209,41,24,0.08)' }}>
                   <div style={{ width: 44, height: 44, borderRadius: 10, flexShrink: 0, backgroundImage: `url('${item?.image}')`, backgroundSize: 'cover' }} />
                   <div style={{ flex: 1 }}>
-                    <div style={{ fontFamily: "'Lato', sans-serif", fontSize: 14, fontWeight: 600, color: '#1E0E04' }}>{item?.name}</div>
-                    <div style={{ fontFamily: "'Lato', sans-serif", fontSize: 12, color: '#B07040' }}>× {qty}</div>
+                    <div style={{ fontFamily: "'Nunito', sans-serif", fontSize: 14, fontWeight: 600, color: '#3A5A14' }}>{item?.name}</div>
+                    <div style={{ fontFamily: "'Nunito', sans-serif", fontSize: 12, color: '#6B8F3A' }}>× {qty}</div>
                   </div>
-                  <div style={{ fontFamily: "'Playfair Display', serif", fontSize: 15, fontWeight: 700, color: '#D4541A' }}>
+                  <div style={{ fontFamily: "'Nunito', sans-serif", fontWeight: 900, fontSize: 15, fontWeight: 700, color: '#D12918' }}>
                     {item?.price != null ? `$${item.price * qty}` : 'TBD'}
                   </div>
                 </div>
               )
             })}
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '14px 16px', borderTop: '2px solid rgba(212,84,26,0.12)' }}>
-              <span style={{ fontFamily: "'Lato', sans-serif", fontSize: 15, fontWeight: 700, color: '#1E0E04' }}>Total</span>
-              <span style={{ fontFamily: "'Playfair Display', serif", fontSize: 22, fontWeight: 700, color: '#D4541A' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '14px 16px', borderTop: '2px solid rgba(209,41,24,0.12)' }}>
+              <span style={{ fontFamily: "'Nunito', sans-serif", fontSize: 15, fontWeight: 700, color: '#3A5A14' }}>Total</span>
+              <span style={{ fontFamily: "'Nunito', sans-serif", fontWeight: 900, fontSize: 22, fontWeight: 700, color: '#D12918' }}>
                 {total > 0 ? `$${total}` : 'TBD'}
               </span>
             </div>
           </div>
 
-          <div style={{ background: 'rgba(212,84,26,0.04)', border: '1px solid rgba(212,84,26,0.12)', borderRadius: 14, padding: 16, marginBottom: 14 }}>
-            <div style={{ fontFamily: "'Lato', sans-serif", fontSize: 11, fontWeight: 700, color: '#B07040', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 10 }}>Your Details</div>
-            <div style={{ fontFamily: "'Lato', sans-serif", fontSize: 14, color: '#1E0E04', lineHeight: 2 }}>
+          <div style={{ background: 'rgba(209,41,24,0.04)', border: '1px solid rgba(209,41,24,0.12)', borderRadius: 14, padding: 16, marginBottom: 14 }}>
+            <div style={{ fontFamily: "'Nunito', sans-serif", fontSize: 11, fontWeight: 700, color: '#6B8F3A', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 10 }}>Your Details</div>
+            <div style={{ fontFamily: "'Nunito', sans-serif", fontSize: 14, color: '#3A5A14', lineHeight: 2 }}>
               <div>{info.name}</div>
               <div>{info.branch} · {info.battalion}</div>
               {info.phone && <div>{info.phone}</div>}
             </div>
           </div>
 
-          <div style={{ background: 'rgba(212,84,26,0.04)', border: '1px solid rgba(212,84,26,0.12)', borderRadius: 14, padding: 16, marginBottom: 20 }}>
-            <div style={{ fontFamily: "'Lato', sans-serif", fontSize: 11, fontWeight: 700, color: '#B07040', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 10 }}>Payment</div>
-            <div style={{ fontFamily: "'Lato', sans-serif", fontSize: 14, color: '#1E0E04', lineHeight: 2 }}>
+          <div style={{ background: 'rgba(209,41,24,0.04)', border: '1px solid rgba(209,41,24,0.12)', borderRadius: 14, padding: 16, marginBottom: 20 }}>
+            <div style={{ fontFamily: "'Nunito', sans-serif", fontSize: 11, fontWeight: 700, color: '#6B8F3A', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 10 }}>Payment</div>
+            <div style={{ fontFamily: "'Nunito', sans-serif", fontSize: 14, color: '#3A5A14', lineHeight: 2 }}>
               <div>Method: <strong>{info.paymentMethod === 'cashapp' ? 'Cash App' : 'Zelle'}</strong></div>
               <div>Username: <strong>{info.paymentHandle}</strong></div>
             </div>
           </div>
 
-          <div style={{ background: 'rgba(212,84,26,0.06)', border: '1px solid rgba(212,84,26,0.15)', borderRadius: 12, padding: '14px 16px', marginBottom: 8 }}>
-            <p style={{ fontFamily: "'Lato', sans-serif", fontSize: 13, color: '#7A3A10', lineHeight: 1.7, margin: 0 }}>
+          <div style={{ background: 'rgba(209,41,24,0.06)', border: '1px solid rgba(209,41,24,0.15)', borderRadius: 12, padding: '14px 16px', marginBottom: 8 }}>
+            <p style={{ fontFamily: "'Nunito', sans-serif", fontSize: 13, color: '#456D1B', lineHeight: 1.7, margin: 0 }}>
               After placing your order, Obaa Yaa will receive a notification.
               Send <strong>${total}</strong> via {info.paymentMethod === 'cashapp' ? 'Cash App' : 'Zelle'} to confirm.
               She will approve once payment is received.
@@ -382,20 +382,20 @@ export default function Order() {
         <div style={{ display: 'flex', gap: 12, marginTop: 28 }}>
           <button onClick={back} style={{
             flex: 1, padding: 14,
-            border: '1.5px solid rgba(212,84,26,0.25)', borderRadius: 12,
-            background: 'transparent', color: '#1E0E04',
-            fontFamily: "'Lato', sans-serif", fontSize: 14, fontWeight: 600, cursor: 'pointer',
+            border: '1.5px solid rgba(209,41,24,0.25)', borderRadius: 12,
+            background: 'transparent', color: '#3A5A14',
+            fontFamily: "'Nunito', sans-serif", fontSize: 14, fontWeight: 600, cursor: 'pointer',
           }}>← Back</button>
           <button onClick={next} disabled={submitting} style={{
             flex: 2, padding: 14,
-            background: submitting ? 'rgba(212,84,26,0.4)' : step === 3 ? '#1E0E04' : '#D4541A',
+            background: submitting ? 'rgba(209,41,24,0.4)' : step === 3 ? '#3A5A14' : '#D12918',
             border: 'none', borderRadius: 12, color: '#fff',
-            fontFamily: "'Lato', sans-serif", fontSize: 14, fontWeight: 700,
+            fontFamily: "'Nunito', sans-serif", fontSize: 14, fontWeight: 700,
             cursor: submitting ? 'not-allowed' : 'pointer', transition: 'background 0.2s',
             display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
           }}
-            onMouseEnter={e => { if (!submitting) e.currentTarget.style.background = step === 3 ? '#7A3A10' : '#F08030' }}
-            onMouseLeave={e => { if (!submitting) e.currentTarget.style.background = step === 3 ? '#1E0E04' : '#D4541A' }}
+            onMouseEnter={e => { if (!submitting) e.currentTarget.style.background = step === 3 ? '#456D1B' : '#ED7D2B' }}
+            onMouseLeave={e => { if (!submitting) e.currentTarget.style.background = step === 3 ? '#3A5A14' : '#D12918' }}
           >
             {submitting
               ? <><span style={{ width: 16, height: 16, border: '2px solid rgba(255,255,255,0.3)', borderTopColor: '#fff', borderRadius: '50%', animation: 'spin 0.8s linear infinite', display: 'inline-block' }} />Placing Order...</>

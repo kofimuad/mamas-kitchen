@@ -32,9 +32,9 @@ export default function Menu() {
 
         {/* Tab toggle */}
         <div style={{
-          display: 'flex', background: '#FFF1E0',
+          display: 'flex', background: '#F5EDCC',
           borderRadius: 12, padding: 4, marginBottom: 36,
-          border: '1px solid rgba(212,84,26,0.15)',
+          border: '1px solid rgba(209,41,24,0.15)',
         }}>
           {[
             { key: 'plate', label: '🍽️ Saturday Plates',   sub: 'Order by Thu 8 PM' },
@@ -42,10 +42,10 @@ export default function Menu() {
           ].map(t => (
             <button key={t.key} onClick={() => setTab(t.key)} style={{
               flex: 1, padding: '11px 12px',
-              background: tab === t.key ? '#D4541A' : 'transparent',
-              color: tab === t.key ? '#fff' : '#7A3A10',
+              background: tab === t.key ? '#D12918' : 'transparent',
+              color: tab === t.key ? '#fff' : '#456D1B',
               border: 'none', borderRadius: 9,
-              fontFamily: "'Lato', sans-serif",
+              fontFamily: "'Nunito', sans-serif",
               fontSize: 13, fontWeight: 700,
               cursor: 'pointer', transition: 'all 0.2s',
               display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2,
@@ -67,7 +67,7 @@ export default function Menu() {
               <div key={n} style={{
                 display: 'flex', alignItems: 'center', gap: 14,
                 background: '#fff', borderRadius: 14, padding: 12,
-                border: '1px solid rgba(212,84,26,0.08)',
+                border: '1px solid rgba(209,41,24,0.08)',
               }}>
                 <div style={{ width: 62, height: 62, borderRadius: 10, flexShrink: 0, background: 'linear-gradient(90deg, #f0e8e0 25%, #e8ddd5 50%, #f0e8e0 75%)', backgroundSize: '200% 100%', animation: 'shimmer 1.4s infinite' }} />
                 <div style={{ flex: 1 }}>
@@ -81,12 +81,12 @@ export default function Menu() {
           Object.entries(grouped).map(([cat, catItems]) => (
             <div key={cat} style={{ marginBottom: 32 }}>
               <div style={{
-                fontFamily: "'Lato', sans-serif",
+                fontFamily: "'Nunito', sans-serif",
                 fontSize: 11, fontWeight: 700,
                 textTransform: 'uppercase', letterSpacing: '0.12em',
-                color: '#D4541A', marginBottom: 14,
+                color: '#D12918', marginBottom: 14,
                 paddingBottom: 8,
-                borderBottom: '1.5px solid rgba(212,84,26,0.12)',
+                borderBottom: '1.5px solid rgba(209,41,24,0.12)',
               }}>{cat}</div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
                 {catItems.map(item => (
@@ -99,7 +99,7 @@ export default function Menu() {
 
         {/* CTA */}
         <div style={{
-          background: '#1E0E04', borderRadius: 20,
+          background: '#3A5A14', borderRadius: 20,
           padding: '28px 32px',
           display: 'flex', alignItems: 'center', justifyContent: 'space-between',
           gap: 20, flexWrap: 'wrap',
@@ -107,11 +107,11 @@ export default function Menu() {
         }}>
           <div>
             <div style={{
-              fontFamily: "'Playfair Display', serif",
+              fontFamily: "'Nunito', sans-serif", fontWeight: 900,
               fontSize: 20, fontWeight: 700, color: '#fff', marginBottom: 4,
             }}>Ready to order?</div>
             <div style={{
-              fontFamily: "'Lato', sans-serif",
+              fontFamily: "'Nunito', sans-serif",
               fontSize: 13, color: 'rgba(255,255,255,0.55)',
             }}>
               {tab === 'plate' ? 'Cutoff Thursday 8 PM · Delivery Saturday' : 'Cutoff Monday 8 PM · Delivery Wednesday'}
@@ -120,16 +120,16 @@ export default function Menu() {
           <button
             onClick={() => navigate('/order', { state: { preselect: { type: tab } } })}
             style={{
-              fontFamily: "'Lato', sans-serif",
-              background: '#D4541A', color: '#fff',
+              fontFamily: "'Nunito', sans-serif",
+              background: '#D12918', color: '#fff',
               fontSize: 11, fontWeight: 700,
               letterSpacing: '0.14em', textTransform: 'uppercase',
               padding: '14px 24px', borderRadius: 8, border: 'none',
               cursor: 'pointer', flexShrink: 0,
               transition: 'background 0.2s',
             }}
-            onMouseEnter={e => e.currentTarget.style.background = '#F08030'}
-            onMouseLeave={e => e.currentTarget.style.background = '#D4541A'}
+            onMouseEnter={e => e.currentTarget.style.background = '#ED7D2B'}
+            onMouseLeave={e => e.currentTarget.style.background = '#D12918'}
           >Place Your Order →</button>
         </div>
 

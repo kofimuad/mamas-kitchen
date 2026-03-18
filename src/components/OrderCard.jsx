@@ -3,14 +3,14 @@ import { useNavigate } from 'react-router-dom'
 // Maps ALL possible order statuses to a display config
 const STATUS = {
   // Legacy Stripe statuses
-  new:             { bg: '#FFF4EF', color: '#D4541A', border: '#D4541A',  label: 'New'      },
-  cooking:         { bg: '#F0FBF4', color: '#1a7a3a', border: '#27ae60',  label: 'Cooking'  },
-  ready:           { bg: '#FFFBF0', color: '#9a6e00', border: '#F5C842',  label: 'Ready'    },
+  new:             { bg: '#FFF0E8', color: '#D12918', border: '#D12918',  label: 'New'      },
+  cooking:         { bg: '#F0FAF0', color: '#1a7a3a', border: '#27ae60',  label: 'Cooking'  },
+  ready:           { bg: '#FFF8E8', color: '#9a6e00', border: '#ED7D2B',  label: 'Ready'    },
   declined:        { bg: '#FDF2F2', color: '#9b2c2c', border: '#e53e3e',  label: 'Declined' },
   // New Zelle/CashApp statuses
-  pending_payment: { bg: '#FFF8E7', color: '#9a6e00', border: '#F5C842',  label: 'Pending'  },
-  confirmed:       { bg: '#F0FBF4', color: '#1a7a3a', border: '#27ae60',  label: 'Confirmed'},
-  delivered:       { bg: '#FFF4EF', color: '#D4541A', border: '#D4541A',  label: 'Delivered'},
+  pending_payment: { bg: '#FFF8E7', color: '#9a6e00', border: '#ED7D2B',  label: 'Pending'  },
+  confirmed:       { bg: '#F0FAF0', color: '#1a7a3a', border: '#27ae60',  label: 'Confirmed'},
+  delivered:       { bg: '#FFF0E8', color: '#D12918', border: '#D12918',  label: 'Delivered'},
 }
 
 const FALLBACK_STATUS = { bg: '#F5F5F5', color: '#888', border: '#ccc', label: 'Unknown' }
@@ -30,10 +30,10 @@ export default function OrderCard({ order, onAccept, onDecline }) {
   return (
     <div style={{
       background: '#fff',
-      border: '1px solid rgba(212,84,26,0.12)',
+      border: '1px solid rgba(209,41,24,0.12)',
       borderRadius: 18,
       overflow: 'hidden',
-      boxShadow: '0 2px 12px rgba(212,84,26,0.06)',
+      boxShadow: '0 2px 12px rgba(209,41,24,0.06)',
       opacity: order.status === 'declined' ? 0.55 : 1,
       transition: 'opacity 0.2s',
     }}>
@@ -45,12 +45,12 @@ export default function OrderCard({ order, onAccept, onDecline }) {
       }}>
         <div>
           <div style={{
-            fontFamily: "'Playfair Display', serif",
-            fontSize: 17, fontWeight: 700, color: '#1E0E04', marginBottom: 3,
+            fontFamily: "'Nunito', sans-serif", fontWeight: 900,
+            fontSize: 17, fontWeight: 700, color: '#3A5A14', marginBottom: 3,
           }}>{order.customerName || order.info?.name || '—'}</div>
           <div style={{
-            fontFamily: "'Lato', sans-serif",
-            fontSize: 12, color: '#B07040', letterSpacing: '0.02em',
+            fontFamily: "'Nunito', sans-serif",
+            fontSize: 12, color: '#6B8F3A', letterSpacing: '0.02em',
           }}>
             {branch}{battalion ? ` · ${battalion}` : ''}
             {phone ? ` · ${phone}` : ''}
@@ -59,7 +59,7 @@ export default function OrderCard({ order, onAccept, onDecline }) {
 
         {/* Status badge */}
         <span style={{
-          fontFamily: "'Lato', sans-serif",
+          fontFamily: "'Nunito', sans-serif",
           background: s.bg, color: s.color,
           border: `1px solid ${s.border}`,
           fontSize: 10, fontWeight: 700,
@@ -69,7 +69,7 @@ export default function OrderCard({ order, onAccept, onDecline }) {
       </div>
 
       {/* ── Divider ── */}
-      <div style={{ height: 1, background: 'rgba(212,84,26,0.08)', margin: '0 20px' }} />
+      <div style={{ height: 1, background: 'rgba(209,41,24,0.08)', margin: '0 20px' }} />
 
       {/* ── Order details ── */}
       <div style={{
@@ -79,8 +79,8 @@ export default function OrderCard({ order, onAccept, onDecline }) {
         <div style={{ flex: 1 }}>
           {/* Items list */}
           <div style={{
-            fontFamily: "'Lato', sans-serif",
-            fontSize: 14, fontWeight: 600, color: '#1E0E04',
+            fontFamily: "'Nunito', sans-serif",
+            fontSize: 14, fontWeight: 600, color: '#3A5A14',
             marginBottom: 6, lineHeight: 1.5,
           }}>
             {items.length > 0
@@ -88,11 +88,11 @@ export default function OrderCard({ order, onAccept, onDecline }) {
                   <span key={i}>
                     {p.name}{p.qty > 1 ? ` ×${p.qty}` : ''}
                     {i < items.length - 1 && (
-                      <span style={{ color: 'rgba(212,84,26,0.35)', margin: '0 6px' }}>—</span>
+                      <span style={{ color: 'rgba(209,41,24,0.35)', margin: '0 6px' }}>—</span>
                     )}
                   </span>
                 ))
-              : <span style={{ color: '#B07040', fontWeight: 400 }}>No items</span>
+              : <span style={{ color: '#6B8F3A', fontWeight: 400 }}>No items</span>
             }
           </div>
 
@@ -100,18 +100,18 @@ export default function OrderCard({ order, onAccept, onDecline }) {
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
             {payMethod && (
               <span style={{
-                fontFamily: "'Lato', sans-serif",
-                fontSize: 11, color: '#B07040', textTransform: 'capitalize',
+                fontFamily: "'Nunito', sans-serif",
+                fontSize: 11, color: '#6B8F3A', textTransform: 'capitalize',
               }}>{payMethod === 'cashapp' ? 'Cash App' : payMethod}</span>
             )}
             <span style={{
               display: 'inline-block',
-              background: order.status === 'confirmed' || order.status === 'delivered' ? '#F0FBF4' : '#FFF4EF',
-              color:      order.status === 'confirmed' || order.status === 'delivered' ? '#1a7a3a' : '#D4541A',
-              border: `1px solid ${order.status === 'confirmed' || order.status === 'delivered' ? '#27ae60' : '#D4541A'}`,
+              background: order.status === 'confirmed' || order.status === 'delivered' ? '#F0FAF0' : '#FFF0E8',
+              color:      order.status === 'confirmed' || order.status === 'delivered' ? '#1a7a3a' : '#D12918',
+              border: `1px solid ${order.status === 'confirmed' || order.status === 'delivered' ? '#27ae60' : '#D12918'}`,
               fontSize: 10, fontWeight: 700,
               padding: '2px 8px', borderRadius: 99,
-              fontFamily: "'Lato', sans-serif",
+              fontFamily: "'Nunito', sans-serif",
             }}>
               {order.status === 'confirmed' || order.status === 'delivered' ? 'Paid' : 'Pending'}
             </span>
@@ -120,8 +120,8 @@ export default function OrderCard({ order, onAccept, onDecline }) {
 
         {/* Total */}
         <div style={{
-          fontFamily: "'Playfair Display', serif",
-          fontSize: 26, fontWeight: 700, color: '#D4541A',
+          fontFamily: "'Nunito', sans-serif", fontWeight: 900,
+          fontSize: 26, fontWeight: 700, color: '#D12918',
           flexShrink: 0,
         }}>${order.total}</div>
       </div>
@@ -129,33 +129,33 @@ export default function OrderCard({ order, onAccept, onDecline }) {
       {/* ── Legacy accept/decline actions (old Stripe orders) ── */}
       {isNew && (
         <>
-          <div style={{ height: 1, background: 'rgba(212,84,26,0.08)', margin: '0 20px' }} />
+          <div style={{ height: 1, background: 'rgba(209,41,24,0.08)', margin: '0 20px' }} />
           <div style={{ display: 'flex', gap: 10, padding: '14px 20px' }}>
             <button
               onClick={() => onDecline?.(order._id)}
               style={{
                 flex: 1, padding: '11px 0',
-                border: '1px solid rgba(212,84,26,0.20)',
+                border: '1px solid rgba(209,41,24,0.20)',
                 borderRadius: 10, background: 'transparent',
-                fontFamily: "'Lato', sans-serif",
-                color: '#7A3A10', fontSize: 13, fontWeight: 600,
+                fontFamily: "'Nunito', sans-serif",
+                color: '#456D1B', fontSize: 13, fontWeight: 600,
                 cursor: 'pointer', transition: 'border-color 0.2s, color 0.2s',
               }}
-              onMouseEnter={e => { e.currentTarget.style.borderColor = '#D4541A'; e.currentTarget.style.color = '#D4541A' }}
-              onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(212,84,26,0.20)'; e.currentTarget.style.color = '#7A3A10' }}
+              onMouseEnter={e => { e.currentTarget.style.borderColor = '#D12918'; e.currentTarget.style.color = '#D12918' }}
+              onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(209,41,24,0.20)'; e.currentTarget.style.color = '#456D1B' }}
             >Decline</button>
             <button
               onClick={() => onAccept?.(order._id)}
               style={{
                 flex: 2, padding: '11px 0',
-                background: '#1E0E04', border: 'none',
+                background: '#3A5A14', border: 'none',
                 borderRadius: 10, color: '#fff',
-                fontFamily: "'Lato', sans-serif",
+                fontFamily: "'Nunito', sans-serif",
                 fontSize: 13, fontWeight: 700, cursor: 'pointer',
                 transition: 'background 0.2s', letterSpacing: '0.02em',
               }}
-              onMouseEnter={e => e.currentTarget.style.background = '#D4541A'}
-              onMouseLeave={e => e.currentTarget.style.background = '#1E0E04'}
+              onMouseEnter={e => e.currentTarget.style.background = '#D12918'}
+              onMouseLeave={e => e.currentTarget.style.background = '#3A5A14'}
             >Accept &amp; Start Cooking</button>
           </div>
         </>
@@ -167,8 +167,8 @@ export default function OrderCard({ order, onAccept, onDecline }) {
           onClick={() => navigate(`/admin/orders/${order._id}`)}
           style={{
             background: 'none', border: 'none', cursor: 'pointer',
-            fontFamily: "'Lato', sans-serif",
-            fontSize: 12, color: '#D4541A', fontWeight: 600,
+            fontFamily: "'Nunito', sans-serif",
+            fontSize: 12, color: '#D12918', fontWeight: 600,
             letterSpacing: '0.02em',
           }}
         >View full order →</button>

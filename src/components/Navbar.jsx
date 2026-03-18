@@ -39,8 +39,8 @@ export default function Navbar() {
       background: solid ? 'rgba(255,250,244,0.97)' : 'transparent',
       backdropFilter: solid ? 'blur(16px)' : 'none',
       WebkitBackdropFilter: solid ? 'blur(16px)' : 'none',
-      borderBottom: solid ? '1px solid rgba(212,84,26,0.15)' : '1px solid rgba(255,255,255,0.10)',
-      boxShadow: solid ? '0 2px 24px rgba(212,84,26,0.07)' : 'none',
+      borderBottom: solid ? '1px solid rgba(209,41,24,0.15)' : '1px solid rgba(255,255,255,0.10)',
+      boxShadow: solid ? '0 2px 24px rgba(209,41,24,0.07)' : 'none',
     }}>
 
       {/* ── Inner ── */}
@@ -55,22 +55,24 @@ export default function Navbar() {
           display: 'flex', alignItems: 'center', gap: 10,
           background: 'none', border: 'none', cursor: 'pointer', padding: 0,
         }}>
-          <div style={{
-            width: 36, height: 36, borderRadius: '50%',
-            background: '#D4541A',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            fontSize: 17, flexShrink: 0,
-          }}>🍛</div>
+          <img
+            src="/images/logo-icon.png"
+            alt="Obaa Yaa's Kitchen"
+            style={{
+              width: 42, height: 42, borderRadius: '50%',
+              objectFit: 'cover', flexShrink: 0,
+            }}
+          />
           <div style={{ display: 'flex', flexDirection: 'column', lineHeight: 1, textAlign: 'left' }}>
             <span style={{
-              fontFamily: "'Playfair Display', Georgia, serif", fontSize: 18, fontWeight: 700,
-              color: solid ? '#1E0E04' : '#fff',
+              fontFamily: "'Nunito', sans-serif", fontWeight: 900, fontSize: 18,
+              color: solid ? '#3A5A14' : '#fff',
               transition: 'color 0.3s',
             }}>Obaa Yaa's Kitchen</span>
             <span style={{
-              fontFamily: "'Lato', sans-serif", fontSize: 9, fontWeight: 700, letterSpacing: '0.14em',
+              fontFamily: "'Nunito', sans-serif", fontSize: 9, fontWeight: 700, letterSpacing: '0.14em',
               textTransform: 'uppercase', marginTop: 2,
-              color: solid ? '#D4541A' : 'rgba(245,200,66,0.85)',
+              color: solid ? '#D12918' : 'rgba(237,125,43,0.85)',
               transition: 'color 0.3s',
             }}>Authentic Ghanaian Cuisine</span>
           </div>
@@ -87,7 +89,7 @@ export default function Navbar() {
               background: 'none', border: 'none', cursor: 'pointer',
               borderRadius: 6,
               color: solid
-                ? (isActive(path) ? '#D4541A' : '#7A3A10')
+                ? (isActive(path) ? '#D12918' : '#456D1B')
                 : (isActive(path) ? '#fff' : 'rgba(255,255,255,0.75)'),
               transition: 'color 0.2s',
             }}>
@@ -96,7 +98,7 @@ export default function Navbar() {
               <span style={{
                 position: 'absolute', bottom: 2, left: 16, right: 16,
                 height: 1.5, borderRadius: 2,
-                background: solid ? '#D4541A' : '#F5C842',
+                background: solid ? '#D12918' : '#ED7D2B',
                 transform: isActive(path) ? 'scaleX(1)' : 'scaleX(0)',
                 transition: 'transform 0.25s ease',
                 transformOrigin: 'center',
@@ -110,12 +112,12 @@ export default function Navbar() {
             fontSize: 11, fontWeight: 700,
             letterSpacing: '0.12em', textTransform: 'uppercase',
             padding: '11px 22px', borderRadius: 4, border: 'none',
-            background: '#D4541A', color: '#fff',
-            boxShadow: '0 4px 16px rgba(212,84,26,0.35)',
+            background: '#D12918', color: '#fff',
+            boxShadow: '0 4px 16px rgba(209,41,24,0.35)',
             cursor: 'pointer', transition: 'all 0.2s',
           }}
-            onMouseEnter={e => { e.currentTarget.style.background = '#F08030'; e.currentTarget.style.boxShadow = '0 6px 22px rgba(212,84,26,0.5)' }}
-            onMouseLeave={e => { e.currentTarget.style.background = '#D4541A'; e.currentTarget.style.boxShadow = '0 4px 16px rgba(212,84,26,0.35)' }}
+            onMouseEnter={e => { e.currentTarget.style.background = '#ED7D2B'; e.currentTarget.style.boxShadow = '0 6px 22px rgba(209,41,24,0.5)' }}
+            onMouseLeave={e => { e.currentTarget.style.background = '#D12918'; e.currentTarget.style.boxShadow = '0 4px 16px rgba(209,41,24,0.35)' }}
           >
             Place Order
           </button>
@@ -134,7 +136,7 @@ export default function Navbar() {
           {[0,1,2].map(i => (
             <span key={i} style={{
               display: 'block', width: 22, height: 2, borderRadius: 2,
-              background: solid ? '#1E0E04' : '#fff',
+              background: solid ? '#3A5A14' : '#fff',
               transition: 'background 0.3s',
             }} />
           ))}
@@ -146,9 +148,9 @@ export default function Navbar() {
         <div style={{
           background: 'rgba(255,250,244,0.98)',
           backdropFilter: 'blur(16px)',
-          borderTop: '1px solid rgba(212,84,26,0.15)',
+          borderTop: '1px solid rgba(209,41,24,0.15)',
           padding: '12px 16px 20px',
-          boxShadow: '0 8px 32px rgba(212,84,26,0.12)',
+          boxShadow: '0 8px 32px rgba(209,41,24,0.12)',
         }}>
           {links.map(({ label, path }) => (
             <button key={path} onClick={() => go(path)} style={{
@@ -156,15 +158,15 @@ export default function Navbar() {
               padding: '14px 16px',
               fontSize: 13, fontWeight: 600,
               letterSpacing: '0.08em', textTransform: 'uppercase',
-              color: isActive(path) ? '#D4541A' : '#7A3A10',
+              color: isActive(path) ? '#D12918' : '#456D1B',
               background: 'none', border: 'none',
-              borderBottom: '1px solid rgba(212,84,26,0.12)',
+              borderBottom: '1px solid rgba(209,41,24,0.12)',
               cursor: 'pointer',
             }}>{label}</button>
           ))}
           <button onClick={() => go('/order')} style={{
             display: 'block', width: '100%', marginTop: 12,
-            background: '#D4541A', color: '#fff',
+            background: '#D12918', color: '#fff',
             fontSize: 12, fontWeight: 700,
             letterSpacing: '0.12em', textTransform: 'uppercase',
             padding: 14, borderRadius: 6, border: 'none',

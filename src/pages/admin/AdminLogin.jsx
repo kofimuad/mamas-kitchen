@@ -39,8 +39,8 @@ export default function AdminLogin() {
     <div style={{
       minHeight: '100vh',
       display: 'flex', alignItems: 'center', justifyContent: 'center',
-      background: '#1E0E04',
-      backgroundImage: 'radial-gradient(ellipse at 30% 50%, rgba(212,84,26,0.12) 0%, transparent 60%)',
+      background: '#3A5A14',
+      backgroundImage: 'radial-gradient(ellipse at 30% 50%, rgba(209,41,24,0.12) 0%, transparent 60%)',
     }}>
       <div style={{
         background: 'rgba(255,255,255,0.04)',
@@ -53,20 +53,19 @@ export default function AdminLogin() {
       }}>
 
         {/* Logo */}
-        <div style={{
-          width: 52, height: 52, borderRadius: '50%',
-          background: '#D4541A', margin: '0 auto 16px',
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-          fontSize: 24,
-        }}>🍛</div>
+        <img
+          src="/images/logo-icon-inverse.png"
+          alt="Obaa Yaa's Kitchen"
+          style={{ width: 64, height: 64, borderRadius: '50%', margin: '0 auto 16px', display: 'block' }}
+        />
 
         <h2 style={{
-          fontFamily: "'Playfair Display', serif",
+          fontFamily: "'Nunito', sans-serif", fontWeight: 900,
           fontSize: 22, color: '#fff', marginBottom: 4,
         }}>Obaa Yaa's Kitchen</h2>
 
         <p style={{
-          fontFamily: "'Lato', sans-serif",
+          fontFamily: "'Nunito', sans-serif",
           fontSize: 12, color: 'rgba(255,255,255,0.40)',
           letterSpacing: '0.12em', textTransform: 'uppercase',
           marginBottom: 32,
@@ -82,7 +81,7 @@ export default function AdminLogin() {
             <div key={i} style={{
               width: 14, height: 14, borderRadius: '50%',
               background: i < pin.length
-                ? (error ? '#e74c3c' : '#D4541A')
+                ? (error ? '#e74c3c' : '#D12918')
                 : 'rgba(255,255,255,0.15)',
               transition: 'background 0.15s',
               transform: i < pin.length ? 'scale(1.15)' : 'scale(1)',
@@ -92,7 +91,7 @@ export default function AdminLogin() {
 
         {error && (
           <p style={{
-            fontFamily: "'Lato', sans-serif",
+            fontFamily: "'Nunito', sans-serif",
             fontSize: 12, color: '#e74c3c',
             marginBottom: 16, fontWeight: 600,
           }}>Incorrect PIN. Try again.</p>
@@ -110,17 +109,17 @@ export default function AdminLogin() {
               style={{
                 height: 56, borderRadius: 12, border: 'none',
                 background: k === '⌫'
-                  ? 'rgba(212,84,26,0.18)'
+                  ? 'rgba(209,41,24,0.18)'
                   : k ? 'rgba(255,255,255,0.07)' : 'transparent',
-                color: k === '⌫' ? '#D4541A' : '#fff',
+                color: k === '⌫' ? '#D12918' : '#fff',
                 fontSize: k === '⌫' ? 18 : 20,
-                fontFamily: "'Lato', sans-serif",
+                fontFamily: "'Nunito', sans-serif",
                 fontWeight: 600,
                 cursor: k ? 'pointer' : 'default',
                 transition: 'background 0.15s, transform 0.1s',
               }}
-              onMouseEnter={e => { if (k) e.currentTarget.style.background = k === '⌫' ? 'rgba(212,84,26,0.30)' : 'rgba(255,255,255,0.14)' }}
-              onMouseLeave={e => { if (k) e.currentTarget.style.background = k === '⌫' ? 'rgba(212,84,26,0.18)' : 'rgba(255,255,255,0.07)' }}
+              onMouseEnter={e => { if (k) e.currentTarget.style.background = k === '⌫' ? 'rgba(209,41,24,0.30)' : 'rgba(255,255,255,0.14)' }}
+              onMouseLeave={e => { if (k) e.currentTarget.style.background = k === '⌫' ? 'rgba(209,41,24,0.18)' : 'rgba(255,255,255,0.07)' }}
               onMouseDown={e => { if (k) e.currentTarget.style.transform = 'scale(0.93)' }}
               onMouseUp={e => { if (k) e.currentTarget.style.transform = 'scale(1)' }}
             >{k}</button>
@@ -128,7 +127,7 @@ export default function AdminLogin() {
         </div>
 
         <p style={{
-          fontFamily: "'Lato', sans-serif",
+          fontFamily: "'Nunito', sans-serif",
           fontSize: 11, color: 'rgba(255,255,255,0.20)',
           marginTop: 28, lineHeight: 1.6,
         }}>

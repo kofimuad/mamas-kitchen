@@ -35,29 +35,29 @@ export default function Home() {
         {/* Dark overlay */}
         <div style={{
           position: 'absolute', inset: 0,
-          background: 'linear-gradient(135deg, rgba(18,7,0,0.72) 0%, rgba(30,14,4,0.55) 60%, rgba(18,7,0,0.75) 100%)',
+          background: 'linear-gradient(135deg, rgba(15,5,0,0.75) 0%, rgba(80,20,10,0.55) 60%, rgba(15,5,0,0.78) 100%)',
         }} />
 
         {/* Glass card — compact to fit on first load */}
         <div style={{
           position: 'relative', zIndex: 2,
           marginTop: 64,
-          background: 'rgba(255,255,255,0.06)',
-          backdropFilter: 'blur(28px) saturate(1.8) brightness(1.1)',
-          WebkitBackdropFilter: 'blur(28px) saturate(1.8) brightness(1.1)',
-          border: '1px solid rgba(255,255,255,0.14)',
-          borderTop: '1px solid rgba(255,255,255,0.22)',
+          background: 'rgba(20,8,0,0.52)',
+          backdropFilter: 'blur(28px) saturate(1.4)',
+          WebkitBackdropFilter: 'blur(28px) saturate(1.4)',
+          border: '1px solid rgba(255,255,255,0.12)',
+          borderTop: '1px solid rgba(255,255,255,0.20)',
           borderRadius: 16,
           padding: '36px 40px 32px',
           maxWidth: 440,
           width: 'calc(100% - 48px)',
           textAlign: 'center',
-          boxShadow: '0 24px 64px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.12)',
+          boxShadow: '0 24px 64px rgba(0,0,0,0.50), inset 0 1px 0 rgba(255,255,255,0.10)',
         }}>
 
           {/* Eyebrow */}
           <p style={{
-            fontFamily: "'Lato', sans-serif",
+            fontFamily: "'Nunito', sans-serif",
             fontSize: 9, fontWeight: 700,
             letterSpacing: '0.26em', textTransform: 'uppercase',
             color: 'rgba(255,255,255,0.55)',
@@ -65,34 +65,34 @@ export default function Home() {
           }}>GH &nbsp; Serving Our Heroes</p>
 
           {/* Gold rule */}
-          <div style={{ width: 36, height: 1, background: '#F5C842', opacity: 0.8, margin: '0 auto 18px' }} />
+          <div style={{ width: 36, height: 1, background: '#ED7D2B', opacity: 0.8, margin: '0 auto 18px' }} />
 
           {/* Headline */}
           <h1 style={{
-            fontFamily: "'Playfair Display', Georgia, serif",
+            fontFamily: "'Nunito', sans-serif", fontWeight: 900,
             fontSize: 'clamp(26px, 3.5vw, 42px)',
             color: '#fff', lineHeight: 1.2, fontWeight: 700,
             margin: '0 0 4px', letterSpacing: '-0.01em',
           }}>Authentic Ghanaian Cuisine,</h1>
           <h1 style={{
-            fontFamily: "'Playfair Display', Georgia, serif",
+            fontFamily: "'Nunito', sans-serif", fontWeight: 900,
             fontSize: 'clamp(26px, 3.5vw, 42px)',
             color: '#fff', lineHeight: 1.2, fontWeight: 700,
             margin: '0 0 4px', letterSpacing: '-0.01em',
-          }}>with{' '}<em style={{ color: '#F5C842', fontStyle: 'italic' }}>Homemade</em></h1>
+          }}>with{' '}<em style={{ color: '#ED7D2B', fontStyle: 'italic' }}>Homemade</em></h1>
           <h1 style={{
-            fontFamily: "'Playfair Display', Georgia, serif",
+            fontFamily: "'Nunito', sans-serif", fontWeight: 900,
             fontSize: 'clamp(26px, 3.5vw, 42px)',
             color: '#fff', lineHeight: 1.2, fontWeight: 700,
             margin: 0, letterSpacing: '-0.01em',
           }}>Love.</h1>
 
           {/* Gold rule */}
-          <div style={{ width: 36, height: 1, background: '#F5C842', opacity: 0.8, margin: '16px auto 18px' }} />
+          <div style={{ width: 36, height: 1, background: '#ED7D2B', opacity: 0.8, margin: '16px auto 18px' }} />
 
           {/* Subtext */}
           <p style={{
-            fontFamily: "'Lato', sans-serif",
+            fontFamily: "'Nunito', sans-serif",
             color: 'rgba(255,255,255,0.72)',
             fontSize: 13, lineHeight: 1.75, fontWeight: 300,
             marginBottom: 24, letterSpacing: '0.01em',
@@ -106,22 +106,22 @@ export default function Home() {
             <button
               onClick={() => navigate('/order')}
               style={{
-                fontFamily: "'Lato', sans-serif",
-                background: '#D4541A', color: '#fff',
+                fontFamily: "'Nunito', sans-serif",
+                background: '#D12918', color: '#fff',
                 fontSize: 11, fontWeight: 700,
                 letterSpacing: '0.18em', textTransform: 'uppercase',
                 padding: '15px 28px', borderRadius: 4, border: 'none',
                 cursor: 'pointer', transition: 'all 0.22s',
-                boxShadow: '0 6px 24px rgba(212,84,26,0.45)',
+                boxShadow: '0 6px 24px rgba(209,41,24,0.45)',
               }}
-              onMouseEnter={e => { e.currentTarget.style.background = '#F08030'; e.currentTarget.style.transform = 'translateY(-1px)' }}
-              onMouseLeave={e => { e.currentTarget.style.background = '#D4541A'; e.currentTarget.style.transform = 'translateY(0)' }}
+              onMouseEnter={e => { e.currentTarget.style.background = '#ED7D2B'; e.currentTarget.style.transform = 'translateY(-1px)' }}
+              onMouseLeave={e => { e.currentTarget.style.background = '#D12918'; e.currentTarget.style.transform = 'translateY(0)' }}
             >Place Your Order</button>
 
             <button
               onClick={() => navigate('/menu')}
               style={{
-                fontFamily: "'Lato', sans-serif",
+                fontFamily: "'Nunito', sans-serif",
                 background: 'rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.88)',
                 fontSize: 11, fontWeight: 600,
                 letterSpacing: '0.18em', textTransform: 'uppercase',
@@ -144,13 +144,13 @@ export default function Home() {
       <div style={{ padding: '48px 24px 0' }}>
         <div style={{ textAlign: 'center', marginBottom: 28 }}>
           <p style={{
-            fontFamily: "'Lato', sans-serif",
+            fontFamily: "'Nunito', sans-serif",
             fontSize: 11, fontWeight: 700, letterSpacing: '0.16em',
-            textTransform: 'uppercase', color: '#D4541A', marginBottom: 8,
+            textTransform: 'uppercase', color: '#D12918', marginBottom: 8,
           }}>When We Deliver</p>
           <h2 style={{
-            fontFamily: "'Playfair Display', serif",
-            fontSize: 32, color: '#1E0E04',
+            fontFamily: "'Nunito', sans-serif", fontWeight: 900,
+            fontSize: 32, color: '#3A5A14',
           }}>Two Delivery Days a Week</h2>
         </div>
 
@@ -163,14 +163,14 @@ export default function Home() {
               type: 'Tray Orders',
               cutoff: 'Order by Monday 8 PM',
               desc: 'Large trays for groups — perfect for sharing with your unit.',
-              bg: '#1E0E04',
+              bg: '#3A5A14',
             },
             {
               day: 'Saturday',
               type: 'Plate Orders',
               cutoff: 'Order by Thursday 8 PM',
               desc: 'Individual plates — your personal taste of home every week.',
-              bg: '#D4541A',
+              bg: '#D12918',
             },
           ].map(d => (
             <div key={d.day} style={{
@@ -179,16 +179,16 @@ export default function Home() {
               position: 'relative', overflow: 'hidden',
             }}>
               <div style={{
-                fontFamily: "'Lato', sans-serif",
+                fontFamily: "'Nunito', sans-serif",
                 fontSize: 10, fontWeight: 700, letterSpacing: '0.14em',
-                textTransform: 'uppercase', color: '#F5C842', marginBottom: 8,
+                textTransform: 'uppercase', color: '#ED7D2B', marginBottom: 8,
               }}>{d.type}</div>
               <div style={{
-                fontFamily: "'Playfair Display', serif",
+                fontFamily: "'Nunito', sans-serif", fontWeight: 900,
                 fontSize: 32, fontWeight: 700, color: '#fff', marginBottom: 10, lineHeight: 1,
               }}>{d.day}</div>
               <p style={{
-                fontFamily: "'Lato', sans-serif",
+                fontFamily: "'Nunito', sans-serif",
                 fontSize: 13, color: 'rgba(255,255,255,0.60)',
                 lineHeight: 1.7, marginBottom: 18,
               }}>{d.desc}</p>
@@ -198,7 +198,7 @@ export default function Home() {
                 borderRadius: 8, padding: '7px 14px',
               }}>
                 <span style={{
-                  fontFamily: "'Lato', sans-serif",
+                  fontFamily: "'Nunito', sans-serif",
                   fontSize: 11, fontWeight: 700, color: 'rgba(255,255,255,0.85)',
                   letterSpacing: '0.03em',
                 }}>{d.cutoff}</span>
@@ -215,20 +215,20 @@ export default function Home() {
         <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', marginBottom: 28 }}>
           <div>
             <p style={{
-              fontFamily: "'Lato', sans-serif",
+              fontFamily: "'Nunito', sans-serif",
               fontSize: 11, fontWeight: 700, letterSpacing: '0.16em',
-              textTransform: 'uppercase', color: '#D4541A', marginBottom: 6,
+              textTransform: 'uppercase', color: '#D12918', marginBottom: 6,
             }}>Saturday Plates</p>
-            <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: 32, color: '#1E0E04' }}>
+            <h2 style={{ fontFamily: "'Nunito', sans-serif", fontWeight: 900, fontSize: 32, color: '#3A5A14' }}>
               This Week's Menu
             </h2>
           </div>
           <button
             onClick={() => navigate('/menu')}
             style={{
-              fontFamily: "'Lato', sans-serif",
+              fontFamily: "'Nunito', sans-serif",
               background: 'none', border: 'none', cursor: 'pointer',
-              fontSize: 13, fontWeight: 700, color: '#D4541A',
+              fontSize: 13, fontWeight: 700, color: '#D12918',
               letterSpacing: '0.04em',
             }}
           >View full menu →</button>
@@ -245,7 +245,7 @@ export default function Home() {
               <div key={n} style={{
                 borderRadius: 16, overflow: 'hidden',
                 background: '#fff',
-                border: '1px solid rgba(212,84,26,0.08)',
+                border: '1px solid rgba(209,41,24,0.08)',
               }}>
                 <div style={{ height: 200, background: 'linear-gradient(90deg, #f0e8e0 25%, #e8ddd5 50%, #f0e8e0 75%)', backgroundSize: '200% 100%', animation: 'shimmer 1.4s infinite' }} />
                 <div style={{ padding: 16 }}>
@@ -270,22 +270,22 @@ export default function Home() {
       <div style={{ padding: '48px 40px 60px' }}>
         <div style={{
           borderRadius: 24, overflow: 'hidden',
-          background: '#1E0E04',
+          background: '#3A5A14',
           display: 'flex', alignItems: 'center',
         }}>
           <div style={{ padding: '44px 48px', maxWidth: 580 }}>
             <span style={{
-              fontFamily: "'Lato', sans-serif",
-              display: 'inline-block', background: '#F5C842', color: '#1E0E04',
+              fontFamily: "'Nunito', sans-serif",
+              display: 'inline-block', background: '#ED7D2B', color: '#3A5A14',
               fontSize: 10, fontWeight: 700, textTransform: 'uppercase',
               letterSpacing: '0.10em', padding: '4px 12px', borderRadius: 99, marginBottom: 16,
             }}>🪖 Military Community</span>
             <h3 style={{
-              fontFamily: "'Playfair Display', serif",
+              fontFamily: "'Nunito', sans-serif", fontWeight: 900,
               fontSize: 30, color: '#fff', marginBottom: 14, lineHeight: 1.25,
             }}>Bringing the Taste<br />of Home to Base</h3>
             <p style={{
-              fontFamily: "'Lato', sans-serif",
+              fontFamily: "'Nunito', sans-serif",
               fontSize: 14, color: 'rgba(255,255,255,0.65)',
               lineHeight: 1.8, fontWeight: 300, margin: 0,
             }}>
