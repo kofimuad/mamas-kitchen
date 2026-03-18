@@ -255,7 +255,7 @@ export default function Home() {
               </div>
             ))
           ) : (
-            plateItems.filter(i => i.available).slice(0, 3).map(item => (
+            plateItems.filter(i => i.available).slice(0, 5).map(item => (
               <FoodCard key={item.id} item={item} />
             ))
           )}

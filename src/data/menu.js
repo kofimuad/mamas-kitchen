@@ -24,7 +24,7 @@ export const plateItems = [
     id: 'check-check',
     name: 'Check Check',
     price: 25,
-    available: true,
+    available: false,
     description: 'A beloved Ghanaian street food favourite — hearty, spicy and deeply satisfying.',
     tags: ['Street Food', 'Spicy'],
     category: 'Specialty',
