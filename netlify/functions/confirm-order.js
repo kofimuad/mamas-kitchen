@@ -1,5 +1,6 @@
 // netlify/functions/confirm-order.js
 // Admin confirms/approves an order
+const { checkAdminPin } = require('./_auth')
 const { MongoClient, ObjectId } = require('mongodb')
 
 let client

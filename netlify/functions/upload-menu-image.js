@@ -8,6 +8,7 @@
 //   CLOUDINARY_API_SECRET   — from Cloudinary dashboard
 //   ADMIN_PIN               — your admin PIN for auth
 
+const { checkAdminPin } = require('./_auth')
 const https = require('https')
 const crypto = require('crypto')
 
@@ -17,9 +18,9 @@ exports.handler = async (event) => {
   }
 
   // Admin auth check
-  const auth = event.headers['x-admin-pin']
-  if (auth !== process.env.ADMIN_PIN) {
-    return { statusCode: 401, body: 'Unauthorized' }
+  const auth = checkAdminPin(event.headers)
+  if (!auth.allowed) {
+    return { statusCode: 401, body: JSON.stringify({ error: auth.reason }) }
   }
 
   try {

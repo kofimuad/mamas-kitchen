@@ -2,6 +2,7 @@
 // Saves the full menu (plateItems + trayItems) to MongoDB.
 // Called by the admin MenuEditor when Mama hits "Save Menu Changes".
 
+const { checkAdminPin } = require('./_auth')
 const { MongoClient } = require('mongodb')
 
 let client

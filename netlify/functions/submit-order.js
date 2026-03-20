@@ -31,6 +31,49 @@ function sanitise(str, maxLen = 200) {
   return str.replace(/<[^>]*>/g, '').replace(/[<>"'`]/g, '').trim().slice(0, maxLen)
 }
 
+// ── TEMPLATE VERSION (uncomment when new_order_notification template is approved) ──
+// async function sendWhatsAppTemplate(order, adminLink) {
+//   const items     = order.items || []
+//   const info      = order.info  || {}
+//   const itemsText = items.map(p => `${p.name}${p.qty > 1 ? ` x${p.qty}` : ''}`).join(', ')
+//   const payLabel  = info.paymentMethod === 'cashapp' ? 'Cash App' : 'Zelle'
+//   const res = await fetch(
+//     `https://graph.facebook.com/v22.0/${process.env.META_PHONE_NUMBER_ID}/messages`,
+//     {
+//       method: 'POST',
+//       headers: {
+//         Authorization: `Bearer ${process.env.META_WHATSAPP_TOKEN}`,
+//         'Content-Type': 'application/json',
+//       },
+//       body: JSON.stringify({
+//         messaging_product: 'whatsapp',
+//         to:   process.env.MAMA_WHATSAPP_NUMBER,
+//         type: 'template',
+//         template: {
+//           name:     'new_order_notification',
+//           language: { code: 'en' },
+//           components: [{
+//             type:       'body',
+//             parameters: [
+//               { type: 'text', text: info.name          || '—' },
+//               { type: 'text', text: `${info.branch || '—'}${info.battalion ? ' · ' + info.battalion : ''}` },
+//               { type: 'text', text: itemsText           || '—' },
+//               { type: 'text', text: String(order.total || 0) },
+//               { type: 'text', text: payLabel },
+//               { type: 'text', text: info.paymentHandle  || '—' },
+//               { type: 'text', text: adminLink },
+//             ],
+//           }],
+//         },
+//       }),
+//     }
+//   )
+//   const data = await res.json()
+//   if (!res.ok) throw new Error(`WhatsApp error: ${JSON.stringify(data)}`)
+//   return data
+// }
+
+// ── FREE-FORM VERSION (active — works within 24hr window) ──
 async function sendWhatsApp(message) {
   const res = await fetch(
     `https://graph.facebook.com/v22.0/${process.env.META_PHONE_NUMBER_ID}/messages`,
@@ -42,7 +85,7 @@ async function sendWhatsApp(message) {
       },
       body: JSON.stringify({
         messaging_product: 'whatsapp',
-        to: process.env.MAMA_WHATSAPP_NUMBER,
+        to:   process.env.MAMA_WHATSAPP_NUMBER,
         type: 'text',
         text: { body: message },
       }),
