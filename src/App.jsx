@@ -11,6 +11,7 @@ import AdminLogin from './pages/admin/AdminLogin'
 import Dashboard from './pages/admin/Dashboard'
 import OrderDetail from './pages/admin/OrderDetail'
 import MenuEditor from './pages/admin/MenuEditor'
+import PrivacyPolicy from './pages/PrivacyPolicy'
 import ScrollToTop from './components/ScrollToTop'
 
 function AdminRoute({ children }) {
@@ -30,6 +31,7 @@ export default function App() {
         <Route path="/order-status/:id"    element={<OrderStatus />} />
         {/* <Route path="/payment" element={<Payment />} /> */}
         <Route path="/confirmation"        element={<Confirmation />} />
+        <Route path="/privacy"             element={<PrivacyPolicy />} />
         <Route path="/about"               element={<About />} />
 
         <Route path="/admin/login"         element={<AdminLogin />} />

@@ -183,8 +183,10 @@ export default function Dashboard() {
                           {group.weekLabel}
                         </div>
                         <div style={{ fontFamily: "'Nunito', sans-serif", fontSize: 11, color: '#6B8F3A', marginTop: 1 }}>
-                          Delivery: {group.deliveryDate.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}
-                          &nbsp;·&nbsp;{group.orders.length} order{group.orders.length !== 1 ? 's' : ''}
+                          {group.deliveryDate && !isNaN(group.deliveryDate)
+                            ? `Delivery: ${group.deliveryDate.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })} · `
+                            : ''}
+                          {group.orders.length} order{group.orders.length !== 1 ? 's' : ''}
                           {revenue > 0 && <>&nbsp;·&nbsp;<strong style={{ color: '#D12918' }}>${revenue}</strong></>}
                         </div>
                       </div>

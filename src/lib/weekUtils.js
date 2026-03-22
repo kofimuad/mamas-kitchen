@@ -71,7 +71,8 @@ export function groupOrdersByWeekAndType(orders) {
   const groups = {}
 
   orders.forEach(order => {
-    const created = new Date(order.createdAt)
+    const created = order.createdAt ? new Date(order.createdAt) : new Date()
+    if (isNaN(created.getTime())) return // skip orders with invalid dates
     const monday  = getWeekStart(created)
     const weekKey = monday.toISOString().slice(0, 10)
     const type    = order.orderType || 'plate'
@@ -84,18 +85,22 @@ export function groupOrdersByWeekAndType(orders) {
         weekLabel: weekLabel(created),
         type,
         label: type === 'tray' ? 'Wednesday Trays' : 'Saturday Plates',
-        deliveryDate: type === 'tray'
-          ? getDeliveryDates(created).wednesday
-          : getDeliveryDates(created).saturday,
+        deliveryDate: (() => {
+          try {
+            return type === 'tray'
+              ? getDeliveryDates(created).wednesday
+              : getDeliveryDates(created).saturday
+          } catch { return null }
+        })(),
         orders: [],
       }
     }
     groups[key].orders.push(order)
   })
 
-  // Sort groups: most recent week first, within week: plates before trays
+  // Sort groups: most recent week first, within same week: trays before plates (Wed before Sat)
   return Object.values(groups).sort((a, b) => {
     if (b.weekStart - a.weekStart !== 0) return b.weekStart - a.weekStart
-    return a.type === 'plate' ? -1 : 1
+    return a.type === 'tray' ? -1 : 1
   })
 }

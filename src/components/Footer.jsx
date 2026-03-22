@@ -145,6 +145,17 @@ export default function Footer() {
             © {year} Obaa Yaa's Kitchen. Made with ❤️ for our heroes.
           </p>
           <button
+            onClick={() => navigate('/privacy')}
+            style={{
+              fontFamily: "'Nunito', sans-serif",
+              background: 'none', border: 'none', cursor: 'pointer',
+              fontSize: 11, color: 'rgba(255,255,255,0.55)',
+              letterSpacing: '0.06em',
+            }}
+            onMouseEnter={e => e.currentTarget.style.color = 'rgba(255,255,255,0.85)'}
+            onMouseLeave={e => e.currentTarget.style.color = 'rgba(255,255,255,0.55)'}
+          >Privacy Policy</button>
+          <button
             onClick={() => navigate('/admin')}
             style={{
               fontFamily: "'Nunito', sans-serif",
