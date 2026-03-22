@@ -2,10 +2,16 @@ import { useNavigate } from 'react-router-dom'
 import FoodCard from '../components/FoodCard'
 import Footer from '../components/Footer'
 import useMenu from '../hooks/useMenu'
+import { getNextDeliveryLabel } from '../lib/weekUtils'
 
 export default function Home() {
-  const navigate = useNavigate()
-  const { plateItems, loading } = useMenu()
+  const navigate  = useNavigate()
+  const { plateItems, trayItems, loading } = useMenu()
+  const nextDelivery = getNextDeliveryLabel()
+
+  // Show items for the next upcoming delivery
+  const previewItems = nextDelivery.type === 'tray' ? trayItems : plateItems
+  const previewLabel = nextDelivery.type === 'tray' ? 'Wednesday Trays' : 'Saturday Plates'
 
   return (
     <div>
@@ -160,6 +166,7 @@ export default function Home() {
           {[
             {
               day: 'Wednesday',
+              orderType: 'tray',
               type: 'Tray Orders',
               cutoff: 'Order by Monday 8 PM',
               desc: 'Large trays for groups — perfect for sharing with your unit.',
@@ -167,17 +174,25 @@ export default function Home() {
             },
             {
               day: 'Saturday',
+              orderType: 'plate',
               type: 'Plate Orders',
               cutoff: 'Order by Thursday 8 PM',
               desc: 'Individual plates — your personal taste of home every week.',
               bg: '#D12918',
             },
           ].map(d => (
-            <div key={d.day} style={{
-              background: d.bg,
-              borderRadius: 20, padding: '28px 24px',
-              position: 'relative', overflow: 'hidden',
-            }}>
+            <div
+              key={d.day}
+              onClick={() => navigate('/menu', { state: { tab: d.orderType } })}
+              style={{
+                background: d.bg,
+                borderRadius: 20, padding: '28px 24px',
+                position: 'relative', overflow: 'hidden',
+                cursor: 'pointer', transition: 'transform 0.2s, box-shadow 0.2s',
+              }}
+              onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-3px)'; e.currentTarget.style.boxShadow = '0 12px 32px rgba(0,0,0,0.2)' }}
+              onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)';    e.currentTarget.style.boxShadow = 'none' }}
+            >
               <div style={{
                 fontFamily: "'Nunito', sans-serif",
                 fontSize: 10, fontWeight: 700, letterSpacing: '0.14em',
@@ -218,13 +233,13 @@ export default function Home() {
               fontFamily: "'Nunito', sans-serif",
               fontSize: 11, fontWeight: 700, letterSpacing: '0.16em',
               textTransform: 'uppercase', color: '#D12918', marginBottom: 6,
-            }}>Saturday Plates</p>
+            }}>{previewLabel}</p>
             <h2 style={{ fontFamily: "'Nunito', sans-serif", fontWeight: 900, fontSize: 32, color: '#3A5A14' }}>
               This Week's Menu
             </h2>
           </div>
           <button
-            onClick={() => navigate('/menu')}
+            onClick={() => navigate('/menu', { state: { tab: nextDelivery.tab } })}
             style={{
               fontFamily: "'Nunito', sans-serif",
               background: 'none', border: 'none', cursor: 'pointer',
@@ -240,7 +255,6 @@ export default function Home() {
           gap: 20,
         }}>
           {loading ? (
-            // Skeleton cards while MongoDB loads
             [1,2,3].map(n => (
               <div key={n} style={{
                 borderRadius: 16, overflow: 'hidden',
@@ -255,8 +269,8 @@ export default function Home() {
               </div>
             ))
           ) : (
-            plateItems.filter(i => i.available).slice(0, 5).map(item => (
-              <FoodCard key={item.id} item={item} />
+            previewItems.filter(i => i.available).slice(0, 5).map(item => (
+              <FoodCard key={item.id} item={{ ...item, type: nextDelivery.tab }} />
             ))
           )}
         </div>

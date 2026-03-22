@@ -15,7 +15,7 @@ const STATUS = {
 
 const FALLBACK_STATUS = { bg: '#F5F5F5', color: '#888', border: '#ccc', label: 'Unknown' }
 
-export default function OrderCard({ order, onAccept, onDecline }) {
+export default function OrderCard({ order, onAccept, onDecline, onDelete }) {
   const navigate = useNavigate()
   const s        = STATUS[order.status] || FALLBACK_STATUS
   const isNew    = order.status === 'new'
@@ -161,8 +161,20 @@ export default function OrderCard({ order, onAccept, onDecline }) {
         </>
       )}
 
-      {/* ── View detail ── */}
-      <div style={{ padding: isNew ? '0 20px 14px' : '10px 20px 14px', textAlign: 'right' }}>
+      {/* ── View detail + Delete ── */}
+      <div style={{ padding: isNew ? '0 20px 14px' : '10px 20px 14px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <button
+          onClick={() => onDelete?.(order._id)}
+          style={{
+            background: 'none', border: 'none', cursor: 'pointer',
+            fontFamily: "'Nunito', sans-serif",
+            fontSize: 12, color: 'rgba(192,50,40,0.55)', fontWeight: 600,
+            letterSpacing: '0.02em', padding: 0,
+            transition: 'color 0.2s',
+          }}
+          onMouseEnter={e => e.currentTarget.style.color = '#C03228'}
+          onMouseLeave={e => e.currentTarget.style.color = 'rgba(192,50,40,0.55)'}
+        >🗑 Delete</button>
         <button
           onClick={() => navigate(`/admin/orders/${order._id}`)}
           style={{

@@ -32,7 +32,7 @@ function statusLabel(status) {
   return map[status] || status
 }
 
-export async function generateOrderLog(orders) {
+export async function generateOrderLog(orders, title = 'All Orders') {
   const doc    = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' })
   const PW     = 210  // page width mm
   const PH     = 297  // page height mm
@@ -87,7 +87,7 @@ export async function generateOrderLog(orders) {
   doc.setFontSize(14)
   doc.setTextColor(...WHITE)
   doc.setFont('helvetica', 'bold')
-  doc.text('Order Log Report', ML, 40)
+  doc.text(title, ML, 40)
 
   // Report meta
   doc.setFontSize(9)
@@ -380,6 +380,7 @@ export async function generateOrderLog(orders) {
   drawPageFooter()
 
   // ── Save ──────────────────────────────────────────────────
-  const dateStr = new Date().toISOString().slice(0, 10)
-  doc.save(`obaa-yaa-order-log-${dateStr}.pdf`)
+  const dateStr  = new Date().toISOString().slice(0, 10)
+  const safeName = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
+  doc.save(`obaa-yaa-${safeName}-${dateStr}.pdf`)
 }

@@ -33,6 +33,20 @@ export default function useOrders() {
     }
   }
 
+  const deleteOrder = async (id) => {
+    if (!confirm('Delete this order permanently? This cannot be undone.')) return
+    setOrders(prev => prev.filter(o => o._id !== id))
+    try {
+      await fetch(apiUrl('delete-order'), {
+        method:  'DELETE',
+        headers: { 'Content-Type': 'application/json', ...adminHeaders() },
+        body:    JSON.stringify({ orderId: id }),
+      })
+    } catch (err) {
+      console.error('Failed to delete order:', err)
+    }
+  }
+
   const stats = {
     total:    orders.length,
     newCount: orders.filter(o => o.status === 'new' || o.status === 'pending_payment').length,
@@ -47,5 +61,5 @@ export default function useOrders() {
     })
   })
 
-  return { orders, loading, error, updateStatus, stats }
+  return { orders, loading, error, updateStatus, deleteOrder, stats }
 }

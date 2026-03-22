@@ -1,13 +1,14 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import Footer from '../components/Footer'
 import FoodCard from '../components/FoodCard'
 import { plateCategories, trayCategories } from '../data/menu'
 import useMenu from '../hooks/useMenu'
 
 export default function Menu() {
-  const navigate = useNavigate()
-  const [tab, setTab] = useState('plate')
+  const navigate  = useNavigate()
+  const location  = useLocation()
+  const [tab, setTab] = useState(location.state?.tab || 'plate')
   const { plateItems, trayItems, loading } = useMenu()
 
   const items      = tab === 'plate' ? plateItems : trayItems

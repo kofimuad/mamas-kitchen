@@ -360,6 +360,21 @@ app.patch('/api/orders/:id', async (req, res) => {
   }
 })
 
+// ── DELETE /api/delete-order ───────────────────────────────
+app.delete('/api/delete-order', async (req, res) => {
+  if (req.headers['x-admin-pin'] !== process.env.ADMIN_PIN) {
+    return res.status(401).json({ error: 'Unauthorized' })
+  }
+  try {
+    const { ObjectId } = await import('mongodb')
+    const { orderId } = req.body
+    await (await db()).collection('orders').deleteOne({ _id: new ObjectId(orderId) })
+    res.json({ success: true })
+  } catch (err) {
+    res.status(500).json({ error: err.message })
+  }
+})
+
 app.listen(PORT, () => {
   console.log(`✓ API server running at http://localhost:${PORT}`)
   console.log(`  GET  http://localhost:${PORT}/api/get-menu`)
