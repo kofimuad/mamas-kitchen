@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
+import { getNextDeliveryLabel } from '../lib/weekUtils'
 
 const links = [
   { label: 'Home',      path: '/' },
@@ -12,6 +13,13 @@ export default function Navbar() {
   const [drawerOpen, setDrawer] = useState(false)
   const navigate  = useNavigate()
   const location  = useLocation()
+  const nextDelivery = getNextDeliveryLabel()
+
+  // Navigate to menu with the correct tab pre-selected based on next delivery
+  const goToMenu = () => {
+    navigate('/menu', { state: { tab: nextDelivery.tab } })
+    setDrawer(false)
+  }
 
   const onHome = location.pathname === '/'
 
@@ -39,7 +47,7 @@ export default function Navbar() {
       background: solid ? 'rgba(255,250,244,0.97)' : 'transparent',
       backdropFilter: solid ? 'blur(16px)' : 'none',
       WebkitBackdropFilter: solid ? 'blur(16px)' : 'none',
-      borderBottom: solid ? '1px solid rgba(209,41,24,0.15)' : '1px solid rgba(255,255,255,0.10)',
+      borderBottom: solid ? '1px solid rgba(209,41,24,0.15)' : 'none',
       boxShadow: solid ? '0 2px 24px rgba(209,41,24,0.07)' : 'none',
     }}>
 
@@ -81,13 +89,12 @@ export default function Navbar() {
         {/* Desktop links */}
         <div className="nav-links-desktop" style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
           {links.map(({ label, path }) => (
-            <button key={path} onClick={() => go(path)} style={{
-              position: 'relative',
+            <button key={path} onClick={() => path === '/menu' ? goToMenu() : go(path)} style={{
               padding: '8px 16px',
               fontSize: 12, fontWeight: 600,
               letterSpacing: '0.10em', textTransform: 'uppercase',
               background: 'none', border: 'none', cursor: 'pointer',
-              borderRadius: 6,
+              borderRadius: 6, position: 'relative', overflow: 'hidden',
               color: solid
                 ? (isActive(path) ? '#D12918' : '#456D1B')
                 : (isActive(path) ? '#fff' : 'rgba(255,255,255,0.75)'),
@@ -96,8 +103,8 @@ export default function Navbar() {
               {label}
               {/* Active underline */}
               <span style={{
-                position: 'absolute', bottom: 2, left: 16, right: 16,
-                height: 1.5, borderRadius: 2,
+                position: 'absolute', bottom: 0, left: 0, right: 0,
+                height: 2, borderRadius: 2,
                 background: solid ? '#D12918' : '#ED7D2B',
                 transform: isActive(path) ? 'scaleX(1)' : 'scaleX(0)',
                 transition: 'transform 0.25s ease',
@@ -153,7 +160,7 @@ export default function Navbar() {
           boxShadow: '0 8px 32px rgba(209,41,24,0.12)',
         }}>
           {links.map(({ label, path }) => (
-            <button key={path} onClick={() => go(path)} style={{
+            <button key={path} onClick={() => path === '/menu' ? goToMenu() : go(path)} style={{
               display: 'block', width: '100%', textAlign: 'left',
               padding: '14px 16px',
               fontSize: 13, fontWeight: 600,

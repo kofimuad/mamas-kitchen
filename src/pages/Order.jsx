@@ -36,10 +36,15 @@ export default function Order() {
   const cutoff = orderType ? cutoffs[orderType] : null
 
   // Pre-select the item once menu data has loaded
+  // If item not found (e.g. removed from menu), still land on step 1
   useEffect(() => {
-    if (preselect?.id && items.length > 0) {
-      const found = items.find(i => i.id === preselect.id)
-      if (found) setSelected([preselect.id])
+    if (!preselect?.id || items.length === 0) return
+    const found = items.find(i => i.id === preselect.id)
+    if (found) {
+      setSelected([preselect.id])
+    } else {
+      // Item not in active menu — just stay on step 1 so user can pick from what's available
+      setSelected([])
     }
   }, [preselect?.id, items.length])
 
@@ -109,7 +114,7 @@ export default function Order() {
 
   const categories = orderType === 'tray' ? trayCategories : plateCategories
   const grouped    = categories.reduce((acc, cat) => {
-    const catItems = items.filter(i => i.category === cat && i.available)
+    const catItems = items.filter(i => i.category === cat && i.available && i.price != null)
     if (catItems.length) acc[cat] = catItems
     return acc
   }, {})

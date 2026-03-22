@@ -17,18 +17,19 @@ export default function useMenu() {
         return r.json()
       })
       .then(data => {
-        if (data.exists && data.plateItems?.length) {
-          setPlateItems(data.plateItems)
-          setTrayItems(data.trayItems)
+        if (data.exists) {
+          // DB has a saved menu — use it as the source of truth
+          setPlateItems(data.plateItems?.length ? data.plateItems : defaultPlates)
+          setTrayItems(data.trayItems?.length   ? data.trayItems  : defaultTrays)
           setLastSaved(data.updatedAt)
         } else {
-          // No saved menu in DB — fall back to defaults
+          // No menu saved in DB yet — fall back to menu.js defaults
           setPlateItems(defaultPlates)
           setTrayItems(defaultTrays)
         }
       })
       .catch(() => {
-        // API unreachable — fall back to defaults silently
+        // API unreachable — fall back to defaults
         setPlateItems(defaultPlates)
         setTrayItems(defaultTrays)
       })

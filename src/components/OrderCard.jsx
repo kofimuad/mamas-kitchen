@@ -55,6 +55,18 @@ export default function OrderCard({ order, onAccept, onDecline, onDelete }) {
             {branch}{battalion ? ` · ${battalion}` : ''}
             {phone ? ` · ${phone}` : ''}
           </div>
+          {order.createdAt && (
+            <div style={{
+              fontFamily: "'Nunito', sans-serif",
+              fontSize: 11, color: '#6B8F3A', marginTop: 3,
+              opacity: 0.75,
+            }}>
+              {new Date(order.createdAt).toLocaleString('en-US', {
+                weekday: 'short', month: 'short', day: 'numeric',
+                hour: 'numeric', minute: '2-digit', hour12: true,
+              })}
+            </div>
+          )}
         </div>
 
         {/* Status badge */}

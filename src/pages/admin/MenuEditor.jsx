@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import {
   plateCategories, trayCategories,
@@ -58,10 +58,15 @@ export default function MenuEditor() {
   // ── Add new item ──
   const [addingCat, setAddingCat] = useState(null)
   const [newItem,   setNewItem]   = useState({ name: '', price: '', category: '' })
+  const addFormRefs = useRef({}) // one ref per category
 
   const openAdd = (cat) => {
     setAddingCat(cat)
     setNewItem({ name: '', price: '', category: cat, image: '', customName: false })
+    // Scroll to form after React renders it
+    setTimeout(() => {
+      addFormRefs.current[cat]?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    }, 80)
   }
 
   const confirmAdd = () => {
@@ -350,11 +355,13 @@ export default function MenuEditor() {
 
           {/* Add item inline form */}
           {addingCat === cat && (
-            <div style={{
-              padding: 16, background: 'rgba(209,41,24,0.04)',
-              border: '1.5px dashed rgba(209,41,24,0.30)',
-              borderRadius: 14, marginTop: 4,
-            }}>
+            <div
+              ref={el => addFormRefs.current[cat] = el}
+              style={{
+                padding: 16, background: 'rgba(209,41,24,0.04)',
+                border: '1.5px dashed rgba(209,41,24,0.30)',
+                borderRadius: 14, marginTop: 4,
+              }}>
               <div style={{ fontSize: 12, fontWeight: 700, color: '#D12918', marginBottom: 14 }}>
                 New {cat} Item
               </div>
@@ -483,6 +490,22 @@ export default function MenuEditor() {
                       />
                     </div>
                     <span style={{ fontSize: 11, color: '#6B8F3A', marginLeft: 8 }}>tap photo or name to edit</span>
+
+                    {/* Description */}
+                    <textarea
+                      placeholder="Description (optional but recommended)..."
+                      value={newItem.description || ''}
+                      onChange={e => setNewItem(n => ({ ...n, description: e.target.value }))}
+                      rows={2}
+                      style={{
+                        width: '100%', marginTop: 10,
+                        fontSize: 12, color: '#456D1B', lineHeight: 1.6,
+                        border: '1px solid rgba(209,41,24,0.18)', borderRadius: 8,
+                        padding: '7px 10px', outline: 'none', resize: 'vertical',
+                        fontFamily: 'inherit', background: 'rgba(209,41,24,0.02)',
+                        boxSizing: 'border-box',
+                      }}
+                    />
                   </div>
                 </div>
               )}

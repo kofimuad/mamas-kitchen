@@ -269,7 +269,7 @@ export default function Home() {
               </div>
             ))
           ) : (
-            previewItems.filter(i => i.available).slice(0, 5).map(item => (
+            previewItems.filter(i => i.available && i.price != null).slice(0, 5).map(item => (
               <FoodCard key={item.id} item={{ ...item, type: nextDelivery.tab }} />
             ))
           )}

@@ -15,7 +15,7 @@ export default function Menu() {
   const categories = tab === 'plate' ? plateCategories : trayCategories
 
   const grouped = categories.reduce((acc, cat) => {
-    const catItems = items.filter(i => i.category === cat && i.available)
+    const catItems = items.filter(i => i.category === cat && i.available && i.price != null)
     if (catItems.length) acc[cat] = catItems
     return acc
   }, {})
