@@ -199,7 +199,11 @@ export async function generateOrderLog(orders, title = 'All Orders') {
   doc.line(ML, y, ML + 36, y)
   y += 8
 
-  orders.forEach((order, idx) => {
+  // Sort orders by createdAt ascending so day groups flow chronologically
+  const sortedOrders = [...orders].sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt))
+  let currentDayKey = null
+
+  sortedOrders.forEach((order, idx) => {
     const items   = order.items || order.plates || []
     const info    = order.info || {}
     const name    = info.name    || order.customerName || '—'
@@ -210,6 +214,31 @@ export async function generateOrderLog(orders, title = 'All Orders') {
     const payH    = info.paymentHandle  || '—'
     const status  = order.status || 'unknown'
     const isConf  = status === 'confirmed' || status === 'delivered'
+
+    // ── Day separator ──────────────────────────────────────
+    const orderDate  = new Date(order.createdAt)
+    const dayKey     = orderDate.toISOString().slice(0, 10)
+    if (dayKey !== currentDayKey) {
+      currentDayKey = dayKey
+      checkPage(18)
+      const dayLabel = orderDate.toLocaleDateString('en-US', {
+        weekday: 'long', month: 'long', day: 'numeric', year: 'numeric',
+      })
+      const dayTime = orderDate.toLocaleTimeString('en-US', {
+        hour: 'numeric', minute: '2-digit', hour12: true,
+      })
+      // Day band
+      doc.setFillColor(245, 237, 204)
+      doc.rect(ML, y, CW, 10, 'F')
+      doc.setFontSize(8.5)
+      doc.setFont('helvetica', 'bold')
+      doc.setTextColor(...BROWN)
+      doc.text(dayLabel, ML + 4, y + 7)
+      doc.setFont('helvetica', 'normal')
+      doc.setTextColor(...MGRAY)
+      doc.text(`First order: ${dayTime}`, PW - MR, y + 7, { align: 'right' })
+      y += 14
+    }
 
     // Estimate height needed for this order
     const neededH = 14 + (items.length * 6) + 48

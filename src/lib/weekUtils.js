@@ -6,26 +6,32 @@
 // - Tray orders:  cutoff Monday 8PM,   delivery Wednesday
 
 // Returns 'plate' or 'tray' based on what the next upcoming delivery is
+// Schedule:
+//   Tray cutoff: Monday 8PM → delivery Wednesday
+//   Plate cutoff: Thursday 8PM → delivery Saturday
+//
+// Day windows:
+//   Sun           → next = Wednesday tray
+//   Mon before 8PM → next = Wednesday tray   (still can order)
+//   Mon 8PM+      → next = Saturday plate    (tray cutoff passed)
+//   Tue           → next = Saturday plate
+//   Wed           → next = Saturday plate
+//   Thu before 8PM → next = Saturday plate   (still can order)
+//   Thu 8PM+      → next = Wednesday tray    (plate cutoff passed)
+//   Fri           → next = Wednesday tray
+//   Sat           → next = Wednesday tray
 export function getNextDeliveryType() {
-  const now     = new Date()
-  const day     = now.getDay() // 0=Sun,1=Mon,2=Tue,3=Wed,4=Thu,5=Fri,6=Sat
-  const hour    = now.getHours()
+  const now  = new Date()
+  const day  = now.getDay() // 0=Sun,1=Mon,2=Tue,3=Wed,4=Thu,5=Fri,6=Sat
+  const hour = now.getHours()
 
-  // After Saturday delivery (Sat after ~noon) through Monday 8PM → next is Wednesday trays
-  // After Wednesday delivery (Wed after ~noon) through Thursday 8PM → next is Saturday plates
-
-  // If today is Sunday, Monday before 8PM → next delivery is Wednesday (tray)
-  if (day === 0) return 'tray'
-  if (day === 1 && hour < 20) return 'tray'
-  // Monday 8PM through Wednesday → tray cutoff passed, next is Saturday plates
-  if (day === 1 && hour >= 20) return 'plate'
-  if (day === 2) return 'plate'
-  if (day === 3) return 'plate'
-  if (day === 4 && hour < 20) return 'plate'
-  // Thursday 8PM through Saturday → plate cutoff passed, next is Wednesday trays
-  if (day === 4 && hour >= 20) return 'tray'
-  if (day === 5) return 'tray'
-  if (day === 6) return 'tray'
+  if (day === 0) return 'tray'                          // Sunday
+  if (day === 1) return hour < 20 ? 'tray'  : 'plate'  // Monday
+  if (day === 2) return 'plate'                         // Tuesday
+  if (day === 3) return 'plate'                         // Wednesday
+  if (day === 4) return hour < 20 ? 'plate' : 'tray'   // Thursday
+  if (day === 5) return 'tray'                          // Friday
+  if (day === 6) return 'tray'                          // Saturday
   return 'plate'
 }
 
