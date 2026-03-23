@@ -180,29 +180,41 @@ app.post('/api/submit-order', async (req, res) => {
     const result  = await database.collection('orders').insertOne(order)
     const orderId = result.insertedId.toString()
 
-    // WhatsApp notification
-    const baseUrl    = process.env.SITE_URL || `http://localhost:5173`
-    const adminLink  = `${baseUrl}/admin/orders/${orderId}`
-    const statusLink = `${baseUrl}/order-status/${orderId}`
-    const itemsText  = items.map(p => `  • ${p.name}${p.qty > 1 ? ` ×${p.qty}` : ''} — $${p.price * p.qty}`).join('\n')
-    const payLabel   = info.paymentMethod === 'zelle' ? 'Zelle' : 'Cash App'
-    const divider    = '─────────────────────'
-
-    const message =
-      `🍛 *New Order — Obaa Yaa's Kitchen*\n${divider}\n\n` +
-      `👤 *${info.name}*\n📞 ${info.phone || '—'}\n🪖 ${info.branch}${info.battalion ? ' · ' + info.battalion : ''}\n\n` +
-      `🍽 *Order (${orderType === 'tray' ? 'Tray — Wed' : 'Plate — Sat'}):*\n${itemsText}\n\n` +
-      `💰 *Total: $${total}*\n💳 Paying via *${payLabel}*\n   Handle: *${info.paymentHandle}*\n\n` +
-      `${divider}\n✅ *Confirm order here:*\n${adminLink}\n\n📋 Customer status:\n${statusLink}`
+    // WhatsApp notification — using approved template (works 24/7)
+    const baseUrl   = process.env.SITE_URL || `http://localhost:5173`
+    const adminLink = `${baseUrl}/admin/orders/${orderId}`
+    const itemsText = items.map(p => `${p.name}${p.qty > 1 ? ` x${p.qty}` : ''}`).join(', ')
+    const payLabel  = info.paymentMethod === 'cashapp' ? 'Cash App' : 'Zelle'
 
     try {
       const waRes = await fetch(`https://graph.facebook.com/v22.0/${process.env.META_PHONE_NUMBER_ID}/messages`, {
         method: 'POST',
         headers: { Authorization: `Bearer ${process.env.META_WHATSAPP_TOKEN}`, 'Content-Type': 'application/json' },
-        body: JSON.stringify({ messaging_product: 'whatsapp', to: process.env.MAMA_WHATSAPP_NUMBER, type: 'text', text: { body: message } }),
+        body: JSON.stringify({
+          messaging_product: 'whatsapp',
+          to:   process.env.MAMA_WHATSAPP_NUMBER,
+          type: 'template',
+          template: {
+            name:     'new_order_notification',
+            language: { code: 'en' },
+            components: [{
+              type:       'body',
+              parameters: [
+                { type: 'text', text: info.name || '—' },
+                { type: 'text', text: `${info.branch || '—'}${info.battalion ? ' · ' + info.battalion : ''}` },
+                { type: 'text', text: itemsText || '—' },
+                { type: 'text', text: String(total || 0) },
+                { type: 'text', text: payLabel },
+                { type: 'text', text: info.paymentHandle || '—' },
+                { type: 'text', text: adminLink },
+              ],
+            }],
+          },
+        }),
       })
+      const waData = await waRes.json()
       if (waRes.ok) console.log('✓ WhatsApp sent for order:', orderId)
-      else console.error('WhatsApp failed:', await waRes.text())
+      else console.error('WhatsApp failed:', JSON.stringify(waData))
     } catch (waErr) { console.error('WhatsApp error:', waErr.message) }
 
     res.json({ success: true, orderId })
