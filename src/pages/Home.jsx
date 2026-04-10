@@ -176,7 +176,7 @@ export default function Home() {
               day: 'Saturday',
               orderType: 'plate',
               type: 'Plate Orders',
-              cutoff: 'Order by Thursday 8 PM',
+              cutoff: 'Order by Friday 6 PM',
               desc: 'Individual plates — your personal taste of home every week.',
               bg: '#D12918',
             },

@@ -226,7 +226,7 @@ export const trayCategories  = ['Jollof', 'Waakye', 'Fried Rice', 'Soup', 'Speci
 
 // ─── CUTOFF TIMES ────────────────────────────────────────────
 export const cutoffs = {
-  plate: { day: 'Thursday', hour: 20, time: '8 PM', delivery: 'Saturday' },
+  plate: { day: 'Friday', hour: 18, time: '6 PM', delivery: 'Saturday' },
   tray:  { day: 'Monday',   hour: 20, time: '8 PM', delivery: 'Wednesday' },
 }
 

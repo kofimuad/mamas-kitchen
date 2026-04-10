@@ -132,8 +132,8 @@ export default function Order() {
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: 16, marginBottom: 32 }}>
             {[
-              { type: 'plate', label: 'Plate Order', sub: 'Individual plates · Delivered Saturday', cutoffText: 'Order by Thursday 8 PM', accent: '#D12918' },
-              { type: 'tray',  label: 'Tray Order',  sub: 'Large trays · Feeds a group · Delivered Wednesday', cutoffText: 'Order by Monday 8 PM', accent: '#3A5A14' },
+              { type: 'plate', label: 'Plate Order', sub: `Individual plates · Delivered ${cutoffs.plate.delivery}`, cutoffText: `Order by ${cutoffs.plate.day} ${cutoffs.plate.time}`, accent: '#D12918' },
+              { type: 'tray',  label: 'Tray Order',  sub: `Large trays · Feeds a group · Delivered ${cutoffs.tray.delivery}`, cutoffText: `Order by ${cutoffs.tray.day} ${cutoffs.tray.time}`, accent: '#3A5A14' },
             ].map(({ type, label, sub, cutoffText, accent }) => (
               <div key={type}
                 onClick={() => { setOrderType(type); setStep(1) }}

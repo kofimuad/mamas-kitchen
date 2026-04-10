@@ -2,13 +2,13 @@
 // Utilities for determining the current delivery week and next upcoming event
 
 // Delivery schedule:
-// - Plate orders: cutoff Thursday 8PM, delivery Saturday
+// - Plate orders: cutoff Friday 6PM, delivery Saturday
 // - Tray orders:  cutoff Monday 8PM,   delivery Wednesday
 
 // Returns 'plate' or 'tray' based on what the next upcoming delivery is
 // Schedule:
 //   Tray cutoff: Monday 8PM → delivery Wednesday
-//   Plate cutoff: Thursday 8PM → delivery Saturday
+//   Plate cutoff: Friday 6PM → delivery Saturday
 //
 // Day windows:
 //   Sun           → next = Wednesday tray
@@ -16,9 +16,9 @@
 //   Mon 8PM+      → next = Saturday plate    (tray cutoff passed)
 //   Tue           → next = Saturday plate
 //   Wed           → next = Saturday plate
-//   Thu before 8PM → next = Saturday plate   (still can order)
-//   Thu 8PM+      → next = Wednesday tray    (plate cutoff passed)
-//   Fri           → next = Wednesday tray
+//   Thu           → next = Saturday plate
+//   Fri before 6PM → next = Saturday plate   (still can order)
+//   Fri 6PM+      → next = Wednesday tray    (plate cutoff passed)
 //   Sat           → next = Wednesday tray
 export function getNextDeliveryType() {
   const now  = new Date()
@@ -29,8 +29,8 @@ export function getNextDeliveryType() {
   if (day === 1) return hour < 20 ? 'tray'  : 'plate'  // Monday
   if (day === 2) return 'plate'                         // Tuesday
   if (day === 3) return 'plate'                         // Wednesday
-  if (day === 4) return hour < 20 ? 'plate' : 'tray'   // Thursday
-  if (day === 5) return 'tray'                          // Friday
+  if (day === 4) return 'plate'                         // Thursday
+  if (day === 5) return hour < 18 ? 'plate' : 'tray'   // Friday
   if (day === 6) return 'tray'                          // Saturday
   return 'plate'
 }
@@ -39,7 +39,7 @@ export function getNextDeliveryType() {
 export function getNextDeliveryLabel() {
   return getNextDeliveryType() === 'tray'
     ? { type: 'tray',  day: 'Wednesday', cutoff: 'Monday 8 PM',   tab: 'tray'  }
-    : { type: 'plate', day: 'Saturday',  cutoff: 'Thursday 8 PM', tab: 'plate' }
+    : { type: 'plate', day: 'Saturday',  cutoff: 'Friday 6 PM',   tab: 'plate' }
 }
 
 // Get the Monday of the current week (week starts Monday)

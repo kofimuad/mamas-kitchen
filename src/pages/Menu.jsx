@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import Footer from '../components/Footer'
 import FoodCard from '../components/FoodCard'
-import { plateCategories, trayCategories } from '../data/menu'
+import { plateCategories, trayCategories, cutoffs } from '../data/menu'
 import useMenu from '../hooks/useMenu'
 
 export default function Menu() {
@@ -38,7 +38,7 @@ export default function Menu() {
           border: '1px solid rgba(209,41,24,0.15)',
         }}>
           {[
-            { key: 'plate', label: '🍽️ Saturday Plates',   sub: 'Order by Thu 8 PM' },
+            { key: 'plate', label: '🍽️ Saturday Plates',   sub: `Order by ${cutoffs.plate.day} ${cutoffs.plate.time}` },
             { key: 'tray',  label: '🥘 Wednesday Trays',   sub: 'Order by Mon 8 PM' },
           ].map(t => (
             <button key={t.key} onClick={() => setTab(t.key)} style={{
@@ -115,7 +115,9 @@ export default function Menu() {
               fontFamily: "'Nunito', sans-serif",
               fontSize: 13, color: 'rgba(255,255,255,0.55)',
             }}>
-              {tab === 'plate' ? 'Cutoff Thursday 8 PM · Delivery Saturday' : 'Cutoff Monday 8 PM · Delivery Wednesday'}
+              {tab === 'plate'
+                ? `Cutoff ${cutoffs.plate.day} ${cutoffs.plate.time} · Delivery ${cutoffs.plate.delivery}`
+                : `Cutoff ${cutoffs.tray.day} ${cutoffs.tray.time} · Delivery ${cutoffs.tray.delivery}`}
             </div>
           </div>
           <button

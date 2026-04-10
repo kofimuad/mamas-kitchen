@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router-dom'
+import { cutoffs } from '../data/menu'
 
 export default function Footer() {
   const navigate = useNavigate()
@@ -96,7 +97,7 @@ export default function Footer() {
               <div style={{
                 fontFamily: "'Nunito', sans-serif",
                 fontSize: 12, color: 'rgba(255,255,255,0.75)',
-              }}>Order by Thursday 8 PM</div>
+              }}>Order by {cutoffs.plate.day} {cutoffs.plate.time}</div>
             </div>
 
             <div style={{ marginBottom: 24 }}>
