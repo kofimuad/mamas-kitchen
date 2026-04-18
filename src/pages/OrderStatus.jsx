@@ -129,10 +129,20 @@ export default function OrderStatus() {
               <div style={{ fontFamily: "'Nunito', sans-serif", fontSize: 11, fontWeight: 700, color: '#456D1B', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 12 }}>
                 Next Step — Send Payment
               </div>
-              <p style={{ fontFamily: "'Nunito', sans-serif", fontSize: 14, color: '#3A5A14', lineHeight: 1.7, margin: 0 }}>
+              <p style={{ fontFamily: "'Nunito', sans-serif", fontSize: 14, color: '#3A5A14', lineHeight: 1.7, margin: '0 0 14px' }}>
                 Send <strong style={{ color: '#D12918' }}>${order.total}</strong> to Obaa Yaa via Zelle or Cash App.
                 Once she receives it, she will confirm your order and this page will update automatically.
               </p>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10, background: 'rgba(255,255,255,0.6)', borderRadius: 8, padding: '10px 14px' }}>
+                  <span style={{ fontFamily: "'Nunito', sans-serif", fontSize: 12, fontWeight: 700, color: '#456D1B', textTransform: 'uppercase', letterSpacing: '0.06em', minWidth: 56 }}>Zelle</span>
+                  <span style={{ fontFamily: "'Nunito', sans-serif", fontSize: 14, color: '#3A5A14', fontWeight: 600 }}>706-577-3297 · Mayfred Mensah</span>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10, background: 'rgba(255,255,255,0.6)', borderRadius: 8, padding: '10px 14px' }}>
+                  <span style={{ fontFamily: "'Nunito', sans-serif", fontSize: 12, fontWeight: 700, color: '#456D1B', textTransform: 'uppercase', letterSpacing: '0.06em', minWidth: 56 }}>Cash App</span>
+                  <span style={{ fontFamily: "'Nunito', sans-serif", fontSize: 14, color: '#3A5A14', fontWeight: 600 }}>$mayfredmensah</span>
+                </div>
+              </div>
             </div>
           )}
 
