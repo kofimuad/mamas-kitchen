@@ -110,7 +110,7 @@ export default function OrderDetail() {
       )}
 
       {order.status === 'confirmed' && (
-        <div style={{ marginBottom: 24 }}>
+        <div style={{ marginBottom: 24, display: 'flex', flexDirection: 'column', gap: 10 }}>
           <button
             onClick={() => updateStatus('delivered')}
             disabled={saving}
@@ -123,6 +123,20 @@ export default function OrderDetail() {
             }}
           >
             {saving ? 'Updating...' : 'Mark as Delivered'}
+          </button>
+          <button
+            onClick={() => updateStatus('pending_payment')}
+            disabled={saving}
+            style={{
+              width: '100%', padding: '12px',
+              background: 'transparent',
+              border: '1.5px solid rgba(237,125,43,0.5)',
+              borderRadius: 10,
+              color: '#ED7D2B', fontFamily: "'Nunito', sans-serif",
+              fontSize: 13, fontWeight: 700, cursor: saving ? 'not-allowed' : 'pointer',
+            }}
+          >
+            ↩ Undo Approval — Payment Not Received
           </button>
         </div>
       )}
