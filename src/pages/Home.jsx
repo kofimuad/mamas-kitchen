@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom'
 import FoodCard from '../components/FoodCard'
+import FoodShowcaseSlider from '../components/FoodShowcaseSlider'
 import Footer from '../components/Footer'
 import useMenu from '../hooks/useMenu'
 import { getNextDeliveryLabel } from '../lib/weekUtils'
@@ -12,6 +13,8 @@ export default function Home() {
   // Show items for the next upcoming delivery
   const previewItems = nextDelivery.type === 'tray' ? trayItems : plateItems
   const previewLabel = nextDelivery.type === 'tray' ? 'Wednesday Trays' : 'Saturday Plates'
+  const availablePreview = previewItems.filter(i => i.available && i.price != null)
+  const showShowcase = !loading && availablePreview.length === 0
 
   return (
     <div>
@@ -224,7 +227,7 @@ export default function Home() {
       </div>
 
       {/* ══════════════════════════════
-          THIS WEEK'S MENU PREVIEW
+          THIS WEEK'S MENU / FOOD SHOWCASE
       ══════════════════════════════ */}
       <div style={{ padding: '52px 40px 0' }}>
         <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', marginBottom: 28 }}>
@@ -233,29 +236,37 @@ export default function Home() {
               fontFamily: "'Nunito', sans-serif",
               fontSize: 11, fontWeight: 700, letterSpacing: '0.16em',
               textTransform: 'uppercase', color: '#D12918', marginBottom: 6,
-            }}>{previewLabel}</p>
-            <h2 style={{ fontFamily: "'Nunito', sans-serif", fontWeight: 900, fontSize: 32, color: '#3A5A14' }}>
-              This Week's Menu
+            }}>{showShowcase ? 'What We Make' : previewLabel}</p>
+            <h2 style={{ fontFamily: "'Nunito', sans-serif", fontWeight: 900, fontSize: 32, color: '#3A5A14', margin: 0 }}>
+              {showShowcase ? 'Our Menu' : "This Week's Menu"}
             </h2>
           </div>
-          <button
-            onClick={() => navigate('/menu', { state: { tab: nextDelivery.tab } })}
-            style={{
+          {showShowcase ? (
+            <p style={{
               fontFamily: "'Nunito', sans-serif",
-              background: 'none', border: 'none', cursor: 'pointer',
-              fontSize: 13, fontWeight: 700, color: '#D12918',
-              letterSpacing: '0.04em',
-            }}
-          >View full menu →</button>
+              fontSize: 13, color: '#6B8F3A',
+              textAlign: 'right', maxWidth: 240, margin: 0, lineHeight: 1.6,
+            }}>Ordering is closed — check back soon for the next drop!</p>
+          ) : (
+            <button
+              onClick={() => navigate('/menu', { state: { tab: nextDelivery.tab } })}
+              style={{
+                fontFamily: "'Nunito', sans-serif",
+                background: 'none', border: 'none', cursor: 'pointer',
+                fontSize: 13, fontWeight: 700, color: '#D12918',
+                letterSpacing: '0.04em',
+              }}
+            >View full menu →</button>
+          )}
         </div>
 
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))',
-          gap: 20,
-        }}>
-          {loading ? (
-            [1,2,3].map(n => (
+        {loading ? (
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))',
+            gap: 20,
+          }}>
+            {[1,2,3].map(n => (
               <div key={n} style={{
                 borderRadius: 16, overflow: 'hidden',
                 background: '#fff',
@@ -267,13 +278,21 @@ export default function Home() {
                   <div style={{ height: 13, width: '90%', borderRadius: 6, background: 'linear-gradient(90deg, #f0e8e0 25%, #e8ddd5 50%, #f0e8e0 75%)', backgroundSize: '200% 100%', animation: 'shimmer 1.4s infinite' }} />
                 </div>
               </div>
-            ))
-          ) : (
-            previewItems.filter(i => i.available && i.price != null).slice(0, 5).map(item => (
+            ))}
+          </div>
+        ) : showShowcase ? (
+          <FoodShowcaseSlider plateItems={plateItems} trayItems={trayItems} />
+        ) : (
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))',
+            gap: 20,
+          }}>
+            {availablePreview.slice(0, 5).map(item => (
               <FoodCard key={item.id} item={{ ...item, type: nextDelivery.tab }} />
-            ))
-          )}
-        </div>
+            ))}
+          </div>
+        )}
       </div>
 
 
