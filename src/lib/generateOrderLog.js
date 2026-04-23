@@ -119,6 +119,10 @@ export async function generateOrderLog(orders, title = 'All Orders') {
   let confirmedCount = 0
   let pendingCount = 0
   const itemFreq = {}
+  const payMethodCounts = {}
+  const payMethodRevenue = {}
+  const branchCounts = {}
+  const orderTypeCounts = { tray: 0, plate: 0 }
 
   orders.forEach(o => {
     const s = o.status || 'unknown'
@@ -128,12 +132,26 @@ export async function generateOrderLog(orders, title = 'All Orders') {
       confirmedCount++
     }
     if (s === 'pending_payment') pendingCount++
+
     ;(o.items || o.plates || []).forEach(p => {
       itemFreq[p.name] = (itemFreq[p.name] || 0) + (p.qty || 1)
     })
+
+    const payM = (o.info?.paymentMethod || o.paymentMethod || 'unknown').toLowerCase()
+    const payLabel = payM === 'cashapp' ? 'Cash App' : payM === 'zelle' ? 'Zelle' : payM.charAt(0).toUpperCase() + payM.slice(1)
+    payMethodCounts[payLabel] = (payMethodCounts[payLabel] || 0) + 1
+    if (s === 'confirmed' || s === 'delivered') {
+      payMethodRevenue[payLabel] = (payMethodRevenue[payLabel] || 0) + (o.total || 0)
+    }
+
+    const branch = o.info?.branch || o.branch || 'Unknown'
+    branchCounts[branch] = (branchCounts[branch] || 0) + 1
+
+    if (o.orderType === 'tray') orderTypeCounts.tray++
+    else orderTypeCounts.plate++
   })
 
-  const topItems = Object.entries(itemFreq).sort((a, b) => b[1] - a[1]).slice(0, 5)
+  const allItems = Object.entries(itemFreq).sort((a, b) => b[1] - a[1])
 
   // Stats boxes (2 columns)
   const stats = [
@@ -160,29 +178,181 @@ export async function generateOrderLog(orders, title = 'All Orders') {
     doc.setFont('helvetica', 'bold')
     doc.text(s.value, bx + 5, by + 14)
   })
-  y += 48
+  y += 50
 
-  // Top items
-  if (topItems.length > 0) {
+  // ── ITEMS TO PREPARE (full list) ───────────────────────────
+  if (allItems.length > 0) {
+    checkPage(14 + allItems.length * 7)
     doc.setFontSize(9)
     doc.setTextColor(...BROWN)
     doc.setFont('helvetica', 'bold')
-    doc.text('Most Ordered Items', ML, y)
+    doc.text('Items to Prepare', ML, y)
+    y += 4
+    doc.setDrawColor(...ORANGE)
+    doc.setLineWidth(0.5)
+    doc.line(ML, y, ML + 40, y)
     y += 5
 
-    topItems.forEach(([name, count], i) => {
-      doc.setFontSize(8.5)
+    // Header row
+    doc.setFillColor(242, 232, 220)
+    doc.rect(ML, y, CW, 6.5, 'F')
+    doc.setFontSize(7.5)
+    doc.setFont('helvetica', 'bold')
+    doc.setTextColor(...BROWN)
+    doc.text('#', ML + 3, y + 4.5)
+    doc.text('Item', ML + 10, y + 4.5)
+    doc.text('Qty', PW - MR - 3, y + 4.5, { align: 'right' })
+    y += 8
+
+    allItems.forEach(([name, count], i) => {
+      checkPage(8)
+      const rowBg = i % 2 === 0 ? [252, 248, 244] : [255, 255, 255]
+      doc.setFillColor(...rowBg)
+      doc.rect(ML, y - 3.5, CW, 7, 'F')
+      doc.setFontSize(8)
       doc.setFont('helvetica', 'normal')
+      doc.setTextColor(...MGRAY)
+      doc.text(String(i + 1), ML + 3, y + 0.5)
       doc.setTextColor(...BROWN)
-      doc.text(`${i + 1}. ${name}`, ML + 3, y)
+      const nameLines = doc.splitTextToSize(name, CW - 30)
+      doc.text(nameLines, ML + 10, y + 0.5)
       doc.setFont('helvetica', 'bold')
       doc.setTextColor(...ORANGE)
-      doc.text(`×${count}`, PW - MR, y, { align: 'right' })
-      y += 6
+      doc.text(`×${count}`, PW - MR - 3, y + 0.5, { align: 'right' })
+      y += nameLines.length * 7
     })
+
+    // Total portions row
+    const totalPortions = allItems.reduce((sum, [, c]) => sum + c, 0)
+    doc.setFillColor(242, 232, 220)
+    doc.rect(ML, y - 2, CW, 7, 'F')
+    doc.setFontSize(8)
+    doc.setFont('helvetica', 'bold')
+    doc.setTextColor(...BROWN)
+    doc.text('TOTAL PORTIONS', ML + 10, y + 2.5)
+    doc.setTextColor(...ORANGE)
+    doc.text(`×${totalPortions}`, PW - MR - 3, y + 2.5, { align: 'right' })
+    y += 12
   }
 
-  y += 8
+  // ── ORDER TYPE BREAKDOWN ────────────────────────────────────
+  checkPage(30)
+  const hasMultipleTypes = orderTypeCounts.tray > 0 && orderTypeCounts.plate > 0
+  if (hasMultipleTypes || orderTypeCounts.tray > 0 || orderTypeCounts.plate > 0) {
+    doc.setFontSize(9)
+    doc.setTextColor(...BROWN)
+    doc.setFont('helvetica', 'bold')
+    doc.text('Order Types', ML, y)
+    y += 4
+    doc.setDrawColor(...ORANGE)
+    doc.setLineWidth(0.5)
+    doc.line(ML, y, ML + 30, y)
+    y += 5
+
+    const typeRows = []
+    if (orderTypeCounts.tray > 0) typeRows.push(['Wednesday Trays', orderTypeCounts.tray])
+    if (orderTypeCounts.plate > 0) typeRows.push(['Saturday Plates', orderTypeCounts.plate])
+
+    typeRows.forEach(([label, count], i) => {
+      const rowBg = i % 2 === 0 ? [252, 248, 244] : [255, 255, 255]
+      doc.setFillColor(...rowBg)
+      doc.rect(ML, y - 3.5, CW, 7, 'F')
+      doc.setFontSize(8)
+      doc.setFont('helvetica', 'normal')
+      doc.setTextColor(...BROWN)
+      doc.text(label, ML + 5, y + 0.5)
+      doc.setFont('helvetica', 'bold')
+      doc.setTextColor(...ORANGE)
+      doc.text(`${count} order${count !== 1 ? 's' : ''}`, PW - MR - 3, y + 0.5, { align: 'right' })
+      y += 7
+    })
+    y += 5
+  }
+
+  // ── PAYMENT METHOD BREAKDOWN ────────────────────────────────
+  checkPage(30)
+  const payEntries = Object.entries(payMethodCounts)
+  if (payEntries.length > 0) {
+    doc.setFontSize(9)
+    doc.setTextColor(...BROWN)
+    doc.setFont('helvetica', 'bold')
+    doc.text('Payment Methods', ML, y)
+    y += 4
+    doc.setDrawColor(...ORANGE)
+    doc.setLineWidth(0.5)
+    doc.line(ML, y, ML + 38, y)
+    y += 5
+
+    // Header
+    doc.setFillColor(242, 232, 220)
+    doc.rect(ML, y, CW, 6.5, 'F')
+    doc.setFontSize(7.5)
+    doc.setFont('helvetica', 'bold')
+    doc.setTextColor(...BROWN)
+    doc.text('Method', ML + 5, y + 4.5)
+    doc.text('Orders', ML + CW / 2, y + 4.5, { align: 'center' })
+    doc.text('Revenue', PW - MR - 3, y + 4.5, { align: 'right' })
+    y += 8
+
+    payEntries.sort((a, b) => b[1] - a[1]).forEach(([method, count], i) => {
+      const rowBg = i % 2 === 0 ? [252, 248, 244] : [255, 255, 255]
+      doc.setFillColor(...rowBg)
+      doc.rect(ML, y - 3.5, CW, 7, 'F')
+      doc.setFontSize(8)
+      doc.setFont('helvetica', 'normal')
+      doc.setTextColor(...BROWN)
+      doc.text(method, ML + 5, y + 0.5)
+      doc.setTextColor(...MGRAY)
+      doc.text(`${count} order${count !== 1 ? 's' : ''}`, ML + CW / 2, y + 0.5, { align: 'center' })
+      doc.setFont('helvetica', 'bold')
+      doc.setTextColor(...ORANGE)
+      doc.text(`$${payMethodRevenue[method] || 0}`, PW - MR - 3, y + 0.5, { align: 'right' })
+      y += 7
+    })
+    y += 5
+  }
+
+  // ── BRANCH BREAKDOWN ───────────────────────────────────────
+  const branchEntries = Object.entries(branchCounts).sort((a, b) => b[1] - a[1])
+  if (branchEntries.length > 1) {
+    checkPage(14 + branchEntries.length * 7)
+    doc.setFontSize(9)
+    doc.setTextColor(...BROWN)
+    doc.setFont('helvetica', 'bold')
+    doc.text('Orders by Branch', ML, y)
+    y += 4
+    doc.setDrawColor(...ORANGE)
+    doc.setLineWidth(0.5)
+    doc.line(ML, y, ML + 38, y)
+    y += 5
+
+    // Header
+    doc.setFillColor(242, 232, 220)
+    doc.rect(ML, y, CW, 6.5, 'F')
+    doc.setFontSize(7.5)
+    doc.setFont('helvetica', 'bold')
+    doc.setTextColor(...BROWN)
+    doc.text('Branch', ML + 5, y + 4.5)
+    doc.text('Orders', PW - MR - 3, y + 4.5, { align: 'right' })
+    y += 8
+
+    branchEntries.forEach(([branch, count], i) => {
+      checkPage(8)
+      const rowBg = i % 2 === 0 ? [252, 248, 244] : [255, 255, 255]
+      doc.setFillColor(...rowBg)
+      doc.rect(ML, y - 3.5, CW, 7, 'F')
+      doc.setFontSize(8)
+      doc.setFont('helvetica', 'normal')
+      doc.setTextColor(...BROWN)
+      doc.text(branch, ML + 5, y + 0.5)
+      doc.setFont('helvetica', 'bold')
+      doc.setTextColor(...ORANGE)
+      doc.text(`${count}`, PW - MR - 3, y + 0.5, { align: 'right' })
+      y += 7
+    })
+    y += 5
+  }
+
   doc.setDrawColor(...LGRAY)
   doc.setLineWidth(0.4)
   doc.line(ML, y, PW - MR, y)
