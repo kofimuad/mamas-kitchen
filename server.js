@@ -157,14 +157,14 @@ app.post('/api/webhook', async (req, res) => {
 // ── POST /api/submit-order ─────────────────────────────────
 app.post('/api/submit-order', async (req, res) => {
   try {
-    const { orderType, items, info, total } = req.body
+    const { orderType, items, info, total, addOns } = req.body
     if (!items?.length || !info?.name || !info?.branch) {
       return res.status(400).json({ error: 'Missing required fields' })
     }
 
     const database = await db()
     const order = {
-      orderType, items, total,
+      orderType, items, addOns: addOns || [], total,
       info: {
         name:          info.name,
         phone:         info.phone || '',
@@ -238,6 +238,7 @@ app.get('/api/get-order', async (req, res) => {
       status:       order.status,
       orderType:    order.orderType,
       items:        order.items,
+      addOns:       order.addOns || [],
       total:        order.total,
       customerName: order.info?.name,
       createdAt:    order.createdAt,
@@ -320,7 +321,7 @@ app.get('/api/get-menu', async (req, res) => {
   try {
     const doc = await (await db()).collection('menu_config').findOne({ _id: 'current' })
     if (!doc) return res.json({ exists: false })
-    res.json({ exists: true, plateItems: doc.plateItems, trayItems: doc.trayItems, updatedAt: doc.updatedAt })
+    res.json({ exists: true, plateItems: doc.plateItems, trayItems: doc.trayItems, addOns: doc.addOns || [], updatedAt: doc.updatedAt })
   } catch (err) {
     res.status(500).json({ error: err.message })
   }
@@ -329,12 +330,12 @@ app.get('/api/get-menu', async (req, res) => {
 // ── POST /api/save-menu ────────────────────────────────────
 app.post('/api/save-menu', async (req, res) => {
   try {
-    const { plateItems, trayItems } = req.body
+    const { plateItems, trayItems, addOns } = req.body
     if (!plateItems || !trayItems) return res.status(400).json({ error: 'Missing data' })
 
     await (await db()).collection('menu_config').updateOne(
       { _id: 'current' },
-      { $set: { _id: 'current', plateItems, trayItems, updatedAt: new Date() } },
+      { $set: { _id: 'current', plateItems, trayItems, addOns: addOns || [], updatedAt: new Date() } },
       { upsert: true }
     )
     res.json({ success: true, savedAt: new Date().toISOString() })

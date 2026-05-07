@@ -31,6 +31,7 @@ exports.handler = async (event) => {
         status:        order.status,
         orderType:     order.orderType,
         items:         order.items,
+        addOns:        order.addOns || [],
         total:         order.total,
         customerName:  order.info?.name,
         createdAt:     order.createdAt,

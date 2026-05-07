@@ -6,6 +6,7 @@ import { apiUrl, adminHeaders } from '../lib/api'
 export default function useMenu() {
   const [plateItems, setPlateItems] = useState([])
   const [trayItems,  setTrayItems]  = useState([])
+  const [addOns,     setAddOns]     = useState([])
   const [loading,    setLoading]    = useState(true)
   const [error,      setError]      = useState(null)
   const [lastSaved,  setLastSaved]  = useState(null)
@@ -21,6 +22,7 @@ export default function useMenu() {
           // DB has a saved menu — use it as the source of truth
           setPlateItems(data.plateItems?.length ? data.plateItems : defaultPlates)
           setTrayItems(data.trayItems?.length   ? data.trayItems  : defaultTrays)
+          setAddOns(data.addOns || [])
           setLastSaved(data.updatedAt)
         } else {
           // No menu saved in DB yet — fall back to menu.js defaults
@@ -36,19 +38,20 @@ export default function useMenu() {
       .finally(() => setLoading(false))
   }, [])
 
-  const saveMenu = async (plates, trays) => {
+  const saveMenu = async (plates, trays, addOnsToSave) => {
     const res  = await fetch(apiUrl('save-menu'), {
       method:  'POST',
       headers: adminHeaders(),
-      body:    JSON.stringify({ plateItems: plates, trayItems: trays }),
+      body:    JSON.stringify({ plateItems: plates, trayItems: trays, addOns: addOnsToSave || [] }),
     })
     const data = await res.json()
     if (!res.ok) throw new Error(data.error || 'Save failed')
     setPlateItems(plates)
     setTrayItems(trays)
+    setAddOns(addOnsToSave || [])
     setLastSaved(data.savedAt)
     return data
   }
 
-  return { plateItems, trayItems, loading, error, lastSaved, saveMenu }
+  return { plateItems, trayItems, addOns, loading, error, lastSaved, saveMenu }
 }

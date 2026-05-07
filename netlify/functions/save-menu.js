@@ -27,7 +27,7 @@ exports.handler = async (event) => {
   }
 
   try {
-    const { plateItems, trayItems } = JSON.parse(event.body)
+    const { plateItems, trayItems, addOns } = JSON.parse(event.body)
 
     if (!plateItems || !trayItems) {
       return { statusCode: 400, body: JSON.stringify({ error: 'Missing plateItems or trayItems' }) }
@@ -42,6 +42,7 @@ exports.handler = async (event) => {
           _id: 'current',
           plateItems,
           trayItems,
+          addOns: addOns || [],
           updatedAt: new Date(),
         },
       },

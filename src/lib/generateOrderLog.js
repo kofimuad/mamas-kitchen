@@ -136,6 +136,10 @@ export async function generateOrderLog(orders, title = 'All Orders') {
     ;(o.items || o.plates || []).forEach(p => {
       itemFreq[p.name] = (itemFreq[p.name] || 0) + (p.qty || 1)
     })
+    ;(o.addOns || []).forEach(a => {
+      const key = `${a.name} (add-on)`
+      itemFreq[key] = (itemFreq[key] || 0) + (a.qty || 1)
+    })
 
     const payM = (o.info?.paymentMethod || o.paymentMethod || 'unknown').toLowerCase()
     const payLabel = payM === 'cashapp' ? 'Cash App' : payM === 'zelle' ? 'Zelle' : payM.charAt(0).toUpperCase() + payM.slice(1)
@@ -494,6 +498,28 @@ export async function generateOrderLog(orders, title = 'All Orders') {
       }
       ry += itemName.length * 4.5
     })
+
+    const orderAddOns = order.addOns || []
+    if (orderAddOns.length > 0) {
+      doc.setFontSize(7)
+      doc.setFont('helvetica', 'bold')
+      doc.setTextColor(...MGRAY)
+      doc.text('ADD-ONS', rightX, ry)
+      ry += 4
+      orderAddOns.forEach(addOn => {
+        doc.setFontSize(7.5)
+        doc.setFont('helvetica', 'normal')
+        doc.setTextColor(...BROWN)
+        const addOnName = doc.splitTextToSize(`+ ${addOn.name}${addOn.qty > 1 ? ` ×${addOn.qty}` : ''}`, colW - 20)
+        doc.text(addOnName, rightX, ry)
+        if (addOn.price != null) {
+          doc.setFont('helvetica', 'bold')
+          doc.setTextColor(...ORANGE)
+          doc.text(`$${addOn.price * (addOn.qty || 1)}`, PW - MR, ry, { align: 'right' })
+        }
+        ry += addOnName.length * 4.5
+      })
+    }
 
     // Total
     ry += 1

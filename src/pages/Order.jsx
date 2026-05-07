@@ -16,17 +16,18 @@ export default function Order() {
   const navigate  = useNavigate()
   const location  = useLocation()
   const preselect = location.state?.preselect  // { id?, type }
-  const { plateItems, trayItems } = useMenu()
+  const { plateItems, trayItems, addOns } = useMenu()
 
   // If a specific item was passed in, go to step 1 with it pre-selected at qty 1
   // If only a type was passed (from menu CTA), go to step 1 with order type set
   const initialType = preselect?.type || null
   const initialStep = preselect?.type ? 1 : 0
 
-  const [step,       setStep]       = useState(initialStep)
-  const [orderType,  setOrderType]  = useState(initialType)
-  const [selected,   setSelected]   = useState([])      // array of item ids (unlimited)
-  const [submitting, setSubmitting] = useState(false)
+  const [step,         setStep]         = useState(initialStep)
+  const [orderType,    setOrderType]    = useState(initialType)
+  const [selected,     setSelected]     = useState([])      // array of item ids (unlimited)
+  const [addOnCounts,  setAddOnCounts]  = useState({})      // { [addOnId]: qty }
+  const [submitting,   setSubmitting]   = useState(false)
   const [info, setInfo] = useState(() => {
     const saved = loadSavedInfo()
     return saved || { branch: '', name: '', phone: '', battalion: '', paymentMethod: 'cashapp', paymentHandle: '' }
@@ -54,11 +55,27 @@ export default function Order() {
     return sum + (item?.price ?? 0)
   }, 0)
 
+  // Add-ons relevant to this order (available, correct type, trigger matches)
+  const relevantAddOns = (addOns || []).filter(a =>
+    a.available &&
+    (a.orderTypes || ['plate', 'tray']).includes(orderType) &&
+    (!a.triggerItems?.length || a.triggerItems.some(tid => counts[tid] > 0))
+  )
+
+  const addOnTotal = Object.entries(addOnCounts).reduce((sum, [id, qty]) => {
+    const addOn = relevantAddOns.find(a => a.id === id)
+    return sum + (addOn ? addOn.price * qty : 0)
+  }, 0)
+
+  const grandTotal = total + addOnTotal
+
   const add    = (id) => setSelected(s => [...s, id])
   const remove = (id) => {
     const idx = selected.lastIndexOf(id)
     if (idx !== -1) setSelected(s => s.filter((_, i) => i !== idx))
   }
+  const addAddOn    = (id) => setAddOnCounts(c => ({ ...c, [id]: (c[id] || 0) + 1 }))
+  const removeAddOn = (id) => setAddOnCounts(c => ({ ...c, [id]: Math.max(0, (c[id] || 0) - 1) }))
 
   useEffect(() => {
     if (info.name) localStorage.setItem(STORAGE_KEY, JSON.stringify(info))
@@ -78,13 +95,19 @@ export default function Order() {
           const item = items.find(m => m.id === id)
           return { id, name: item?.name || id, price: item?.price || 0, qty }
         })
+        const addOnsPayload = Object.entries(addOnCounts)
+          .filter(([id, qty]) => qty > 0 && relevantAddOns.find(a => a.id === id))
+          .map(([id, qty]) => {
+            const addOn = relevantAddOns.find(a => a.id === id)
+            return { id, name: addOn.name, price: addOn.price, qty }
+          })
         const res  = await fetch(apiUrl('submit-order'), {
           method: 'POST', headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ orderType, items: itemsPayload, info, total }),
+          body: JSON.stringify({ orderType, items: itemsPayload, addOns: addOnsPayload, info, total: grandTotal }),
         })
         const data = await res.json()
         if (!res.ok) throw new Error(data.error || 'Failed to submit order')
-        navigate(`/order-status/${data.orderId}`, { state: { justOrdered: true, info, total, orderType } })
+        navigate(`/order-status/${data.orderId}`, { state: { justOrdered: true, info, total: grandTotal, orderType } })
       } catch (err) {
         alert('Something went wrong: ' + err.message)
         setSubmitting(false)
@@ -347,13 +370,71 @@ export default function Order() {
                 </div>
               )
             })}
+            {/* Add-on line items */}
+            {Object.entries(addOnCounts).filter(([id, qty]) => qty > 0 && relevantAddOns.find(a => a.id === id)).map(([id, qty]) => {
+              const addOn = relevantAddOns.find(a => a.id === id)
+              return (
+                <div key={id} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '10px 16px', borderBottom: '1px solid rgba(209,41,24,0.06)', background: 'rgba(209,41,24,0.02)' }}>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontFamily: "'Nunito', sans-serif", fontSize: 13, fontWeight: 600, color: '#456D1B' }}>{addOn?.name}</div>
+                    <div style={{ fontFamily: "'Nunito', sans-serif", fontSize: 11, color: '#6B8F3A' }}>Add-on × {qty}</div>
+                  </div>
+                  <div style={{ fontFamily: "'Nunito', sans-serif", fontSize: 14, fontWeight: 700, color: '#D12918' }}>${addOn.price * qty}</div>
+                </div>
+              )
+            })}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '14px 16px', borderTop: '2px solid rgba(209,41,24,0.12)' }}>
               <span style={{ fontFamily: "'Nunito', sans-serif", fontSize: 15, fontWeight: 700, color: '#3A5A14' }}>Total</span>
               <span style={{ fontFamily: "'Nunito', sans-serif", fontWeight: 900, fontSize: 22, fontWeight: 700, color: '#D12918' }}>
-                {total > 0 ? `$${total}` : 'TBD'}
+                {grandTotal > 0 ? `$${grandTotal}` : 'TBD'}
               </span>
             </div>
           </div>
+
+          {/* Add-ons upsell section */}
+          {relevantAddOns.length > 0 && (
+            <div style={{ marginBottom: 14 }}>
+              <div style={{ fontFamily: "'Nunito', sans-serif", fontSize: 13, fontWeight: 700, color: '#3A5A14', marginBottom: 10 }}>
+                Make your order even better
+              </div>
+              <div style={{ background: '#fff', border: '1px solid rgba(209,41,24,0.15)', borderRadius: 16, overflow: 'hidden' }}>
+                {relevantAddOns.map((addOn, i) => (
+                  <div key={addOn.id} style={{
+                    display: 'flex', alignItems: 'center', gap: 12, padding: '12px 16px',
+                    borderBottom: i < relevantAddOns.length - 1 ? '1px solid rgba(209,41,24,0.08)' : 'none',
+                  }}>
+                    <div style={{ flex: 1 }}>
+                      <div style={{ fontFamily: "'Nunito', sans-serif", fontSize: 14, fontWeight: 700, color: '#3A5A14' }}>{addOn.name}</div>
+                      {addOn.description && (
+                        <div style={{ fontFamily: "'Nunito', sans-serif", fontSize: 11, color: '#6B8F3A', marginTop: 2 }}>{addOn.description}</div>
+                      )}
+                    </div>
+                    <div style={{ fontFamily: "'Nunito', sans-serif", fontWeight: 700, fontSize: 15, color: '#D12918', marginRight: 4 }}>
+                      ${addOn.price}
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                      <button onClick={() => removeAddOn(addOn.id)} disabled={!addOnCounts[addOn.id]} style={{
+                        width: 28, height: 28, borderRadius: '50%', border: 'none',
+                        background: addOnCounts[addOn.id] ? '#D12918' : 'rgba(209,41,24,0.12)',
+                        color: addOnCounts[addOn.id] ? '#fff' : '#6B8F3A',
+                        fontSize: 16, fontWeight: 700, cursor: addOnCounts[addOn.id] ? 'pointer' : 'default',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      }}>−</button>
+                      <span style={{ fontFamily: "'Nunito', sans-serif", fontSize: 15, fontWeight: 700, color: '#3A5A14', minWidth: 14, textAlign: 'center' }}>
+                        {addOnCounts[addOn.id] || 0}
+                      </span>
+                      <button onClick={() => addAddOn(addOn.id)} style={{
+                        width: 28, height: 28, borderRadius: '50%', border: 'none',
+                        background: '#D12918', color: '#fff',
+                        fontSize: 16, fontWeight: 700, cursor: 'pointer',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      }}>+</button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
 
           <div style={{ background: 'rgba(209,41,24,0.04)', border: '1px solid rgba(209,41,24,0.12)', borderRadius: 14, padding: 16, marginBottom: 14 }}>
             <div style={{ fontFamily: "'Nunito', sans-serif", fontSize: 11, fontWeight: 700, color: '#6B8F3A', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 10 }}>Your Details</div>
@@ -375,7 +456,7 @@ export default function Order() {
           <div style={{ background: 'rgba(209,41,24,0.06)', border: '1px solid rgba(209,41,24,0.15)', borderRadius: 12, padding: '14px 16px', marginBottom: 8 }}>
             <p style={{ fontFamily: "'Nunito', sans-serif", fontSize: 13, color: '#456D1B', lineHeight: 1.7, margin: 0 }}>
               After placing your order, Obaa Yaa will receive a notification.
-              Send <strong>${total}</strong> via {info.paymentMethod === 'cashapp' ? 'Cash App' : 'Zelle'} to confirm.
+              Send <strong>${grandTotal}</strong> via {info.paymentMethod === 'cashapp' ? 'Cash App' : 'Zelle'} to confirm.
               She will approve once payment is received.
             </p>
           </div>

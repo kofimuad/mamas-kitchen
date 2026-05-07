@@ -164,6 +164,12 @@ export default function OrderDetail() {
             <span style={{ fontSize: 14, fontWeight: 700, color: '#D12918' }}>${item.price * item.qty}</span>
           </div>
         ))}
+        {order.addOns?.length > 0 && order.addOns.map((addOn, i) => (
+          <div key={i} style={{ display: 'flex', justifyContent: 'space-between', padding: '9px 16px', borderBottom: '1px solid rgba(209,41,24,0.04)', fontFamily: "'Nunito', sans-serif", background: 'rgba(209,41,24,0.02)' }}>
+            <span style={{ fontSize: 13, color: '#456D1B' }}>{addOn.name}{addOn.qty > 1 ? ` × ${addOn.qty}` : ''} <span style={{ fontSize: 11, color: '#6B8F3A' }}>(add-on)</span></span>
+            <span style={{ fontSize: 13, fontWeight: 700, color: '#D12918' }}>${addOn.price * addOn.qty}</span>
+          </div>
+        ))}
         <div style={{ display: 'flex', justifyContent: 'space-between', padding: '14px 16px' }}>
           <span style={{ fontFamily: "'Nunito', sans-serif", fontSize: 15, fontWeight: 700 }}>Total</span>
           <span style={{ fontFamily: "'Nunito', sans-serif", fontWeight: 900, fontSize: 20, fontWeight: 700, color: '#D12918' }}>${order.total}</span>

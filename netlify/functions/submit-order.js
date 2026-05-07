@@ -115,7 +115,7 @@ exports.handler = async (event) => {
     return { statusCode: 400, body: JSON.stringify({ error: 'Invalid request body' }) }
   }
 
-  const { orderType, items, info, total } = body
+  const { orderType, items, info, total, addOns } = body
 
   // Validate required fields
   if (!['plate', 'tray'].includes(orderType)) {
@@ -148,11 +148,19 @@ exports.handler = async (event) => {
     qty:   typeof p.qty === 'number'   ? Math.max(1, Math.min(p.qty, 50))     : 1,
   }))
 
+  const cleanAddOns = Array.isArray(addOns) ? addOns.slice(0, 20).map(a => ({
+    id:    sanitise(a.id, 100),
+    name:  sanitise(a.name, 150),
+    price: typeof a.price === 'number' ? Math.max(0, Math.min(a.price, 1000)) : 0,
+    qty:   typeof a.qty === 'number'   ? Math.max(1, Math.min(a.qty, 50))     : 1,
+  })) : []
+
   try {
     const db = await getDB()
     const order = {
       orderType,
       items:     cleanItems,
+      addOns:    cleanAddOns,
       total,
       info:      cleanInfo,
       status:    'pending_payment',

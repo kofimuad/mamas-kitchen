@@ -35,6 +35,7 @@ exports.handler = async () => {
         exists: true,
         plateItems: doc.plateItems  || [],
         trayItems:  doc.trayItems   || [],
+        addOns:     doc.addOns      || [],
         updatedAt:  doc.updatedAt,
       }),
     }
