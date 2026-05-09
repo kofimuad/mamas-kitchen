@@ -253,40 +253,6 @@ export async function generateOrderLog(orders, title = 'All Orders') {
     y += 12
   }
 
-  // ── ORDER TYPE BREAKDOWN ────────────────────────────────────
-  checkPage(30)
-  const hasMultipleTypes = orderTypeCounts.tray > 0 && orderTypeCounts.plate > 0
-  if (hasMultipleTypes || orderTypeCounts.tray > 0 || orderTypeCounts.plate > 0) {
-    doc.setFontSize(9)
-    doc.setTextColor(...BROWN)
-    doc.setFont('helvetica', 'bold')
-    doc.text('Order Types', ML, y)
-    y += 4
-    doc.setDrawColor(...ORANGE)
-    doc.setLineWidth(0.5)
-    doc.line(ML, y, ML + 30, y)
-    y += 5
-
-    const typeRows = []
-    if (orderTypeCounts.tray > 0) typeRows.push(['Wednesday Trays', orderTypeCounts.tray])
-    if (orderTypeCounts.plate > 0) typeRows.push(['Saturday Plates', orderTypeCounts.plate])
-
-    typeRows.forEach(([label, count], i) => {
-      const rowBg = i % 2 === 0 ? [252, 248, 244] : [255, 255, 255]
-      doc.setFillColor(...rowBg)
-      doc.rect(ML, y - 3.5, CW, 7, 'F')
-      doc.setFontSize(8)
-      doc.setFont('helvetica', 'normal')
-      doc.setTextColor(...BROWN)
-      doc.text(label, ML + 5, y + 0.5)
-      doc.setFont('helvetica', 'bold')
-      doc.setTextColor(...ORANGE)
-      doc.text(`${count} order${count !== 1 ? 's' : ''}`, PW - MR - 3, y + 0.5, { align: 'right' })
-      y += 7
-    })
-    y += 5
-  }
-
   // ── PAYMENT METHOD BREAKDOWN ────────────────────────────────
   checkPage(30)
   const payEntries = Object.entries(payMethodCounts)
@@ -402,143 +368,138 @@ export async function generateOrderLog(orders, title = 'All Orders') {
   doc.line(ML, y, ML + 36, y)
   y += 8
 
-  // Sort orders by createdAt ascending so day groups flow chronologically
+  // Group by delivery unit so driver can work stop by stop
+  const unitGroups = {}
   const sortedOrders = [...orders].sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt))
-  let currentDayKey = null
 
-  sortedOrders.forEach((order, idx) => {
-    const items   = order.items || order.plates || []
-    const info    = order.info || {}
-    const name    = info.name    || order.customerName || '—'
-    const branch  = info.branch  || order.branch       || '—'
-    const batt    = info.battalion || order.battalion   || ''
-    const phone   = info.phone   || order.phone        || '—'
-    const payM    = info.paymentMethod  || order.paymentMethod  || '—'
-    const payH    = info.paymentHandle  || '—'
-    const status  = order.status || 'unknown'
-    const isConf  = status === 'confirmed' || status === 'delivered'
+  sortedOrders.forEach(order => {
+    const branch = order.info?.branch || order.branch || 'Unknown'
+    let location = ''
+    if (branch === 'Army') {
+      const co  = order.info?.armyCompany || ''
+      const num = order.info?.armyUnit    || ''
+      location = co || num
+        ? [co, num].filter(Boolean).join(' · ')
+        : (order.info?.battalion || order.battalion || '')
+    } else {
+      location = order.info?.battalion || order.battalion || ''
+    }
+    const groupLabel = location ? `${branch}  —  ${location}` : branch
+    if (!unitGroups[groupLabel]) unitGroups[groupLabel] = []
+    unitGroups[groupLabel].push(order)
+  })
 
-    // ── Day separator ──────────────────────────────────────
-    const orderDate  = new Date(order.createdAt)
-    const dayKey     = orderDate.toISOString().slice(0, 10)
-    if (dayKey !== currentDayKey) {
-      currentDayKey = dayKey
-      checkPage(18)
-      const dayLabel = orderDate.toLocaleDateString('en-US', {
-        weekday: 'long', month: 'long', day: 'numeric', year: 'numeric',
-      })
-      const dayTime = orderDate.toLocaleTimeString('en-US', {
-        hour: 'numeric', minute: '2-digit', hour12: true,
-      })
-      // Day band
-      doc.setFillColor(245, 237, 204)
-      doc.rect(ML, y, CW, 10, 'F')
+  const unitGroupEntries = Object.entries(unitGroups)
+    .sort((a, b) => b[1].length - a[1].length)
+
+  let globalIdx = 0
+
+  unitGroupEntries.forEach(([groupLabel, groupOrders]) => {
+    checkPage(20)
+    doc.setFillColor(245, 237, 204)
+    doc.rect(ML, y, CW, 10, 'F')
+    doc.setFontSize(9)
+    doc.setFont('helvetica', 'bold')
+    doc.setTextColor(...BROWN)
+    doc.text(groupLabel, ML + 4, y + 7)
+    doc.setFont('helvetica', 'normal')
+    doc.setTextColor(...MGRAY)
+    doc.text(`${groupOrders.length} order${groupOrders.length !== 1 ? 's' : ''}`, PW - MR, y + 7, { align: 'right' })
+    y += 14
+
+    groupOrders.forEach(order => {
+      globalIdx++
+      const items  = order.items || order.plates || []
+      const info   = order.info || {}
+      const name   = info.name   || order.customerName || '—'
+      const phone  = info.phone  || order.phone        || '—'
+      const payM   = (info.paymentMethod || order.paymentMethod || '').toLowerCase()
+      const payH   = info.paymentHandle  || '—'
+      const status = order.status || 'unknown'
+      const isConf = status === 'confirmed' || status === 'delivered'
+      const payLabel = payM === 'cashapp' ? 'Cash App' : payM === 'zelle' ? 'Zelle' : payM || '—'
+
+      const neededH = 14 + (items.length * 6) + 36
+      checkPage(neededH)
+
+      // Order header bar
+      doc.setFillColor(isConf ? 240 : 252, isConf ? 248 : 247, isConf ? 244 : 242)
+      doc.setDrawColor(...LGRAY)
+      doc.setLineWidth(0.3)
+      doc.roundedRect(ML, y, CW, 12, 2, 2, 'FD')
       doc.setFontSize(8.5)
       doc.setFont('helvetica', 'bold')
       doc.setTextColor(...BROWN)
-      doc.text(dayLabel, ML + 4, y + 7)
-      doc.setFont('helvetica', 'normal')
-      doc.setTextColor(...MGRAY)
-      doc.text(`First order: ${dayTime}`, PW - MR, y + 7, { align: 'right' })
-      y += 14
-    }
+      doc.text(`#${globalIdx}  —  ${order._id?.toString().slice(-8).toUpperCase() || '—'}`, ML + 4, y + 7.5)
 
-    // Estimate height needed for this order
-    const neededH = 14 + (items.length * 6) + 48
-    checkPage(neededH)
-
-    // Order header bar
-    doc.setFillColor(isConf ? 240 : 252, isConf ? 248 : 247, isConf ? 244 : 242)
-    doc.setDrawColor(...LGRAY)
-    doc.setLineWidth(0.3)
-    doc.roundedRect(ML, y, CW, 12, 2, 2, 'FD')
-
-    // Order number + status
-    doc.setFontSize(8.5)
-    doc.setFont('helvetica', 'bold')
-    doc.setTextColor(...BROWN)
-    doc.text(`#${idx + 1}  —  Order ${order._id?.toString().slice(-8).toUpperCase() || '—'}`, ML + 4, y + 7.5)
-
-    // Status pill
-    const pillColor = isConf ? GREEN : status === 'pending_payment' ? [160, 120, 0] : status === 'declined' ? RED : MGRAY
-    doc.setFillColor(...pillColor)
-    const statusText = statusLabel(status)
-    doc.setFontSize(7)
-    doc.setFont('helvetica', 'bold')
-    doc.setTextColor(...WHITE)
-    const pillW = doc.getTextWidth(statusText) + 6
-    doc.roundedRect(PW - MR - pillW - 2, y + 3, pillW + 2, 6, 1, 1, 'F')
-    doc.text(statusText, PW - MR - pillW / 2 - 1, y + 7.2, { align: 'center' })
-
-    y += 15
-
-    // Two-column layout: customer info left, order info right
-    const colW = (CW - 6) / 2
-
-    // Left: customer details
-    doc.setFontSize(7.5)
-    doc.setFont('helvetica', 'bold')
-    doc.setTextColor(...ORANGE)
-    doc.text('CUSTOMER', ML, y)
-    y += 4.5
-
-    const customerLines = [
-      ['Name',        name],
-      ['Branch',      `${branch}${batt ? ' · ' + batt : ''}`],
-      ['Phone',       phone],
-      ['Payment',     payM === 'cashapp' ? 'Cash App' : payM === 'zelle' ? 'Zelle' : payM],
-      ['Handle',      payH],
-      ['Order Type',  order.orderType === 'tray' ? 'Tray Order (Wednesday)' : 'Plate Order (Saturday)'],
-    ]
-
-    const infoStartY = y
-    customerLines.forEach(([label, val]) => {
-      doc.setFontSize(7.5)
-      doc.setFont('helvetica', 'bold')
-      doc.setTextColor(...MGRAY)
-      doc.text(`${label}:`, ML, y)
-      doc.setFont('helvetica', 'normal')
-      doc.setTextColor(...BROWN)
-      const lines = doc.splitTextToSize(String(val || '—'), colW - 22)
-      doc.text(lines, ML + 22, y)
-      y += lines.length * 4.5
-    })
-
-    // Right: items ordered
-    const rightX = ML + colW + 6
-    let ry = infoStartY
-
-    doc.setFontSize(7.5)
-    doc.setFont('helvetica', 'bold')
-    doc.setTextColor(...ORANGE)
-    doc.text('ITEMS ORDERED', rightX, ry)
-    ry += 4.5
-
-    items.forEach(item => {
-      doc.setFontSize(7.5)
-      doc.setFont('helvetica', 'normal')
-      doc.setTextColor(...BROWN)
-      const itemName = doc.splitTextToSize(`${item.name}${item.qty > 1 ? ` ×${item.qty}` : ''}`, colW - 20)
-      doc.text(itemName, rightX, ry)
-      if (item.price != null) {
-        doc.setFont('helvetica', 'bold')
-        doc.setTextColor(...ORANGE)
-        doc.text(`$${item.price * (item.qty || 1)}`, PW - MR, ry, { align: 'right' })
-      }
-      ry += itemName.length * 4.5
-    })
-
-    const orderAddOns = order.addOns || []
-    if (orderAddOns.length > 0) {
+      const pillColor = isConf ? GREEN : status === 'pending_payment' ? [160, 120, 0] : status === 'declined' ? RED : MGRAY
+      const statusText = statusLabel(status)
       doc.setFontSize(7)
       doc.setFont('helvetica', 'bold')
-      doc.setTextColor(...MGRAY)
-      doc.text('ADD-ONS', rightX, ry)
-      ry += 4
-      orderAddOns.forEach(addOn => {
+      doc.setTextColor(...WHITE)
+      const pillW = doc.getTextWidth(statusText) + 6
+      doc.setFillColor(...pillColor)
+      doc.roundedRect(PW - MR - pillW - 2, y + 3, pillW + 2, 6, 1, 1, 'F')
+      doc.text(statusText, PW - MR - pillW / 2 - 1, y + 7.2, { align: 'center' })
+      y += 15
+
+      const colW = (CW - 6) / 2
+
+      // Left: customer (branch omitted — already in section header)
+      doc.setFontSize(7.5)
+      doc.setFont('helvetica', 'bold')
+      doc.setTextColor(...ORANGE)
+      doc.text('CUSTOMER', ML, y)
+      y += 4.5
+
+      const customerLines = [
+        ['Name',    name],
+        ['Phone',   phone],
+        ['Payment', `${payLabel}  ·  ${payH}`],
+        ['Type',    order.orderType === 'tray' ? 'Tray (Wednesday)' : 'Plate (Saturday)'],
+      ]
+
+      const infoStartY = y
+      customerLines.forEach(([label, val]) => {
+        doc.setFontSize(7.5)
+        doc.setFont('helvetica', 'bold')
+        doc.setTextColor(...MGRAY)
+        doc.text(`${label}:`, ML, y)
+        doc.setFont('helvetica', 'normal')
+        doc.setTextColor(...BROWN)
+        const lines = doc.splitTextToSize(String(val || '—'), colW - 22)
+        doc.text(lines, ML + 22, y)
+        y += lines.length * 4.5
+      })
+
+      // Right: items
+      const rightX = ML + colW + 6
+      let ry = infoStartY
+
+      doc.setFontSize(7.5)
+      doc.setFont('helvetica', 'bold')
+      doc.setTextColor(...ORANGE)
+      doc.text('ITEMS', rightX, ry)
+      ry += 4.5
+
+      items.forEach(item => {
         doc.setFontSize(7.5)
         doc.setFont('helvetica', 'normal')
         doc.setTextColor(...BROWN)
+        const itemName = doc.splitTextToSize(`${item.name}${item.qty > 1 ? ` ×${item.qty}` : ''}`, colW - 20)
+        doc.text(itemName, rightX, ry)
+        if (item.price != null) {
+          doc.setFont('helvetica', 'bold')
+          doc.setTextColor(...ORANGE)
+          doc.text(`$${item.price * (item.qty || 1)}`, PW - MR, ry, { align: 'right' })
+        }
+        ry += itemName.length * 4.5
+      })
+
+      ;(order.addOns || []).forEach(addOn => {
+        doc.setFontSize(7.5)
+        doc.setFont('helvetica', 'normal')
+        doc.setTextColor(...MGRAY)
         const addOnName = doc.splitTextToSize(`+ ${addOn.name}${addOn.qty > 1 ? ` ×${addOn.qty}` : ''}`, colW - 20)
         doc.text(addOnName, rightX, ry)
         if (addOn.price != null) {
@@ -548,86 +509,60 @@ export async function generateOrderLog(orders, title = 'All Orders') {
         }
         ry += addOnName.length * 4.5
       })
-    }
 
-    // Total
-    ry += 1
-    doc.setDrawColor(...LGRAY)
-    doc.setLineWidth(0.3)
-    doc.line(rightX, ry, PW - MR, ry)
-    ry += 4
-    doc.setFontSize(8.5)
-    doc.setFont('helvetica', 'bold')
-    doc.setTextColor(...BROWN)
-    doc.text('Total', rightX, ry)
-    doc.setTextColor(...ORANGE)
-    doc.text(`$${order.total || 0}`, PW - MR, ry, { align: 'right' })
-    ry += 5
+      ry += 1
+      doc.setDrawColor(...LGRAY)
+      doc.setLineWidth(0.3)
+      doc.line(rightX, ry, PW - MR, ry)
+      ry += 4
+      doc.setFontSize(8.5)
+      doc.setFont('helvetica', 'bold')
+      doc.setTextColor(...BROWN)
+      doc.text('Total', rightX, ry)
+      doc.setTextColor(...ORANGE)
+      doc.text(`$${order.total || 0}`, PW - MR, ry, { align: 'right' })
+      ry += 5
 
-    // Sync y to whichever column is taller
-    y = Math.max(y, ry) + 4
+      y = Math.max(y, ry) + 4
 
-    // ── Timeline ─────────────────────────────────────────────
-    checkPage(28)
-    doc.setFontSize(7.5)
-    doc.setFont('helvetica', 'bold')
-    doc.setTextColor(...ORANGE)
-    doc.text('TIMELINE', ML, y)
-    y += 4.5
+      // Timeline
+      const timeline = []
+      if (order.createdAt)   timeline.push({ event: 'Placed',    time: order.createdAt,   color: BROWN })
+      if (order.confirmedAt) timeline.push({ event: 'Confirmed', time: order.confirmedAt, color: GREEN })
+      if (order.deliveredAt) timeline.push({ event: 'Delivered', time: order.deliveredAt, color: ORANGE })
 
-    const timeline = []
-    if (order.createdAt)   timeline.push({ event: 'Order placed',    time: order.createdAt,   color: BROWN })
-    if (order.confirmedAt) timeline.push({ event: 'Order confirmed', time: order.confirmedAt, color: GREEN })
-    if (order.deliveredAt) timeline.push({ event: 'Delivered',       time: order.deliveredAt, color: ORANGE })
-
-    // Calculate time-to-confirm
-    if (order.createdAt && order.confirmedAt) {
-      const diffMs  = new Date(order.confirmedAt) - new Date(order.createdAt)
-      const diffMin = Math.round(diffMs / 60000)
-      const diffStr = diffMin < 60
-        ? `${diffMin}m`
-        : `${Math.floor(diffMin / 60)}h ${diffMin % 60}m`
-      timeline[1].extra = `(confirmed in ${diffStr})`
-    }
-
-    if (timeline.length === 0) {
-      doc.setFontSize(7.5)
-      doc.setFont('helvetica', 'italic')
-      doc.setTextColor(...MGRAY)
-      doc.text('No timeline events recorded yet.', ML + 3, y)
-      y += 5
-    } else {
-      timeline.forEach((t, i) => {
-        // Dot
-        doc.setFillColor(...t.color)
-        doc.circle(ML + 3, y - 1, 1.5, 'F')
-        // Line connector
-        if (i < timeline.length - 1) {
-          doc.setDrawColor(...LGRAY)
-          doc.setLineWidth(0.4)
-          doc.line(ML + 3, y + 0.5, ML + 3, y + 4.5)
-        }
+      if (timeline.length > 0) {
+        checkPage(16)
         doc.setFontSize(7.5)
         doc.setFont('helvetica', 'bold')
-        doc.setTextColor(...t.color)
-        doc.text(t.event, ML + 7, y)
-        doc.setFont('helvetica', 'normal')
-        doc.setTextColor(...MGRAY)
-        doc.text(fmt(t.time), ML + 50, y)
-        if (t.extra) {
-          doc.setTextColor(...GREEN)
-          doc.text(t.extra, ML + 100, y)
-        }
-        y += 5
-      })
-    }
+        doc.setTextColor(...ORANGE)
+        doc.text('TIMELINE', ML, y)
+        y += 4.5
+        timeline.forEach((t, i) => {
+          doc.setFillColor(...t.color)
+          doc.circle(ML + 3, y - 1, 1.5, 'F')
+          if (i < timeline.length - 1) {
+            doc.setDrawColor(...LGRAY)
+            doc.setLineWidth(0.4)
+            doc.line(ML + 3, y + 0.5, ML + 3, y + 4.5)
+          }
+          doc.setFontSize(7.5)
+          doc.setFont('helvetica', 'bold')
+          doc.setTextColor(...t.color)
+          doc.text(t.event, ML + 7, y)
+          doc.setFont('helvetica', 'normal')
+          doc.setTextColor(...MGRAY)
+          doc.text(fmt(t.time), ML + 50, y)
+          y += 5
+        })
+      }
 
-    // Divider between orders
-    y += 4
-    doc.setDrawColor(...LGRAY)
-    doc.setLineWidth(0.3)
-    doc.line(ML, y, PW - MR, y)
-    y += 8
+      y += 4
+      doc.setDrawColor(...LGRAY)
+      doc.setLineWidth(0.3)
+      doc.line(ML, y, PW - MR, y)
+      y += 8
+    })
   })
 
   // Draw footer on last page
