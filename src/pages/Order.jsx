@@ -451,68 +451,70 @@ export default function Order() {
               const qty = addOnCounts[addOn.id] || 0
               return (
                 <div key={addOn.id} style={{
-                  borderRadius: 20, overflow: 'hidden',
+                  borderRadius: 16, overflow: 'hidden',
                   border: `2px solid ${qty > 0 ? '#D12918' : 'rgba(209,41,24,0.12)'}`,
                   background: '#fff',
                   boxShadow: qty > 0 ? '0 6px 24px rgba(209,41,24,0.18)' : '0 2px 12px rgba(0,0,0,0.06)',
                   transition: 'all 0.22s',
+                  display: 'flex', alignItems: 'stretch',
                 }}>
-                  {/* Gradient / image header */}
+                  {/* Square image panel */}
                   <div style={{
-                    height: 148, position: 'relative', overflow: 'hidden',
-                    backgroundImage: addOn.image
-                      ? `url('${addOn.image}')`
+                    width: 110, flexShrink: 0, position: 'relative',
+                    background: addOn.image
+                      ? '#f5f0eb'
                       : 'linear-gradient(135deg, #C0392B 0%, #D12918 35%, #ED7D2B 70%, #F5A623 100%)',
-                    backgroundSize: 'cover', backgroundPosition: 'center',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
                   }}>
-                    <div style={{
-                      position: 'absolute', inset: 0,
-                      background: addOn.image
-                        ? 'linear-gradient(to top, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.05) 55%)'
-                        : 'linear-gradient(135deg, rgba(0,0,0,0.18) 0%, rgba(0,0,0,0) 100%)',
-                    }} />
+                    {addOn.image && (
+                      <img
+                        src={addOn.image} alt={addOn.name}
+                        style={{ width: '100%', height: '100%', objectFit: 'contain', display: 'block' }}
+                      />
+                    )}
                     {qty > 0 && (
                       <div style={{
-                        position: 'absolute', top: 12, right: 12,
-                        background: '#fff', color: '#D12918',
-                        borderRadius: 99, padding: '5px 13px',
-                        fontFamily: "'Nunito', sans-serif", fontSize: 12, fontWeight: 800,
-                        boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
-                      }}>×{qty} added</div>
+                        position: 'absolute', top: 7, left: 7,
+                        background: '#D12918', color: '#fff',
+                        borderRadius: 99, padding: '3px 8px',
+                        fontFamily: "'Nunito', sans-serif", fontSize: 10, fontWeight: 800,
+                      }}>×{qty}</div>
                     )}
                   </div>
 
                   {/* Content */}
-                  <div style={{ padding: '16px 20px 20px' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: addOn.description ? 8 : 14 }}>
-                      <div style={{ fontFamily: "'Nunito', sans-serif", fontWeight: 800, fontSize: 17, color: '#2A4A08', lineHeight: 1.3 }}>
-                        {addOn.name}
+                  <div style={{ flex: 1, padding: '14px 16px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                    <div>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 4 }}>
+                        <div style={{ fontFamily: "'Nunito', sans-serif", fontWeight: 800, fontSize: 15, color: '#2A4A08', lineHeight: 1.3 }}>
+                          {addOn.name}
+                        </div>
+                        <div style={{ fontFamily: "'Nunito', sans-serif", fontWeight: 800, fontSize: 17, color: '#D12918', marginLeft: 8, flexShrink: 0 }}>
+                          +${addOn.price}
+                        </div>
                       </div>
-                      <div style={{ fontFamily: "'Nunito', sans-serif", fontWeight: 800, fontSize: 20, color: '#D12918', marginLeft: 12, flexShrink: 0 }}>
-                        +${addOn.price}
-                      </div>
+                      {addOn.description && (
+                        <p style={{ fontFamily: "'Nunito', sans-serif", fontSize: 12, color: '#6B7F4A', lineHeight: 1.5, margin: '0 0 10px' }}>
+                          {addOn.description}
+                        </p>
+                      )}
                     </div>
-                    {addOn.description && (
-                      <p style={{ fontFamily: "'Nunito', sans-serif", fontSize: 13, color: '#6B7F4A', lineHeight: 1.65, margin: '0 0 16px' }}>
-                        {addOn.description}
-                      </p>
-                    )}
-                    <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: 14 }}>
+                    <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: 12 }}>
                       <button onClick={() => removeAddOn(addOn.id)} disabled={!qty} style={{
-                        width: 38, height: 38, borderRadius: '50%', border: 'none',
+                        width: 34, height: 34, borderRadius: '50%', border: 'none',
                         background: qty ? '#D12918' : 'rgba(209,41,24,0.10)',
                         color: qty ? '#fff' : '#6B8F3A',
-                        fontSize: 20, fontWeight: 700, cursor: qty ? 'pointer' : 'default',
+                        fontSize: 18, fontWeight: 700, cursor: qty ? 'pointer' : 'default',
                         display: 'flex', alignItems: 'center', justifyContent: 'center',
                         transition: 'all 0.18s',
                       }}>−</button>
-                      <span style={{ fontFamily: "'Nunito', sans-serif", fontSize: 18, fontWeight: 800, color: '#2A4A08', minWidth: 22, textAlign: 'center' }}>
+                      <span style={{ fontFamily: "'Nunito', sans-serif", fontSize: 16, fontWeight: 800, color: '#2A4A08', minWidth: 20, textAlign: 'center' }}>
                         {qty}
                       </span>
                       <button onClick={() => addAddOn(addOn.id)} style={{
-                        width: 38, height: 38, borderRadius: '50%', border: 'none',
+                        width: 34, height: 34, borderRadius: '50%', border: 'none',
                         background: '#D12918', color: '#fff',
-                        fontSize: 20, fontWeight: 700, cursor: 'pointer',
+                        fontSize: 18, fontWeight: 700, cursor: 'pointer',
                         display: 'flex', alignItems: 'center', justifyContent: 'center',
                         transition: 'all 0.18s',
                       }}>+</button>
