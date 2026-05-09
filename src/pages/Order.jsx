@@ -94,7 +94,7 @@ export default function Order() {
     if (step === 2) {
       if (!info.branch || !info.name) { alert('Please fill in all required fields.'); return }
       if (info.branch === 'Army') {
-        if (!info.armyCompany) { alert('Please select your company (Alpha, Beta, Charlie, or Delta).'); return }
+        if (!info.armyCompany) { alert('Please select your company (Alpha, Beta, Charlie, Delta, or Echo).'); return }
         if (!info.armyUnit) { alert('Please select or enter your unit number.'); return }
       } else {
         if (!info.battalion) { alert('Please fill in your company & battalion.'); return }
@@ -330,8 +330,8 @@ export default function Order() {
             <>
               <div className="field-group">
                 <label className="field-label">Company *</label>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
-                  {['Alpha', 'Beta', 'Charlie', 'Delta'].map(co => (
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 8 }}>
+                  {['Alpha', 'Beta', 'Charlie', 'Delta', 'Echo'].map(co => (
                     <div key={co} onClick={() => setInfo(i => ({ ...i, armyCompany: co }))} style={{
                       padding: '12px 16px', borderRadius: 12, cursor: 'pointer',
                       border: `2px solid ${info.armyCompany === co ? '#D12918' : 'rgba(209,41,24,0.18)'}`,

@@ -116,6 +116,7 @@ export async function generateOrderLog(orders, title = 'All Orders') {
   // Count by status
   const byStatus = {}
   let totalRevenue = 0
+  let projectedRevenue = 0
   let confirmedCount = 0
   let pendingCount = 0
   const itemFreq = {}
@@ -132,6 +133,7 @@ export async function generateOrderLog(orders, title = 'All Orders') {
       totalRevenue += o.total || 0
       confirmedCount++
     }
+    if (s !== 'declined') projectedRevenue += o.total || 0
     if (s === 'pending_payment') pendingCount++
 
     ;(o.items || o.plates || []).forEach(p => {
@@ -173,10 +175,10 @@ export async function generateOrderLog(orders, title = 'All Orders') {
 
   // Stats boxes (2 columns)
   const stats = [
-    { label: 'Total Orders',          value: String(orders.length) },
-    { label: 'Confirmed / Delivered', value: String(confirmedCount) },
-    { label: 'Awaiting Payment',       value: String(pendingCount) },
-    { label: 'Total Revenue',          value: `$${totalRevenue}` },
+    { label: 'Total Orders',       value: String(orders.length) },
+    { label: 'Awaiting Payment',   value: String(pendingCount) },
+    { label: 'Projected Revenue',  value: `$${projectedRevenue}` },
+    { label: 'Actual Revenue',     value: `$${totalRevenue}` },
   ]
 
   const boxW = (CW - 6) / 2

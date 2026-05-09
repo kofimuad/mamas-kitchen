@@ -81,12 +81,11 @@ export default function Dashboard() {
       </div>
 
       {/* ── Stats ── */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12, marginBottom: 36 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12, marginBottom: 36 }}>
         {[
-          { label: 'Pending',            value: stats.newCount,               sub: 'Awaiting payment',      accent: '#D12918' },
-          { label: 'Projected Revenue',  value: `$${stats.projectedRevenue}`, sub: 'All active orders',     accent: '#D12918' },
-          { label: 'Actual Revenue',     value: `$${stats.revenue}`,          sub: 'Confirmed payments',    accent: '#3A5A14' },
-          { label: 'Total Orders',       value: stats.total,                  sub: 'All time',              accent: '#3A5A14' },
+          { label: 'Pending',       value: stats.newCount,      sub: 'Awaiting payment',   accent: '#D12918' },
+          { label: 'Revenue',       value: `$${stats.revenue}`, sub: 'Confirmed payments', accent: '#3A5A14' },
+          { label: 'Total Orders',  value: stats.total,         sub: 'All time',           accent: '#3A5A14' },
         ].map(s => (
           <div key={s.label} style={{
             background: '#fff', border: '1px solid rgba(209,41,24,0.12)',
