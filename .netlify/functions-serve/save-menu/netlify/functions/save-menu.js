@@ -3,6 +3,32 @@ var __commonJS = (cb, mod) => function __require() {
   return mod || (0, cb[__getOwnPropNames(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
 };
 
+// netlify/functions/_auth.js
+var require_auth = __commonJS({
+  "netlify/functions/_auth.js"(exports2, module2) {
+    var failedAttempts = /* @__PURE__ */ new Map();
+    function checkAdminPin2(headers) {
+      const ip = (headers["x-forwarded-for"] || "unknown").split(",")[0].trim();
+      const pin = headers["x-admin-pin"];
+      const now = Date.now();
+      const windowMs = 15 * 60 * 1e3;
+      const maxFails = 10;
+      const attempts = (failedAttempts.get(ip) || []).filter((t) => now - t < windowMs);
+      if (attempts.length >= maxFails) {
+        return { allowed: false, reason: "Too many failed attempts. Try again later." };
+      }
+      if (!pin || pin !== process.env.ADMIN_PIN) {
+        attempts.push(now);
+        failedAttempts.set(ip, attempts);
+        return { allowed: false, reason: "Unauthorized" };
+      }
+      failedAttempts.delete(ip);
+      return { allowed: true };
+    }
+    module2.exports = { checkAdminPin: checkAdminPin2 };
+  }
+});
+
 // node_modules/bson/lib/bson.cjs
 var require_bson = __commonJS({
   "node_modules/bson/lib/bson.cjs"(exports2) {
@@ -31952,6 +31978,7 @@ var require_lib3 = __commonJS({
 });
 
 // netlify/functions/save-menu.js
+var { checkAdminPin } = require_auth();
 var { MongoClient } = require_lib3();
 var client;
 async function getClient() {
@@ -31965,12 +31992,12 @@ exports.handler = async (event) => {
   if (event.httpMethod !== "POST") {
     return { statusCode: 405, body: "Method Not Allowed" };
   }
-  const auth = event.headers["x-admin-secret"];
-  if (auth !== process.env.ADMIN_SECRET) {
+  const auth = event.headers["x-admin-pin"];
+  if (auth !== process.env.ADMIN_PIN) {
     return { statusCode: 401, body: "Unauthorized" };
   }
   try {
-    const { plateItems, trayItems } = JSON.parse(event.body);
+    const { plateItems, trayItems, addOns } = JSON.parse(event.body);
     if (!plateItems || !trayItems) {
       return { statusCode: 400, body: JSON.stringify({ error: "Missing plateItems or trayItems" }) };
     }
@@ -31982,6 +32009,7 @@ exports.handler = async (event) => {
           _id: "current",
           plateItems,
           trayItems,
+          addOns: addOns || [],
           updatedAt: /* @__PURE__ */ new Date()
         }
       },

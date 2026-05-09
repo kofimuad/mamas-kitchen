@@ -230,7 +230,7 @@ export default function Home() {
           THIS WEEK'S MENU / FOOD SHOWCASE
       ══════════════════════════════ */}
       <div style={{ padding: '52px 40px 0' }}>
-        <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', marginBottom: 28 }}>
+        <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', marginBottom: showShowcase ? 16 : 28 }}>
           <div>
             <p style={{
               fontFamily: "'Nunito', sans-serif",
@@ -241,13 +241,7 @@ export default function Home() {
               {showShowcase ? 'Our Menu' : "This Week's Menu"}
             </h2>
           </div>
-          {showShowcase ? (
-            <p style={{
-              fontFamily: "'Nunito', sans-serif",
-              fontSize: 13, color: '#6B8F3A',
-              textAlign: 'right', maxWidth: 240, margin: 0, lineHeight: 1.6,
-            }}>Ordering is closed — check back soon for the next drop!</p>
-          ) : (
+          {!showShowcase && (
             <button
               onClick={() => navigate('/menu', { state: { tab: nextDelivery.tab } })}
               style={{
@@ -259,6 +253,24 @@ export default function Home() {
             >View full menu →</button>
           )}
         </div>
+
+        {showShowcase && !loading && (
+          <div style={{
+            background: 'rgba(237, 125, 43, 0.08)',
+            border: '1px solid rgba(237, 125, 43, 0.22)',
+            borderRadius: 10,
+            padding: '13px 18px',
+            marginBottom: 24,
+          }}>
+            <p style={{
+              fontFamily: "'Nunito', sans-serif",
+              fontSize: 13, fontWeight: 600,
+              color: '#8B5525', margin: 0, lineHeight: 1.5,
+            }}>
+              Ordering is currently closed — check back soon for the next drop!
+            </p>
+          </div>
+        )}
 
         {loading ? (
           <div style={{

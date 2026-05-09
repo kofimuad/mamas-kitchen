@@ -60,6 +60,25 @@ export default function Menu() {
           ))}
         </div>
 
+        {/* No items notice */}
+        {!loading && Object.keys(grouped).length === 0 && (
+          <div style={{
+            background: 'rgba(237, 125, 43, 0.08)',
+            border: '1px solid rgba(237, 125, 43, 0.22)',
+            borderRadius: 10,
+            padding: '13px 18px',
+            marginBottom: 28,
+          }}>
+            <p style={{
+              fontFamily: "'Nunito', sans-serif",
+              fontSize: 13, fontWeight: 600,
+              color: '#8B5525', margin: 0, lineHeight: 1.5,
+            }}>
+              No {tab === 'plate' ? 'Saturday Plates' : 'Wednesday Trays'} are available right now — check back soon for the next drop!
+            </p>
+          </div>
+        )}
+
         {/* Items grouped by category */}
         {loading ? (
           // Skeleton rows while MongoDB loads

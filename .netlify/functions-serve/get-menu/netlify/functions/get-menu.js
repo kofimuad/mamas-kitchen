@@ -31977,8 +31977,9 @@ exports.handler = async () => {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         exists: true,
-        plateItems: doc.plateItems,
-        trayItems: doc.trayItems,
+        plateItems: doc.plateItems || [],
+        trayItems: doc.trayItems || [],
+        addOns: doc.addOns || [],
         updatedAt: doc.updatedAt
       })
     };

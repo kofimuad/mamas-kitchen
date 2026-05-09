@@ -1,13 +1,45 @@
+var __getOwnPropNames = Object.getOwnPropertyNames;
+var __commonJS = (cb, mod) => function __require() {
+  return mod || (0, cb[__getOwnPropNames(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
+};
+
+// netlify/functions/_auth.js
+var require_auth = __commonJS({
+  "netlify/functions/_auth.js"(exports2, module2) {
+    var failedAttempts = /* @__PURE__ */ new Map();
+    function checkAdminPin2(headers) {
+      const ip = (headers["x-forwarded-for"] || "unknown").split(",")[0].trim();
+      const pin = headers["x-admin-pin"];
+      const now = Date.now();
+      const windowMs = 15 * 60 * 1e3;
+      const maxFails = 10;
+      const attempts = (failedAttempts.get(ip) || []).filter((t) => now - t < windowMs);
+      if (attempts.length >= maxFails) {
+        return { allowed: false, reason: "Too many failed attempts. Try again later." };
+      }
+      if (!pin || pin !== process.env.ADMIN_PIN) {
+        attempts.push(now);
+        failedAttempts.set(ip, attempts);
+        return { allowed: false, reason: "Unauthorized" };
+      }
+      failedAttempts.delete(ip);
+      return { allowed: true };
+    }
+    module2.exports = { checkAdminPin: checkAdminPin2 };
+  }
+});
+
 // netlify/functions/upload-menu-image.js
+var { checkAdminPin } = require_auth();
 var https = require("https");
 var crypto = require("crypto");
 exports.handler = async (event) => {
   if (event.httpMethod !== "POST") {
     return { statusCode: 405, body: "Method Not Allowed" };
   }
-  const auth = event.headers["x-admin-secret"];
-  if (auth !== process.env.ADMIN_SECRET) {
-    return { statusCode: 401, body: "Unauthorized" };
+  const auth = checkAdminPin(event.headers);
+  if (!auth.allowed) {
+    return { statusCode: 401, body: JSON.stringify({ error: auth.reason }) };
   }
   try {
     const { imageData, itemId } = JSON.parse(event.body);
@@ -20,7 +52,7 @@ exports.handler = async (event) => {
       CLOUDINARY_API_SECRET
     } = process.env;
     const timestamp = Math.floor(Date.now() / 1e3);
-    const publicId = `mamas-kitchen/menu/${itemId}`;
+    const publicId = `obaa-yaas-kitchen/menu/${itemId}`;
     const paramsToSign = `overwrite=true&public_id=${publicId}&timestamp=${timestamp}`;
     const signature = crypto.createHash("sha1").update(paramsToSign + CLOUDINARY_API_SECRET).digest("hex");
     const boundary = "----CloudinaryBoundary" + Date.now();
