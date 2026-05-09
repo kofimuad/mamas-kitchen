@@ -97,7 +97,7 @@ export default function MenuEditor() {
   // ── New add-on form ──
   const [addingAddOn, setAddingAddOn] = useState(false)
   const [newAddOn, setNewAddOn] = useState({
-    name: '', price: '', description: '',
+    name: '', price: '', description: '', image: '',
     triggerItems: [], orderTypes: ['plate', 'tray'], available: true,
   })
 
@@ -110,11 +110,12 @@ export default function MenuEditor() {
       name:        newAddOn.name.trim(),
       price:       Number(newAddOn.price),
       description: newAddOn.description || '',
+      image:       newAddOn.image || '',
       triggerItems: newAddOn.triggerItems,
       orderTypes:   newAddOn.orderTypes,
       available:    true,
     }])
-    setNewAddOn({ name: '', price: '', description: '', triggerItems: [], orderTypes: ['plate', 'tray'], available: true })
+    setNewAddOn({ name: '', price: '', description: '', image: '', triggerItems: [], orderTypes: ['plate', 'tray'], available: true })
     setAddingAddOn(false)
     setSaveState('idle')
   }
@@ -230,8 +231,58 @@ export default function MenuEditor() {
                 borderRadius: 14, padding: '14px 16px', marginBottom: 12,
                 opacity: addon.available ? 1 : 0.6,
               }}>
-                {/* Row 1: name + price + toggles + remove */}
+                {/* Row 1: thumbnail + name + price + toggles + remove */}
                 <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}>
+                  {/* Clickable image thumbnail */}
+                  <label title="Click to change image" style={{ flexShrink: 0, cursor: 'pointer', position: 'relative' }}>
+                    <div style={{
+                      width: 52, height: 52, borderRadius: 10, flexShrink: 0,
+                      backgroundImage: addon.image
+                        ? `url('${addon.image}')`
+                        : 'linear-gradient(135deg, #C0392B 0%, #D12918 35%, #ED7D2B 70%, #F5A623 100%)',
+                      backgroundSize: 'cover', backgroundPosition: 'center',
+                      border: '2px dashed rgba(209,41,24,0.25)',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      overflow: 'hidden', position: 'relative',
+                    }}>
+                      <div style={{
+                        position: 'absolute', inset: 0, background: 'rgba(0,0,0,0)',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        borderRadius: 10, transition: 'background 0.2s', fontSize: 16,
+                      }}
+                        onMouseEnter={e => { e.currentTarget.style.background = 'rgba(0,0,0,0.45)'; e.currentTarget.firstChild.style.opacity = 1 }}
+                        onMouseLeave={e => { e.currentTarget.style.background = 'rgba(0,0,0,0)'; e.currentTarget.firstChild.style.opacity = 0 }}
+                      >
+                        <span style={{ opacity: 0, transition: 'opacity 0.2s' }}>📷</span>
+                      </div>
+                    </div>
+                    <input
+                      type="file" accept="image/*"
+                      style={{ display: 'none' }}
+                      onChange={async e => {
+                        const file = e.target.files[0]
+                        if (!file) return
+                        const reader = new FileReader()
+                        reader.onload = async ev => {
+                          const imageData = ev.target.result
+                          updateAddOn(addon.id, 'image', imageData)
+                          try {
+                            const res = await fetch('/.netlify/functions/upload-menu-image', {
+                              method: 'POST',
+                              headers: { 'Content-Type': 'application/json', ...adminHeaders() },
+                              body: JSON.stringify({ imageData, itemId: addon.id }),
+                            })
+                            const data = await res.json()
+                            if (data.imageUrl) updateAddOn(addon.id, 'image', data.imageUrl)
+                          } catch (err) {
+                            console.error('Upload failed, using local preview:', err)
+                          }
+                        }
+                        reader.readAsDataURL(file)
+                      }}
+                    />
+                  </label>
+
                   <input
                     type="text"
                     value={addon.name}
@@ -418,6 +469,62 @@ export default function MenuEditor() {
                 })}
               </div>
 
+              {/* Image thumbnail for new add-on */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 12 }}>
+                <label title="Click to add image" style={{ flexShrink: 0, cursor: 'pointer', position: 'relative' }}>
+                  <div style={{
+                    width: 52, height: 52, borderRadius: 10,
+                    backgroundImage: newAddOn.image
+                      ? `url('${newAddOn.image}')`
+                      : 'linear-gradient(135deg, #C0392B 0%, #D12918 35%, #ED7D2B 70%, #F5A623 100%)',
+                    backgroundSize: 'cover', backgroundPosition: 'center',
+                    border: '2px dashed rgba(209,41,24,0.25)',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    overflow: 'hidden', position: 'relative',
+                  }}>
+                    <div style={{
+                      position: 'absolute', inset: 0, background: 'rgba(0,0,0,0)',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      borderRadius: 10, transition: 'background 0.2s', fontSize: 16,
+                    }}
+                      onMouseEnter={e => { e.currentTarget.style.background = 'rgba(0,0,0,0.45)'; e.currentTarget.firstChild.style.opacity = 1 }}
+                      onMouseLeave={e => { e.currentTarget.style.background = 'rgba(0,0,0,0)'; e.currentTarget.firstChild.style.opacity = 0 }}
+                    >
+                      <span style={{ opacity: 0, transition: 'opacity 0.2s' }}>📷</span>
+                    </div>
+                  </div>
+                  <input
+                    type="file" accept="image/*"
+                    style={{ display: 'none' }}
+                    onChange={async e => {
+                      const file = e.target.files[0]
+                      if (!file) return
+                      const reader = new FileReader()
+                      reader.onload = async ev => {
+                        const imageData = ev.target.result
+                        setNewAddOn(n => ({ ...n, image: imageData }))
+                        try {
+                          const tempId = `addon-new-${Date.now()}`
+                          const res = await fetch('/.netlify/functions/upload-menu-image', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json', ...adminHeaders() },
+                            body: JSON.stringify({ imageData, itemId: tempId }),
+                          })
+                          const data = await res.json()
+                          if (data.imageUrl) setNewAddOn(n => ({ ...n, image: data.imageUrl }))
+                        } catch (err) {
+                          console.error('Upload failed, using local preview:', err)
+                        }
+                      }
+                      reader.readAsDataURL(file)
+                    }}
+                  />
+                </label>
+                <span style={{ fontSize: 11, color: '#6B8F3A', fontFamily: "'Nunito', sans-serif" }}>
+                  {newAddOn.image ? 'Image added — click to change' : 'Click to add image (optional)'}
+                </span>
+              </div>
+
               <div style={{ marginBottom: 12 }}>
                 <div style={{ fontSize: 11, fontWeight: 700, color: '#6B8F3A', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 6 }}>
                   Triggered by (leave empty = all orders):
@@ -461,7 +568,7 @@ export default function MenuEditor() {
               </div>
 
               <div style={{ display: 'flex', gap: 10 }}>
-                <button onClick={() => { setAddingAddOn(false); setNewAddOn({ name: '', price: '', description: '', triggerItems: [], orderTypes: ['plate', 'tray'], available: true }) }} style={{
+                <button onClick={() => { setAddingAddOn(false); setNewAddOn({ name: '', price: '', description: '', image: '', triggerItems: [], orderTypes: ['plate', 'tray'], available: true }) }} style={{
                   flex: 1, padding: 11, border: '1.5px solid rgba(209,41,24,0.25)',
                   borderRadius: 10, background: 'transparent', color: '#456D1B',
                   fontSize: 13, fontWeight: 600, cursor: 'pointer',
