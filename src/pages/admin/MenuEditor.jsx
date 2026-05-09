@@ -26,6 +26,7 @@ export default function MenuEditor() {
   if (localAddOns === null && !loading) setLocalAddOns([...(menuAddOns || [])])
 
   const [saveState, setSaveState] = useState('idle') // 'idle' | 'saving' | 'saved' | 'error'
+  const [pendingSpecific, setPendingSpecific] = useState(new Set()) // addon IDs in specific mode with 0 items yet
 
   const items      = tab === 'plate' ? (plates || []) : (trays || [])
   const setItems   = tab === 'plate' ? setPlates : setTrays
@@ -222,7 +223,7 @@ export default function MenuEditor() {
           )}
 
           {(localAddOns || []).map(addon => {
-            const triggerMode = !addon.triggerItems?.length ? 'all' : 'specific'
+            const triggerMode = (addon.triggerItems?.length || pendingSpecific.has(addon.id)) ? 'specific' : 'all'
             const availableTriggerItems = allMenuItems.filter(m => !(addon.triggerItems || []).includes(m.id))
             return (
               <div key={addon.id} style={{
@@ -358,8 +359,12 @@ export default function MenuEditor() {
                     <span style={{ fontSize: 11, fontWeight: 700, color: '#6B8F3A', textTransform: 'uppercase', letterSpacing: '0.06em', flexShrink: 0 }}>Triggered by:</span>
                     {[{ key: 'all', label: 'All orders' }, { key: 'specific', label: 'Specific items' }].map(opt => (
                       <button key={opt.key} onClick={() => {
-                        if (opt.key === 'all') updateAddOn(addon.id, 'triggerItems', [])
-                        else if (triggerMode === 'all') updateAddOn(addon.id, 'triggerItems', [])
+                        if (opt.key === 'all') {
+                          updateAddOn(addon.id, 'triggerItems', [])
+                          setPendingSpecific(prev => { const next = new Set(prev); next.delete(addon.id); return next })
+                        } else {
+                          setPendingSpecific(prev => new Set([...prev, addon.id]))
+                        }
                       }} style={{
                         padding: '3px 10px', borderRadius: 6,
                         border: `1.5px solid ${triggerMode === opt.key ? '#3A5A14' : 'rgba(0,0,0,0.15)'}`,
