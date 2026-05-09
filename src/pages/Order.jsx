@@ -28,9 +28,15 @@ export default function Order() {
   const [selected,     setSelected]     = useState([])      // array of item ids (unlimited)
   const [addOnCounts,  setAddOnCounts]  = useState({})      // { [addOnId]: qty }
   const [submitting,   setSubmitting]   = useState(false)
+  const [showCustomUnit, setShowCustomUnit] = useState(() => {
+    const saved = loadSavedInfo()
+    return !!(saved?.armyUnit && !['264', '233'].includes(saved.armyUnit))
+  })
   const [info, setInfo] = useState(() => {
     const saved = loadSavedInfo()
-    return saved || { branch: '', name: '', phone: '', battalion: '', paymentMethod: 'cashapp', paymentHandle: '' }
+    return saved
+      ? { armyCompany: '', armyUnit: '', ...saved }
+      : { branch: '', name: '', phone: '', battalion: '', armyCompany: '', armyUnit: '', paymentMethod: 'cashapp', paymentHandle: '' }
   })
 
   const items  = orderType === 'tray' ? trayItems : plateItems
@@ -84,7 +90,13 @@ export default function Order() {
   const next = async () => {
     if (step === 1 && selected.length === 0) { alert('Please select at least one item.'); return }
     if (step === 2) {
-      if (!info.branch || !info.name || !info.battalion) { alert('Please fill in all required fields.'); return }
+      if (!info.branch || !info.name) { alert('Please fill in all required fields.'); return }
+      if (info.branch === 'Army') {
+        if (!info.armyCompany) { alert('Please select your company (Alpha, Beta, Charlie, or Delta).'); return }
+        if (!info.armyUnit) { alert('Please select or enter your unit number.'); return }
+      } else {
+        if (!info.battalion) { alert('Please fill in your company & battalion.'); return }
+      }
       if (!info.paymentHandle) { alert('Please enter your Zelle or Cash App username.'); return }
       setStep(3); return
     }
@@ -101,13 +113,17 @@ export default function Order() {
             const addOn = relevantAddOns.find(a => a.id === id)
             return { id, name: addOn.name, price: addOn.price, qty }
           })
+        const effectiveBattalion = info.branch === 'Army'
+          ? `${info.armyCompany} ${info.armyUnit}`.trim()
+          : info.battalion
+        const submittedInfo = { ...info, battalion: effectiveBattalion }
         const res  = await fetch(apiUrl('submit-order'), {
           method: 'POST', headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ orderType, items: itemsPayload, addOns: addOnsPayload, info, total: grandTotal }),
+          body: JSON.stringify({ orderType, items: itemsPayload, addOns: addOnsPayload, info: submittedInfo, total: grandTotal }),
         })
         const data = await res.json()
         if (!res.ok) throw new Error(data.error || 'Failed to submit order')
-        navigate(`/order-status/${data.orderId}`, { state: { justOrdered: true, info, total: grandTotal, orderType } })
+        navigate(`/order-status/${data.orderId}`, { state: { justOrdered: true, info: submittedInfo, total: grandTotal, orderType } })
       } catch (err) {
         alert('Something went wrong: ' + err.message)
         setSubmitting(false)
@@ -303,6 +319,69 @@ export default function Order() {
               {BRANCHES.map(b => <option key={b}>{b}</option>)}
             </select>
           </div>
+
+          {info.branch === 'Army' && (
+            <>
+              <div className="field-group">
+                <label className="field-label">Company *</label>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
+                  {['Alpha', 'Beta', 'Charlie', 'Delta'].map(co => (
+                    <div key={co} onClick={() => setInfo(i => ({ ...i, armyCompany: co }))} style={{
+                      padding: '12px 16px', borderRadius: 12, cursor: 'pointer',
+                      border: `2px solid ${info.armyCompany === co ? '#D12918' : 'rgba(209,41,24,0.18)'}`,
+                      background: info.armyCompany === co ? 'rgba(209,41,24,0.04)' : '#fff',
+                      transition: 'all 0.18s', textAlign: 'center',
+                      fontFamily: "'Nunito', sans-serif", fontSize: 14, fontWeight: 700,
+                      color: info.armyCompany === co ? '#D12918' : '#3A5A14',
+                    }}>
+                      {co}
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="field-group">
+                <label className="field-label">Unit Number *</label>
+                <div style={{ display: 'flex', gap: 8, marginBottom: showCustomUnit ? 10 : 0 }}>
+                  {['264', '233'].map(num => (
+                    <div key={num}
+                      onClick={() => { setShowCustomUnit(false); setInfo(i => ({ ...i, armyUnit: num })) }}
+                      style={{
+                        flex: 1, padding: '12px 16px', borderRadius: 12, cursor: 'pointer',
+                        border: `2px solid ${info.armyUnit === num && !showCustomUnit ? '#D12918' : 'rgba(209,41,24,0.18)'}`,
+                        background: info.armyUnit === num && !showCustomUnit ? 'rgba(209,41,24,0.04)' : '#fff',
+                        transition: 'all 0.18s', textAlign: 'center',
+                        fontFamily: "'Nunito', sans-serif", fontSize: 14, fontWeight: 700,
+                        color: info.armyUnit === num && !showCustomUnit ? '#D12918' : '#3A5A14',
+                      }}>
+                      {num}
+                    </div>
+                  ))}
+                  <div
+                    onClick={() => { setShowCustomUnit(true); setInfo(i => ({ ...i, armyUnit: '' })) }}
+                    style={{
+                      flex: 1, padding: '12px 16px', borderRadius: 12, cursor: 'pointer',
+                      border: `2px solid ${showCustomUnit ? '#D12918' : 'rgba(209,41,24,0.18)'}`,
+                      background: showCustomUnit ? 'rgba(209,41,24,0.04)' : '#fff',
+                      transition: 'all 0.18s', textAlign: 'center',
+                      fontFamily: "'Nunito', sans-serif", fontSize: 14, fontWeight: 700,
+                      color: showCustomUnit ? '#D12918' : '#3A5A14',
+                    }}>
+                    Other
+                  </div>
+                </div>
+                {showCustomUnit && (
+                  <input className="field-input" type="text"
+                    placeholder="Enter your unit number"
+                    value={info.armyUnit}
+                    onChange={e => setInfo(i => ({ ...i, armyUnit: e.target.value }))}
+                    autoFocus
+                  />
+                )}
+              </div>
+            </>
+          )}
+
           <div className="field-group">
             <label className="field-label">Full Name *</label>
             <input className="field-input" type="text" placeholder="Your full name" value={info.name} onChange={e => setInfo(i => ({ ...i, name: e.target.value }))} />
@@ -311,10 +390,12 @@ export default function Order() {
             <label className="field-label">Phone Number</label>
             <input className="field-input" type="tel" placeholder="+1 (555) 000-0000" value={info.phone} onChange={e => setInfo(i => ({ ...i, phone: e.target.value }))} />
           </div>
-          <div className="field-group">
-            <label className="field-label">Company &amp; Battalion *</label>
-            <input className="field-input" type="text" placeholder="e.g. Delta 264" value={info.battalion} onChange={e => setInfo(i => ({ ...i, battalion: e.target.value }))} />
-          </div>
+          {info.branch !== 'Army' && (
+            <div className="field-group">
+              <label className="field-label">Company &amp; Battalion *</label>
+              <input className="field-input" type="text" placeholder="e.g. 2nd Battalion" value={info.battalion} onChange={e => setInfo(i => ({ ...i, battalion: e.target.value }))} />
+            </div>
+          )}
 
           <div style={{ marginTop: 28, marginBottom: 8 }}>
             <div style={{ fontFamily: "'Nunito', sans-serif", fontSize: 11, fontWeight: 700, color: '#6B8F3A', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 14 }}>
@@ -440,7 +521,15 @@ export default function Order() {
             <div style={{ fontFamily: "'Nunito', sans-serif", fontSize: 11, fontWeight: 700, color: '#6B8F3A', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 10 }}>Your Details</div>
             <div style={{ fontFamily: "'Nunito', sans-serif", fontSize: 14, color: '#3A5A14', lineHeight: 2 }}>
               <div>{info.name}</div>
-              <div>{info.branch} · {info.battalion}</div>
+              {info.branch === 'Army' ? (
+                <div>
+                  {info.branch}
+                  {info.armyCompany ? ` · ${info.armyCompany}` : ''}
+                  {info.armyUnit ? ` · Unit ${info.armyUnit}` : ''}
+                </div>
+              ) : (
+                <div>{info.branch}{info.battalion ? ` · ${info.battalion}` : ''}</div>
+              )}
               {info.phone && <div>{info.phone}</div>}
             </div>
           </div>
