@@ -81,25 +81,30 @@ export default function Dashboard() {
       </div>
 
       {/* ── Stats ── */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12, marginBottom: 36 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12, marginBottom: 36 }}>
         {[
-          { label: 'Pending',       value: stats.newCount,      accent: true  },
-          { label: 'Total Revenue', value: `$${stats.revenue}`, accent: true  },
-          { label: 'Total Orders',  value: stats.total,         accent: false },
+          { label: 'Pending',            value: stats.newCount,               sub: 'Awaiting payment',      accent: '#D12918' },
+          { label: 'Projected Revenue',  value: `$${stats.projectedRevenue}`, sub: 'All active orders',     accent: '#D12918' },
+          { label: 'Actual Revenue',     value: `$${stats.revenue}`,          sub: 'Confirmed payments',    accent: '#3A5A14' },
+          { label: 'Total Orders',       value: stats.total,                  sub: 'All time',              accent: '#3A5A14' },
         ].map(s => (
           <div key={s.label} style={{
             background: '#fff', border: '1px solid rgba(209,41,24,0.12)',
-            borderRadius: 16, padding: '20px 20px',
+            borderRadius: 16, padding: '18px 18px',
             boxShadow: '0 2px 8px rgba(209,41,24,0.05)',
           }}>
             <div style={{
               fontFamily: "'Nunito', sans-serif", fontSize: 10, fontWeight: 700,
-              color: '#6B8F3A', textTransform: 'uppercase', letterSpacing: '0.09em', marginBottom: 10,
+              color: '#6B8F3A', textTransform: 'uppercase', letterSpacing: '0.09em', marginBottom: 8,
             }}>{s.label}</div>
             <div style={{
-              fontFamily: "'Nunito', sans-serif", fontWeight: 900, fontSize: 34,
-              lineHeight: 1, color: s.accent ? '#D12918' : '#3A5A14',
+              fontFamily: "'Nunito', sans-serif", fontWeight: 900, fontSize: 30,
+              lineHeight: 1, color: s.accent, marginBottom: 6,
             }}>{s.value}</div>
+            <div style={{
+              fontFamily: "'Nunito', sans-serif", fontSize: 10,
+              color: 'rgba(107,143,58,0.7)', letterSpacing: '0.02em',
+            }}>{s.sub}</div>
           </div>
         ))}
       </div>

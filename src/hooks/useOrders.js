@@ -48,10 +48,13 @@ export default function useOrders() {
   }
 
   const stats = {
-    total:    orders.length,
-    newCount: orders.filter(o => o.status === 'new' || o.status === 'pending_payment').length,
-    revenue:  orders
-      .filter(o => o.paymentStatus === 'paid' || o.status === 'confirmed' || o.status === 'delivered')
+    total:            orders.length,
+    newCount:         orders.filter(o => o.status === 'new' || o.status === 'pending_payment').length,
+    projectedRevenue: orders
+      .filter(o => o.status !== 'declined')
+      .reduce((sum, o) => sum + (o.total || 0), 0),
+    revenue:          orders
+      .filter(o => o.paymentStatus === 'paid' || o.status === 'confirmed' || o.status === 'cooking' || o.status === 'delivered')
       .reduce((sum, o) => sum + (o.total || 0), 0),
     plates: {},
   }
