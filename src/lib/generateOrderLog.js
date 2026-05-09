@@ -122,6 +122,7 @@ export async function generateOrderLog(orders, title = 'All Orders') {
   const payMethodCounts = {}
   const payMethodRevenue = {}
   const branchCounts = {}
+  const locationCounts = {}
   const orderTypeCounts = { tray: 0, plate: 0 }
 
   orders.forEach(o => {
@@ -150,6 +151,19 @@ export async function generateOrderLog(orders, title = 'All Orders') {
 
     const branch = o.info?.branch || o.branch || 'Unknown'
     branchCounts[branch] = (branchCounts[branch] || 0) + 1
+
+    let deliveryLocation = ''
+    if (branch === 'Army') {
+      const co  = o.info?.armyCompany || ''
+      const num = o.info?.armyUnit    || ''
+      deliveryLocation = co || num
+        ? [co, num].filter(Boolean).join(' · ')
+        : (o.info?.battalion || o.battalion || '')
+    } else {
+      deliveryLocation = o.info?.battalion || o.battalion || ''
+    }
+    const locKey = `${branch}|||${deliveryLocation}`
+    locationCounts[locKey] = (locationCounts[locKey] || 0) + 1
 
     if (o.orderType === 'tray') orderTypeCounts.tray++
     else orderTypeCounts.plate++
@@ -316,18 +330,28 @@ export async function generateOrderLog(orders, title = 'All Orders') {
     y += 5
   }
 
-  // ── BRANCH BREAKDOWN ───────────────────────────────────────
-  const branchEntries = Object.entries(branchCounts).sort((a, b) => b[1] - a[1])
-  if (branchEntries.length > 1) {
-    checkPage(14 + branchEntries.length * 7)
+  // ── BRANCH & UNIT BREAKDOWN ────────────────────────────────
+  const locationEntries = Object.entries(locationCounts).map(([key, count]) => {
+    const [branch, location] = key.split('|||')
+    return { branch, location, count }
+  }).sort((a, b) => {
+    const totalA = branchCounts[a.branch] || 0
+    const totalB = branchCounts[b.branch] || 0
+    if (totalA !== totalB) return totalB - totalA
+    if (a.branch !== b.branch) return a.branch.localeCompare(b.branch)
+    return b.count - a.count
+  })
+
+  if (locationEntries.length > 0) {
+    checkPage(14 + locationEntries.length * 7)
     doc.setFontSize(9)
     doc.setTextColor(...BROWN)
     doc.setFont('helvetica', 'bold')
-    doc.text('Orders by Branch', ML, y)
+    doc.text('Orders by Branch & Unit', ML, y)
     y += 4
     doc.setDrawColor(...ORANGE)
     doc.setLineWidth(0.5)
-    doc.line(ML, y, ML + 38, y)
+    doc.line(ML, y, ML + 52, y)
     y += 5
 
     // Header
@@ -337,10 +361,11 @@ export async function generateOrderLog(orders, title = 'All Orders') {
     doc.setFont('helvetica', 'bold')
     doc.setTextColor(...BROWN)
     doc.text('Branch', ML + 5, y + 4.5)
+    doc.text('Company / Unit', ML + 55, y + 4.5)
     doc.text('Orders', PW - MR - 3, y + 4.5, { align: 'right' })
     y += 8
 
-    branchEntries.forEach(([branch, count], i) => {
+    locationEntries.forEach(({ branch, location, count }, i) => {
       checkPage(8)
       const rowBg = i % 2 === 0 ? [252, 248, 244] : [255, 255, 255]
       doc.setFillColor(...rowBg)
@@ -349,6 +374,10 @@ export async function generateOrderLog(orders, title = 'All Orders') {
       doc.setFont('helvetica', 'normal')
       doc.setTextColor(...BROWN)
       doc.text(branch, ML + 5, y + 0.5)
+      if (location) {
+        doc.setTextColor(...MGRAY)
+        doc.text(location, ML + 55, y + 0.5)
+      }
       doc.setFont('helvetica', 'bold')
       doc.setTextColor(...ORANGE)
       doc.text(`${count}`, PW - MR - 3, y + 0.5, { align: 'right' })
