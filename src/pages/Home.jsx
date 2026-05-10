@@ -3,18 +3,20 @@ import FoodCard from '../components/FoodCard'
 import FoodShowcaseSlider from '../components/FoodShowcaseSlider'
 import Footer from '../components/Footer'
 import useMenu from '../hooks/useMenu'
-import { getNextDeliveryLabel } from '../lib/weekUtils'
+import useActiveCycle from '../hooks/useActiveCycle'
 
 export default function Home() {
   const navigate  = useNavigate()
-  const { plateItems, trayItems, loading } = useMenu()
-  const nextDelivery = getNextDeliveryLabel()
+  const { plateItems, trayItems, loading: menuLoading } = useMenu()
+  const { cycle, loading: cycleLoading } = useActiveCycle()
 
-  // Show items for the next upcoming delivery
-  const previewItems = nextDelivery.type === 'tray' ? trayItems : plateItems
-  const previewLabel = nextDelivery.type === 'tray' ? 'Wednesday Trays' : 'Saturday Plates'
-  const availablePreview = previewItems.filter(i => i.available && i.price != null)
-  const showShowcase = !loading && availablePreview.length === 0
+  const loading = menuLoading || cycleLoading
+
+  // Show items for the active cycle type; fall back to showcase when no cycle is open
+  const previewItems    = cycle?.type === 'tray' ? trayItems : plateItems
+  const previewLabel    = cycle?.type === 'tray' ? 'Wednesday Trays' : 'Saturday Plates'
+  const availablePreview = cycle ? previewItems.filter(i => i.available && i.price != null) : []
+  const showShowcase     = !loading && (!cycle || availablePreview.length === 0)
 
   return (
     <div>
@@ -243,7 +245,7 @@ export default function Home() {
           </div>
           {!showShowcase && (
             <button
-              onClick={() => navigate('/menu', { state: { tab: nextDelivery.tab } })}
+              onClick={() => navigate('/menu', { state: { tab: cycle?.type || 'plate' } })}
               style={{
                 fontFamily: "'Nunito', sans-serif",
                 background: 'none', border: 'none', cursor: 'pointer',
@@ -301,7 +303,7 @@ export default function Home() {
             gap: 20,
           }}>
             {availablePreview.slice(0, 5).map(item => (
-              <FoodCard key={item.id} item={{ ...item, type: nextDelivery.tab }} />
+              <FoodCard key={item.id} item={{ ...item, type: cycle?.type || 'plate' }} />
             ))}
           </div>
         )}

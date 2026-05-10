@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
-import { trayCategories, plateCategories, cutoffs } from '../data/menu'
+import { trayCategories, plateCategories } from '../data/menu'
 import useMenu from '../hooks/useMenu'
+import useActiveCycle from '../hooks/useActiveCycle'
 import { apiUrl } from '../lib/api'
 
 const BRANCHES    = ['Army', 'Navy', 'Air Force', 'Marines', 'Coast Guard', 'Space Force']
@@ -17,9 +18,10 @@ export default function Order() {
   const location  = useLocation()
   const preselect = location.state?.preselect  // { id?, type }
   const { plateItems, trayItems, addOns } = useMenu()
+  const { cycle, loading: cycleLoading } = useActiveCycle()
 
-  // If a specific item was passed in, go to step 1 with it pre-selected at qty 1
-  // If only a type was passed (from menu CTA), go to step 1 with order type set
+  // When a cycle is open, skip step 0 and lock the type to the cycle's type.
+  // preselect.type (from Menu CTA) still lands on step 1 as before.
   const initialType = preselect?.type || null
   const initialStep = preselect?.type ? 1 : 0
 
@@ -39,8 +41,24 @@ export default function Order() {
       : { branch: '', name: '', phone: '', battalion: '', armyCompany: '', armyUnit: '', paymentMethod: 'cashapp', paymentHandle: '' }
   })
 
-  const items  = orderType === 'tray' ? trayItems : plateItems
-  const cutoff = orderType ? cutoffs[orderType] : null
+  // When cycle loads and step 0 is still showing, jump straight to step 1 locked to cycle type
+  useEffect(() => {
+    if (cycleLoading || !cycle) return
+    if (step === 0) {
+      setOrderType(cycle.type)
+      setStep(1)
+    }
+  }, [cycleLoading, cycle])
+
+  const items = orderType === 'tray' ? trayItems : plateItems
+
+  // Build cutoff / delivery text from cycle data when available
+  const cutoffText = cycle?.cutoffAt
+    ? new Date(cycle.cutoffAt).toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })
+    : orderType === 'tray' ? 'Monday 8 PM' : 'Friday 6 PM'
+  const deliveryText = cycle?.deliveryDate
+    ? new Date(cycle.deliveryDate).toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })
+    : orderType === 'tray' ? 'Wednesday' : 'Saturday'
 
   // Pre-select the item once menu data has loaded
   // If item not found (e.g. removed from menu), still land on step 1
@@ -163,46 +181,63 @@ export default function Order() {
     return acc
   }, {})
 
+  // Ordering closed screen — shown when cycle fetch is done and no cycle is open
+  if (!cycleLoading && !cycle) {
+    return (
+      <div className="page-wrap" style={{ maxWidth: 580 }}>
+        <div className="page-eyebrow">Place an Order</div>
+        <h1 className="page-title">Ordering Closed</h1>
+        <div className="title-rule" />
+        <div style={{
+          background: 'rgba(237, 125, 43, 0.08)',
+          border: '1px solid rgba(237, 125, 43, 0.22)',
+          borderRadius: 14, padding: '24px 28px', marginTop: 8,
+        }}>
+          <p style={{
+            fontFamily: "'Nunito', sans-serif",
+            fontSize: 15, fontWeight: 600,
+            color: '#8B5525', margin: '0 0 12px', lineHeight: 1.6,
+          }}>
+            Ordering is currently closed — check back soon for the next drop!
+          </p>
+          <p style={{
+            fontFamily: "'Nunito', sans-serif",
+            fontSize: 13, color: '#A0724A', margin: 0, lineHeight: 1.6,
+          }}>
+            Obaa Yaa opens ordering windows before each delivery. When an order window is open you'll be able to place your order here.
+          </p>
+        </div>
+        <button
+          onClick={() => navigate('/menu')}
+          style={{
+            marginTop: 24,
+            fontFamily: "'Nunito', sans-serif",
+            background: '#3A5A14', color: '#fff',
+            fontSize: 13, fontWeight: 700,
+            padding: '14px 24px', borderRadius: 10, border: 'none',
+            cursor: 'pointer',
+          }}
+        >Browse the Menu</button>
+      </div>
+    )
+  }
+
   return (
     <div className="page-wrap" style={{ maxWidth: 580 }}>
 
-      {/* ── STEP 0: Order Type ── */}
-      {step === 0 && (
-        <>
-          <div className="page-eyebrow">Place an Order</div>
-          <h1 className="page-title">What are you ordering?</h1>
-          <div className="title-rule" />
-          <p className="page-sub">We serve twice a week. Choose your order type to get started.</p>
-
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 16, marginBottom: 32 }}>
-            {[
-              { type: 'plate', label: 'Plate Order', sub: `Individual plates · Delivered ${cutoffs.plate.delivery}`, cutoffText: `Order by ${cutoffs.plate.day} ${cutoffs.plate.time}`, accent: '#D12918' },
-              { type: 'tray',  label: 'Tray Order',  sub: `Large trays · Feeds a group · Delivered ${cutoffs.tray.delivery}`, cutoffText: `Order by ${cutoffs.tray.day} ${cutoffs.tray.time}`, accent: '#3A5A14' },
-            ].map(({ type, label, sub, cutoffText, accent }) => (
-              <div key={type}
-                onClick={() => { setOrderType(type); setStep(1) }}
-                style={{
-                  background: '#fff', border: `2px solid rgba(209,41,24,0.18)`,
-                  borderRadius: 20, overflow: 'hidden', cursor: 'pointer', transition: 'all 0.2s',
-                  boxShadow: '0 4px 20px rgba(209,41,24,0.08)',
-                }}
-                onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-3px)'; e.currentTarget.style.boxShadow = '0 10px 32px rgba(209,41,24,0.16)' }}
-                onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)';   e.currentTarget.style.boxShadow = '0 4px 20px rgba(209,41,24,0.08)' }}
-              >
-                <div style={{ height: 100, background: accent, display: 'flex', alignItems: 'center', padding: '0 28px' }}>
-                  <div>
-                    <div style={{ fontFamily: "'Nunito', sans-serif", fontWeight: 900, fontSize: 22, fontWeight: 'bold', color: '#fff' }}>{label}</div>
-                    <div style={{ fontFamily: "'Nunito', sans-serif", fontSize: 12, color: 'rgba(255,255,255,0.80)', marginTop: 2 }}>{sub}</div>
-                  </div>
-                </div>
-                <div style={{ padding: '16px 24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <div style={{ fontFamily: "'Nunito', sans-serif", fontSize: 13, color: '#456D1B' }}>{cutoffText}</div>
-                  <div style={{ background: accent, color: '#fff', fontSize: 18, width: 34, height: 34, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>→</div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </>
+      {/* ── STEP 0: loading skeleton while cycle resolves ── */}
+      {step === 0 && cycleLoading && (
+        <div style={{ paddingTop: 40 }}>
+          {[1, 2].map(n => (
+            <div key={n} style={{
+              borderRadius: 20, overflow: 'hidden', marginBottom: 16,
+              border: '2px solid rgba(209,41,24,0.12)',
+            }}>
+              <div style={{ height: 100, background: 'linear-gradient(90deg, #f0e8e0 25%, #e8ddd5 50%, #f0e8e0 75%)', backgroundSize: '200% 100%', animation: 'shimmer 1.4s infinite' }} />
+              <div style={{ height: 56, background: '#fff' }} />
+            </div>
+          ))}
+        </div>
       )}
 
       {/* Steps 1–3 header */}
@@ -212,7 +247,7 @@ export default function Order() {
           <h1 className="page-title">Place Your Order</h1>
           <div className="title-rule" />
           <div className="notice" style={{ marginBottom: 24 }}>
-            <div><div className="notice-title">Cutoff: <span>{cutoff.day} {cutoff.time}</span> · Delivery: {cutoff.delivery}</div></div>
+            <div><div className="notice-title">Cutoff: <span>{cutoffText}</span> · Delivery: {deliveryText}</div></div>
           </div>
 
           {/* Step bar */}
@@ -637,7 +672,10 @@ export default function Order() {
           </button>
         </div>
       )}
-      <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+      <style>{`
+        @keyframes spin { to { transform: rotate(360deg); } }
+        @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+      `}</style>
     </div>
   )
 }

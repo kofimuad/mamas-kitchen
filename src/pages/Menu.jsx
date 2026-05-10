@@ -1,16 +1,26 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import Footer from '../components/Footer'
 import FoodCard from '../components/FoodCard'
-import { plateCategories, trayCategories, cutoffs } from '../data/menu'
+import { plateCategories, trayCategories } from '../data/menu'
 import useMenu from '../hooks/useMenu'
+import useActiveCycle from '../hooks/useActiveCycle'
 
 export default function Menu() {
   const navigate  = useNavigate()
   const location  = useLocation()
-  const [tab, setTab] = useState(location.state?.tab || 'plate')
-  const { plateItems, trayItems, loading } = useMenu()
+  const { plateItems, trayItems, loading: menuLoading } = useMenu()
+  const { cycle, loading: cycleLoading } = useActiveCycle()
 
+  // Default tab from navigation state; once cycle loads, lock it to cycle type
+  const [tab, setTab] = useState(location.state?.tab || 'plate')
+
+  useEffect(() => {
+    if (!cycleLoading && cycle) setTab(cycle.type)
+  }, [cycleLoading, cycle])
+
+  const loading    = menuLoading || cycleLoading
+  const isOpen     = !!cycle
   const items      = tab === 'plate' ? plateItems : trayItems
   const categories = tab === 'plate' ? plateCategories : trayCategories
 
@@ -19,6 +29,15 @@ export default function Menu() {
     if (catItems.length) acc[cat] = catItems
     return acc
   }, {})
+
+  // Format cutoff from cycle if available
+  const cutoffText = cycle?.cutoffAt
+    ? `Order by ${new Date(cycle.cutoffAt).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })}`
+    : tab === 'plate' ? 'Order by Friday 6 PM' : 'Order by Monday 8 PM'
+
+  const deliveryText = cycle?.deliveryDate
+    ? `Delivery ${new Date(cycle.deliveryDate).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}`
+    : tab === 'plate' ? 'Delivery Saturday' : 'Delivery Wednesday'
 
   return (
     <div>
@@ -31,57 +50,74 @@ export default function Menu() {
           Cooked fresh and delivered to your base. Two delivery days every week.
         </p>
 
-        {/* Tab toggle */}
-        <div style={{
-          display: 'flex', background: '#F5EDCC',
-          borderRadius: 12, padding: 4, marginBottom: 36,
-          border: '1px solid rgba(209,41,24,0.15)',
-        }}>
-          {[
-            { key: 'plate', label: '🍽️ Saturday Plates',   sub: `Order by ${cutoffs.plate.day} ${cutoffs.plate.time}` },
-            { key: 'tray',  label: '🥘 Wednesday Trays',   sub: 'Order by Mon 8 PM' },
-          ].map(t => (
-            <button key={t.key} onClick={() => setTab(t.key)} style={{
-              flex: 1, padding: '11px 12px',
-              background: tab === t.key ? '#D12918' : 'transparent',
-              color: tab === t.key ? '#fff' : '#456D1B',
-              border: 'none', borderRadius: 9,
-              fontFamily: "'Nunito', sans-serif",
-              fontSize: 13, fontWeight: 700,
-              cursor: 'pointer', transition: 'all 0.2s',
-              display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2,
-            }}>
-              <span>{t.label}</span>
-              <span style={{
-                fontSize: 10, fontWeight: 400,
-                opacity: tab === t.key ? 0.75 : 0.55,
-              }}>{t.sub}</span>
-            </button>
-          ))}
-        </div>
-
-        {/* No items notice */}
-        {!loading && Object.keys(grouped).length === 0 && (
+        {/* Ordering closed notice */}
+        {!loading && !isOpen && (
           <div style={{
             background: 'rgba(237, 125, 43, 0.08)',
             border: '1px solid rgba(237, 125, 43, 0.22)',
-            borderRadius: 10,
-            padding: '13px 18px',
-            marginBottom: 28,
+            borderRadius: 10, padding: '13px 18px', marginBottom: 24,
           }}>
             <p style={{
               fontFamily: "'Nunito', sans-serif",
               fontSize: 13, fontWeight: 600,
               color: '#8B5525', margin: 0, lineHeight: 1.5,
             }}>
-              No {tab === 'plate' ? 'Saturday Plates' : 'Wednesday Trays'} are available right now — check back soon for the next drop!
+              Ordering is currently closed — check back soon for the next drop!
+            </p>
+          </div>
+        )}
+
+        {/* Tab toggle — locked to cycle type when a cycle is open */}
+        <div style={{
+          display: 'flex', background: '#F5EDCC',
+          borderRadius: 12, padding: 4, marginBottom: 36,
+          border: '1px solid rgba(209,41,24,0.15)',
+        }}>
+          {[
+            { key: 'plate', label: '🍽️ Saturday Plates',  sub: 'Order by Fri 6 PM' },
+            { key: 'tray',  label: '🥘 Wednesday Trays',  sub: 'Order by Mon 8 PM' },
+          ].map(t => {
+            const locked = isOpen && t.key !== cycle.type
+            return (
+              <button key={t.key} onClick={() => !locked && setTab(t.key)} style={{
+                flex: 1, padding: '11px 12px',
+                background: tab === t.key ? '#D12918' : 'transparent',
+                color: tab === t.key ? '#fff' : locked ? 'rgba(107,143,58,0.35)' : '#456D1B',
+                border: 'none', borderRadius: 9,
+                fontFamily: "'Nunito', sans-serif",
+                fontSize: 13, fontWeight: 700,
+                cursor: locked ? 'default' : 'pointer', transition: 'all 0.2s',
+                display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2,
+              }}>
+                <span>{t.label}</span>
+                <span style={{
+                  fontSize: 10, fontWeight: 400,
+                  opacity: tab === t.key ? 0.75 : 0.55,
+                }}>{t.sub}</span>
+              </button>
+            )
+          })}
+        </div>
+
+        {/* No items notice */}
+        {!loading && Object.keys(grouped).length === 0 && isOpen && (
+          <div style={{
+            background: 'rgba(237, 125, 43, 0.08)',
+            border: '1px solid rgba(237, 125, 43, 0.22)',
+            borderRadius: 10, padding: '13px 18px', marginBottom: 28,
+          }}>
+            <p style={{
+              fontFamily: "'Nunito', sans-serif",
+              fontSize: 13, fontWeight: 600,
+              color: '#8B5525', margin: 0, lineHeight: 1.5,
+            }}>
+              No {tab === 'plate' ? 'Saturday Plates' : 'Wednesday Trays'} are available right now — check back soon!
             </p>
           </div>
         )}
 
         {/* Items grouped by category */}
         {loading ? (
-          // Skeleton rows while MongoDB loads
           <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
             {[1,2,3,4,5].map(n => (
               <div key={n} style={{
@@ -117,43 +153,43 @@ export default function Menu() {
           ))
         )}
 
-        {/* CTA */}
-        <div style={{
-          background: '#3A5A14', borderRadius: 20,
-          padding: '28px 32px',
-          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-          gap: 20, flexWrap: 'wrap',
-          marginBottom: 20,
-        }}>
-          <div>
-            <div style={{
-              fontFamily: "'Nunito', sans-serif", fontWeight: 900,
-              fontSize: 20, fontWeight: 700, color: '#fff', marginBottom: 4,
-            }}>Ready to order?</div>
-            <div style={{
-              fontFamily: "'Nunito', sans-serif",
-              fontSize: 13, color: 'rgba(255,255,255,0.55)',
-            }}>
-              {tab === 'plate'
-                ? `Cutoff ${cutoffs.plate.day} ${cutoffs.plate.time} · Delivery ${cutoffs.plate.delivery}`
-                : `Cutoff ${cutoffs.tray.day} ${cutoffs.tray.time} · Delivery ${cutoffs.tray.delivery}`}
+        {/* CTA — only shown when ordering is open */}
+        {isOpen && (
+          <div style={{
+            background: '#3A5A14', borderRadius: 20,
+            padding: '28px 32px',
+            display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+            gap: 20, flexWrap: 'wrap',
+            marginBottom: 20,
+          }}>
+            <div>
+              <div style={{
+                fontFamily: "'Nunito', sans-serif", fontWeight: 700,
+                fontSize: 20, color: '#fff', marginBottom: 4,
+              }}>Ready to order?</div>
+              <div style={{
+                fontFamily: "'Nunito', sans-serif",
+                fontSize: 13, color: 'rgba(255,255,255,0.55)',
+              }}>
+                {cutoffText} · {deliveryText}
+              </div>
             </div>
+            <button
+              onClick={() => navigate('/order', { state: { preselect: { type: tab } } })}
+              style={{
+                fontFamily: "'Nunito', sans-serif",
+                background: '#D12918', color: '#fff',
+                fontSize: 11, fontWeight: 700,
+                letterSpacing: '0.14em', textTransform: 'uppercase',
+                padding: '14px 24px', borderRadius: 8, border: 'none',
+                cursor: 'pointer', flexShrink: 0,
+                transition: 'background 0.2s',
+              }}
+              onMouseEnter={e => e.currentTarget.style.background = '#ED7D2B'}
+              onMouseLeave={e => e.currentTarget.style.background = '#D12918'}
+            >Place Your Order →</button>
           </div>
-          <button
-            onClick={() => navigate('/order', { state: { preselect: { type: tab } } })}
-            style={{
-              fontFamily: "'Nunito', sans-serif",
-              background: '#D12918', color: '#fff',
-              fontSize: 11, fontWeight: 700,
-              letterSpacing: '0.14em', textTransform: 'uppercase',
-              padding: '14px 24px', borderRadius: 8, border: 'none',
-              cursor: 'pointer', flexShrink: 0,
-              transition: 'background 0.2s',
-            }}
-            onMouseEnter={e => e.currentTarget.style.background = '#ED7D2B'}
-            onMouseLeave={e => e.currentTarget.style.background = '#D12918'}
-          >Place Your Order →</button>
-        </div>
+        )}
 
       </div>
       <Footer />

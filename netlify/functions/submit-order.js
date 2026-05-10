@@ -157,14 +157,29 @@ exports.handler = async (event) => {
 
   try {
     const db = await getDB()
+
+    // Cycle gate: reject if no cycle is open, or if type doesn't match
+    const activeCycle = await db.collection('cycles').findOne({ status: 'open' })
+    if (!activeCycle) {
+      return { statusCode: 400, body: JSON.stringify({ error: 'Ordering is currently closed' }) }
+    }
+    if (activeCycle.type !== orderType) {
+      return {
+        statusCode: 400,
+        body: JSON.stringify({ error: `Only ${activeCycle.type === 'plate' ? 'Saturday Plate' : 'Wednesday Tray'} orders are open right now` }),
+      }
+    }
+
     const order = {
       orderType,
-      items:     cleanItems,
-      addOns:    cleanAddOns,
+      items:      cleanItems,
+      addOns:     cleanAddOns,
       total,
-      info:      cleanInfo,
-      status:    'pending_payment',
-      createdAt: new Date(),
+      info:       cleanInfo,
+      status:     'pending_payment',
+      createdAt:  new Date(),
+      cycleId:    activeCycle._id,
+      cycleLabel: activeCycle.label,
     }
 
     const result  = await db.collection('orders').insertOne(order)

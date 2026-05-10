@@ -162,7 +162,17 @@ app.post('/api/submit-order', async (req, res) => {
       return res.status(400).json({ error: 'Missing required fields' })
     }
 
-    const database = await db()
+    const database    = await db()
+    const activeCycle = await database.collection('cycles').findOne({ status: 'open' })
+    if (!activeCycle) {
+      return res.status(400).json({ error: 'Ordering is currently closed' })
+    }
+    if (activeCycle.type !== orderType) {
+      return res.status(400).json({
+        error: `Only ${activeCycle.type === 'plate' ? 'Saturday Plate' : 'Wednesday Tray'} orders are open right now`,
+      })
+    }
+
     const order = {
       orderType, items, addOns: addOns || [], total,
       info: {
@@ -173,8 +183,10 @@ app.post('/api/submit-order', async (req, res) => {
         paymentMethod: info.paymentMethod,
         paymentHandle: info.paymentHandle,
       },
-      status:    'pending_payment',
-      createdAt: new Date(),
+      status:     'pending_payment',
+      createdAt:  new Date(),
+      cycleId:    activeCycle._id,
+      cycleLabel: activeCycle.label,
     }
 
     const result  = await database.collection('orders').insertOne(order)
@@ -387,6 +399,111 @@ app.delete('/api/delete-order', async (req, res) => {
     res.status(500).json({ error: err.message })
   }
 })
+
+// ── GET /api/get-active-cycle ──────────────────────────────
+app.get('/api/get-active-cycle', async (req, res) => {
+  try {
+    const cycle = await (await db()).collection('cycles').findOne({ status: 'open' })
+    if (!cycle) return res.json({ active: false })
+    res.json({ active: true, cycle: { ...cycle, _id: cycle._id.toString() } })
+  } catch (err) {
+    res.status(500).json({ error: err.message })
+  }
+})
+
+// ── GET /api/get-cycles ────────────────────────────────────
+app.get('/api/get-cycles', async (req, res) => {
+  if (req.headers['x-admin-pin'] !== process.env.ADMIN_PIN) {
+    return res.status(401).json({ error: 'Unauthorized' })
+  }
+  try {
+    const cycles = await (await db()).collection('cycles').find({}).sort({ openedAt: -1 }).toArray()
+    res.json({ cycles: cycles.map(c => ({ ...c, _id: c._id.toString() })) })
+  } catch (err) {
+    res.status(500).json({ error: err.message })
+  }
+})
+
+// ── POST /api/open-cycle ───────────────────────────────────
+app.post('/api/open-cycle', async (req, res) => {
+  if (req.headers['x-admin-pin'] !== process.env.ADMIN_PIN) {
+    return res.status(401).json({ error: 'Unauthorized' })
+  }
+  try {
+    const { type, label, cutoffAt, deliveryDate } = req.body
+    if (!['plate', 'tray'].includes(type)) {
+      return res.status(400).json({ error: 'Invalid cycle type' })
+    }
+    const database = await db()
+    const existing = await database.collection('cycles').findOne({ status: 'open' })
+    if (existing) {
+      return res.status(400).json({ error: 'Another cycle is already open', cycleId: existing._id.toString() })
+    }
+    const now          = new Date()
+    const defaultLabel = type === 'plate'
+      ? `Saturday Plates — ${now.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}`
+      : `Wednesday Trays — ${now.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}`
+    const cycle = {
+      type, status: 'open',
+      label:        label || defaultLabel,
+      openedAt:     now,
+      closedAt:     null,
+      cutoffAt:     cutoffAt     ? new Date(cutoffAt)     : null,
+      deliveryDate: deliveryDate ? new Date(deliveryDate) : null,
+    }
+    const result = await database.collection('cycles').insertOne(cycle)
+    res.json({ success: true, cycleId: result.insertedId.toString(), cycle: { ...cycle, _id: result.insertedId.toString() } })
+  } catch (err) {
+    res.status(500).json({ error: err.message })
+  }
+})
+
+// ── POST /api/close-cycle ──────────────────────────────────
+app.post('/api/close-cycle', async (req, res) => {
+  if (req.headers['x-admin-pin'] !== process.env.ADMIN_PIN) {
+    return res.status(401).json({ error: 'Unauthorized' })
+  }
+  try {
+    const { ObjectId } = await import('mongodb')
+    const { cycleId } = req.body
+    if (!cycleId) return res.status(400).json({ error: 'Missing cycleId' })
+    await (await db()).collection('cycles').updateOne(
+      { _id: new ObjectId(cycleId) },
+      { $set: { status: 'closed', closedAt: new Date() } }
+    )
+    res.json({ success: true })
+  } catch (err) {
+    res.status(500).json({ error: err.message })
+  }
+})
+
+// ── POST /api/reopen-cycle ─────────────────────────────────
+app.post('/api/reopen-cycle', async (req, res) => {
+  if (req.headers['x-admin-pin'] !== process.env.ADMIN_PIN) {
+    return res.status(401).json({ error: 'Unauthorized' })
+  }
+  try {
+    const { ObjectId } = await import('mongodb')
+    const { cycleId } = req.body
+    if (!cycleId) return res.status(400).json({ error: 'Missing cycleId' })
+    const database = await db()
+    const existing = await database.collection('cycles').findOne({ status: 'open' })
+    if (existing && existing._id.toString() !== cycleId) {
+      return res.status(400).json({ error: 'Another cycle is already open', cycleId: existing._id.toString() })
+    }
+    await database.collection('cycles').updateOne(
+      { _id: new ObjectId(cycleId) },
+      { $set: { status: 'open', closedAt: null } }
+    )
+    res.json({ success: true })
+  } catch (err) {
+    res.status(500).json({ error: err.message })
+  }
+})
+
+// ── POST /api/migrate-orders ───────────────────────────────
+// One-time: see netlify/functions/migrate-orders.js for the full implementation.
+// In dev, call the Netlify function directly or run that logic here.
 
 app.listen(PORT, () => {
   console.log(`✓ API server running at http://localhost:${PORT}`)
