@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
-import { getNextDeliveryLabel } from '../lib/weekUtils'
 
 const links = [
   { label: 'Home',      path: '/' },
@@ -13,13 +12,6 @@ export default function Navbar() {
   const [drawerOpen, setDrawer] = useState(false)
   const navigate  = useNavigate()
   const location  = useLocation()
-  const nextDelivery = getNextDeliveryLabel()
-
-  // Navigate to menu with the correct tab pre-selected based on next delivery
-  const goToMenu = () => {
-    navigate('/menu', { state: { tab: nextDelivery.tab } })
-    setDrawer(false)
-  }
 
   const onHome = location.pathname === '/'
 
@@ -89,7 +81,7 @@ export default function Navbar() {
         {/* Desktop links */}
         <div className="nav-links-desktop" style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
           {links.map(({ label, path }) => (
-            <button key={path} onClick={() => path === '/menu' ? goToMenu() : go(path)} style={{
+            <button key={path} onClick={() => go(path)} style={{
               padding: '8px 16px',
               fontSize: 12, fontWeight: 600,
               letterSpacing: '0.10em', textTransform: 'uppercase',
@@ -160,7 +152,7 @@ export default function Navbar() {
           boxShadow: '0 8px 32px rgba(209,41,24,0.12)',
         }}>
           {links.map(({ label, path }) => (
-            <button key={path} onClick={() => path === '/menu' ? goToMenu() : go(path)} style={{
+            <button key={path} onClick={() => go(path)} style={{
               display: 'block', width: '100%', textAlign: 'left',
               padding: '14px 16px',
               fontSize: 13, fontWeight: 600,
