@@ -116,7 +116,7 @@ export default function Menu() {
           </div>
         )}
 
-        {/* Items grouped by category */}
+        {/* Items grouped by category — only shown when a cycle is open */}
         {loading ? (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
             {[1,2,3,4,5].map(n => (
@@ -133,7 +133,7 @@ export default function Menu() {
               </div>
             ))}
           </div>
-        ) : (
+        ) : isOpen ? (
           Object.entries(grouped).map(([cat, catItems]) => (
             <div key={cat} style={{ marginBottom: 32 }}>
               <div style={{
@@ -151,7 +151,7 @@ export default function Menu() {
               </div>
             </div>
           ))
-        )}
+        ) : null}
 
         {/* CTA — only shown when ordering is open */}
         {isOpen && (
