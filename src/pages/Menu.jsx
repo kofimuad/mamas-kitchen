@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
-import Footer from '../components/Footer'
 import FoodCard from '../components/FoodCard'
 import { plateCategories, trayCategories } from '../data/menu'
 import useMenu from '../hooks/useMenu'
@@ -192,7 +191,6 @@ export default function Menu() {
         )}
 
       </div>
-      <Footer />
       <style>{`
         @keyframes shimmer {
           0% { background-position: 200% 0; }

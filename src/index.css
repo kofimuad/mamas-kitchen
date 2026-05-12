@@ -35,6 +35,12 @@ body {
   overflow-x: hidden;
 }
 
+#root {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
 h1, h2, h3, h4 {
   font-family: 'Nunito', -apple-system, 'Helvetica Neue', Arial, sans-serif;
   font-weight: 900;

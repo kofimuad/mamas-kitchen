@@ -1,4 +1,3 @@
-import Footer from '../components/Footer'
 
 export default function PrivacyPolicy() {
   const updated = 'March 22, 2026'
@@ -74,7 +73,6 @@ export default function PrivacyPolicy() {
           </div>
         ))}
       </div>
-      <Footer />
     </div>
   )
 }
