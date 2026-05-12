@@ -1,4 +1,3 @@
-import Footer from '../components/Footer'
 
 const values = [
   {
@@ -173,7 +172,6 @@ export default function About() {
         </div>
       </div>
 
-      <Footer />
     </div>
   )
 }

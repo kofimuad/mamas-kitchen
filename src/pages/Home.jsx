@@ -1,7 +1,6 @@
 import { useNavigate } from 'react-router-dom'
 import FoodCard from '../components/FoodCard'
 import FoodShowcaseSlider from '../components/FoodShowcaseSlider'
-import Footer from '../components/Footer'
 import useMenu from '../hooks/useMenu'
 import useActiveCycle from '../hooks/useActiveCycle'
 
@@ -352,7 +351,6 @@ export default function Home() {
           .delivery-grid { grid-template-columns: 1fr !important; }
         }
       `}</style>
-      <Footer />
     </div>
   )
 }
