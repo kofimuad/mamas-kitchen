@@ -22,7 +22,7 @@ export default function Footer() {
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 16 }}>
               <img
-                src="/images/logo-icon.png"
+                src="/images/logo-cream-on-red.png"
                 alt="Obaa Yaa's Kitchen"
                 style={{ width: 42, height: 42, borderRadius: '50%', objectFit: 'cover', flexShrink: 0 }}
               />
