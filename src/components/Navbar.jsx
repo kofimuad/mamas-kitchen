@@ -56,7 +56,7 @@ export default function Navbar() {
           background: 'none', border: 'none', cursor: 'pointer', padding: 0,
         }}>
           <img
-            src="/images/logo-icon.png"
+            src="/images/logo-cream-on-red.png"
             alt="Obaa Yaa's Kitchen"
             style={{
               width: 42, height: 42, borderRadius: '50%',
