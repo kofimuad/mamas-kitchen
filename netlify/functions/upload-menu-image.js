@@ -30,6 +30,10 @@ exports.handler = async (event) => {
       return { statusCode: 400, body: JSON.stringify({ error: 'Missing imageData or itemId' }) }
     }
 
+    if (imageData.length > 7_000_000) {
+      return { statusCode: 413, body: JSON.stringify({ error: 'Image too large (max 5MB)' }) }
+    }
+
     const {
       CLOUDINARY_CLOUD_NAME,
       CLOUDINARY_API_KEY,
@@ -78,7 +82,7 @@ exports.handler = async (event) => {
     }
   } catch (err) {
     console.error('Cloudinary upload error:', err)
-    return { statusCode: 500, body: JSON.stringify({ error: err.message }) }
+    return { statusCode: 500, body: JSON.stringify({ error: 'Failed to upload image' }) }
   }
 }
 

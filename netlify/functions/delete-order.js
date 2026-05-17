@@ -25,6 +25,7 @@ exports.handler = async (event) => {
 
     return { statusCode: 200, body: JSON.stringify({ success: true }) }
   } catch (err) {
-    return { statusCode: 500, body: JSON.stringify({ error: err.message }) }
+    console.error('delete-order error:', err)
+    return { statusCode: 500, body: JSON.stringify({ error: 'Failed to delete order' }) }
   }
 }
