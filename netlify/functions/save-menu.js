@@ -20,10 +20,9 @@ exports.handler = async (event) => {
     return { statusCode: 405, body: 'Method Not Allowed' }
   }
 
-  // Admin auth check
-  const auth = event.headers['x-admin-pin']
-  if (auth !== process.env.ADMIN_PIN) {
-    return { statusCode: 401, body: 'Unauthorized' }
+  const auth = checkAdminPin(event.headers)
+  if (!auth.allowed) {
+    return { statusCode: 401, body: JSON.stringify({ error: auth.reason }) }
   }
 
   try {
@@ -57,7 +56,7 @@ exports.handler = async (event) => {
     console.error('save-menu error:', err)
     return {
       statusCode: 500,
-      body: JSON.stringify({ error: err.message }),
+      body: JSON.stringify({ error: 'Failed to save menu' }),
     }
   }
 }

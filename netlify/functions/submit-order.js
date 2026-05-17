@@ -170,11 +170,14 @@ exports.handler = async (event) => {
       }
     }
 
+    const calculatedTotal = cleanItems.reduce((sum, i) => sum + i.price * i.qty, 0)
+                          + cleanAddOns.reduce((sum, a) => sum + a.price * a.qty, 0)
+
     const order = {
       orderType,
       items:      cleanItems,
       addOns:     cleanAddOns,
-      total,
+      total:      calculatedTotal,
       info:       cleanInfo,
       status:     'pending_payment',
       createdAt:  new Date(),

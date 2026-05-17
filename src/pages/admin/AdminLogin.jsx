@@ -1,33 +1,48 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
-// PIN comes from environment variable — set VITE_ADMIN_PIN in your .env
-const ADMIN_PIN = import.meta.env.VITE_ADMIN_PIN
-
 export default function AdminLogin() {
   const navigate = useNavigate()
-  const [pin,    setPin]    = useState('')
-  const [error,  setError]  = useState(false)
-  const [shake,  setShake]  = useState(false)
+  const [pin,     setPin]     = useState('')
+  const [error,   setError]   = useState(false)
+  const [shake,   setShake]   = useState(false)
+  const [loading, setLoading] = useState(false)
 
   const handleKey = (val) => {
-    if (pin.length >= 4) return
+    if (pin.length >= 4 || loading) return
     const next = pin + val
     setPin(next)
     setError(false)
     if (next.length === 4) {
-      setTimeout(() => {
-        if (next === ADMIN_PIN) {
-          sessionStorage.setItem('mama_admin', '1')
-          sessionStorage.setItem('mama_admin_pin', next)
-          navigate('/admin')
-        } else {
-          setError(true)
-          setShake(true)
-          setPin('')
-          setTimeout(() => setShake(false), 500)
-        }
-      }, 180)
+      setTimeout(() => verifyPin(next), 180)
+    }
+  }
+
+  const verifyPin = async (enteredPin) => {
+    setLoading(true)
+    try {
+      const res = await fetch('/.netlify/functions/admin-login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ pin: enteredPin }),
+      })
+      if (res.ok) {
+        sessionStorage.setItem('mama_admin', '1')
+        sessionStorage.setItem('mama_admin_pin', enteredPin)
+        navigate('/admin')
+      } else {
+        setError(true)
+        setShake(true)
+        setPin('')
+        setTimeout(() => setShake(false), 500)
+      }
+    } catch {
+      setError(true)
+      setShake(true)
+      setPin('')
+      setTimeout(() => setShake(false), 500)
+    } finally {
+      setLoading(false)
     }
   }
 

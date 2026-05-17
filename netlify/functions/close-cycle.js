@@ -41,6 +41,7 @@ exports.handler = async (event) => {
       body: JSON.stringify({ success: true }),
     }
   } catch (err) {
-    return { statusCode: 500, body: JSON.stringify({ error: err.message }) }
+    console.error('close-cycle error:', err)
+    return { statusCode: 500, body: JSON.stringify({ error: 'Failed to close cycle' }) }
   }
 }

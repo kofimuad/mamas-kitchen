@@ -36,6 +36,7 @@ exports.handler = async (event) => {
       body: JSON.stringify({ success: true }),
     }
   } catch (err) {
-    return { statusCode: 500, body: JSON.stringify({ error: err.message }) }
+    console.error('confirm-order error:', err)
+    return { statusCode: 500, body: JSON.stringify({ error: 'Failed to update order' }) }
   }
 }

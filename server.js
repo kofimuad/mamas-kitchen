@@ -262,7 +262,7 @@ app.get('/api/get-order', async (req, res) => {
 })
 
 // ── POST /api/confirm-order ────────────────────────────────
-app.post('/api/confirm-order', async (req, res) => {
+app.post('/api/confirm-order', adminOnly, async (req, res) => {
   try {
     const { ObjectId } = await import('mongodb')
     const { orderId, status } = req.body
@@ -340,7 +340,7 @@ app.get('/api/get-menu', async (req, res) => {
 })
 
 // ── POST /api/save-menu ────────────────────────────────────
-app.post('/api/save-menu', async (req, res) => {
+app.post('/api/save-menu', adminOnly, async (req, res) => {
   try {
     const { plateItems, trayItems, addOns } = req.body
     if (!plateItems || !trayItems) return res.status(400).json({ error: 'Missing data' })
@@ -371,7 +371,7 @@ app.get('/api/get-orders', async (req, res) => {
 })
 
 // ── PATCH /api/orders/:id ──────────────────────────────────
-app.patch('/api/orders/:id', async (req, res) => {
+app.patch('/api/orders/:id', adminOnly, async (req, res) => {
   try {
     const { ObjectId } = await import('mongodb')
     const { status } = req.body
