@@ -211,6 +211,11 @@ export default function Dashboard() {
             fontSize: 12, fontWeight: 700, padding: '7px 16px', borderRadius: 99,
             border: 'none', cursor: 'pointer',
           }}>Manage Menu</button>
+          <button onClick={() => navigate('/admin/insights')} style={{
+            fontFamily: "'Nunito', sans-serif", background: '#3A5A14', color: '#fff',
+            fontSize: 12, fontWeight: 700, padding: '7px 16px', borderRadius: 99,
+            border: 'none', cursor: 'pointer',
+          }}>Insights</button>
           <button
             onClick={async () => {
               if (orders.length === 0) { alert('No orders to export.'); return }

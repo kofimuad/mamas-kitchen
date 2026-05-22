@@ -12,6 +12,7 @@ import AdminLogin from './pages/admin/AdminLogin'
 import Dashboard from './pages/admin/Dashboard'
 import OrderDetail from './pages/admin/OrderDetail'
 import MenuEditor from './pages/admin/MenuEditor'
+import Insights from './pages/admin/Insights'
 import PrivacyPolicy from './pages/PrivacyPolicy'
 import ScrollToTop from './components/ScrollToTop'
 
@@ -47,6 +48,7 @@ function AppLayout() {
           <Route path="/admin"               element={<AdminRoute><Dashboard /></AdminRoute>} />
           <Route path="/admin/menu"          element={<AdminRoute><MenuEditor /></AdminRoute>} />
           <Route path="/admin/orders/:id"    element={<AdminRoute><OrderDetail /></AdminRoute>} />
+          <Route path="/admin/insights"     element={<AdminRoute><Insights /></AdminRoute>} />
         </Routes>
       </main>
       {showFooter && <Footer />}

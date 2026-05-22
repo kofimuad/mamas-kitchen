@@ -356,6 +356,30 @@ app.post('/api/save-menu', adminOnly, async (req, res) => {
   }
 })
 
+// ── GET /api/get-insights ──────────────────────────────────
+app.get('/api/get-insights', adminOnly, async (req, res) => {
+  try {
+    const leaderboard = await (await db()).collection('orders').aggregate([
+      { $match: { status: { $in: ['confirmed', 'delivered'] } } },
+      {
+        $group: {
+          _id:        '$info.phone',
+          name:       { $first: '$info.name' },
+          phone:      { $first: '$info.phone' },
+          orderCount: { $sum: 1 },
+          totalSpent: { $sum: '$total' },
+          lastOrder:  { $max: '$createdAt' },
+        },
+      },
+      { $sort: { orderCount: -1, totalSpent: -1 } },
+      { $limit: 20 },
+    ]).toArray()
+    res.json({ leaderboard })
+  } catch (err) {
+    res.status(500).json({ error: err.message })
+  }
+})
+
 // ── GET /api/get-orders ────────────────────────────────────
 app.get('/api/get-orders', async (req, res) => {
   if (req.headers['x-admin-pin'] !== process.env.ADMIN_PIN) {
