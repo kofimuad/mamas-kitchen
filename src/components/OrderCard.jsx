@@ -22,6 +22,7 @@ export default function OrderCard({ order, onAccept, onDecline, onDelete }) {
 
   // Support both old shape (order.plates, order.branch) and new shape (order.items, order.info.*)
   const items     = order.items || order.plates || []
+  const addOns    = (order.addOns || []).filter(a => a.qty > 0)
   const branch    = order.info?.branch    || order.branch    || ''
   const battalion = order.info?.battalion || order.battalion || ''
   const phone     = order.info?.phone     || order.phone     || ''
@@ -107,6 +108,24 @@ export default function OrderCard({ order, onAccept, onDecline, onDelete }) {
               : <span style={{ color: '#6B8F3A', fontWeight: 400 }}>No items</span>
             }
           </div>
+
+          {/* Add-ons */}
+          {addOns.length > 0 && (
+            <div style={{
+              fontFamily: "'Nunito', sans-serif",
+              fontSize: 12, color: '#6B8F3A', fontWeight: 600,
+              marginBottom: 6, lineHeight: 1.5,
+            }}>
+              + {addOns.map((a, i) => (
+                <span key={i}>
+                  {a.name}{a.qty > 1 ? ` ×${a.qty}` : ''}
+                  {i < addOns.length - 1 && (
+                    <span style={{ color: 'rgba(107,143,58,0.35)', margin: '0 6px' }}>—</span>
+                  )}
+                </span>
+              ))}
+            </div>
+          )}
 
           {/* Payment badge */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
