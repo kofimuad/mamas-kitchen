@@ -93,7 +93,7 @@ export default function Order() {
 
   const grandTotal  = total + addOnTotal
   const hasAddOns   = relevantAddOns.length > 0
-  const summaryStep = hasAddOns ? 4 : 3
+  const summaryStep = 4
 
   const add    = (id) => setSelected(s => [...s, id])
   const remove = (id) => {
