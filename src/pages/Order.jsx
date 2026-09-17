@@ -5,7 +5,7 @@ import useMenu from '../hooks/useMenu'
 import useActiveCycle from '../hooks/useActiveCycle'
 import { apiUrl } from '../lib/api'
 
-const BRANCHES    = ['Army', 'Navy', 'Air Force', 'Marines', 'Coast Guard', 'Space Force', 'Lackland']
+const BRANCHES    = ['Army', 'Marines', 'Coast Guard', 'Space Force', 'Lackland Gate', 'Lackland Shoppette', 'BAMC']
 const STORAGE_KEY = 'obaa_yaa_customer_info'
 
 function loadSavedInfo() {
